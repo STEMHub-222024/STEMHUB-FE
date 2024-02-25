@@ -1,0 +1,65 @@
+.wrapper {
+    --color-title-topic: #06241b;
+
+    display: flex;
+    flex-direction: column;
+    width: var(--default-layout-body-width);
+    max-width: 100%;
+    height: 100%;
+}
+
+// Slide
+.slideshow {
+    margin-top: 18px;
+    padding: 0 26px;
+}
+
+// body
+.container {
+    margin: 70px 0 0 0 !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+// Topic
+.topic-group {
+    padding: 0 26px 40px 26px;
+    background: rgba(235, 235, 245, 1.3);
+    .topic-header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .title {
+            width: 66%;
+            line-height: 56px;
+            color: var(--color-title-topic);
+            padding: 24px 0;
+            font-size: 3rem;
+            font-weight: 600;
+
+            span {
+                color: #7f56d9;
+            }
+        }
+    }
+}
+
+.btn-explore-all {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+// Introduce
+.introduce {
+    background-color: var(--white);
+}
+
+//posts
+
+.posts-content {
+    padding: 0 26px 40px 26px;
+    background: rgba(235, 235, 245, 1.3);
+}

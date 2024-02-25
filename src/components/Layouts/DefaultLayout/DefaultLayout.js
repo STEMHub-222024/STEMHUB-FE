@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import Footer from './Footer';
+import Footer from '../Components/Footer';
 import Header from '../Components/Header';
 import styles from './DefaultLayout.module.scss';
 

@@ -1,0 +1,22 @@
+.menu-topic {
+    --background-color-navbar-topic: rgb(116 116 208 / 30%);
+
+    padding: 24px 0;
+    flex: 1;
+
+    .group-menu {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        border-radius: 46px;
+        padding: 6px;
+        background-color: var(--background-color-navbar-topic);
+        box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+
+        & .active {
+            background-color: var(--main-color) !important;
+            color: var(--white) !important;
+            text-decoration: none !important;
+        }
+    }
+}

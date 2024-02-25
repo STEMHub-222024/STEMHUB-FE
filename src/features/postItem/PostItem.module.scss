@@ -1,0 +1,83 @@
+.wrapper {
+    margin-top: 24px;
+    background-color: var(--white);
+    border-radius: 30px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    transition: transform linear 0.1s;
+    will-change: transform;
+
+    &:hover {
+        transform: translateY(-4px);
+    }
+
+    .group-images {
+        height: 170px;
+
+        .images {
+            padding-top: 100%;
+            background-repeat: no-repeat;
+            background-size: contain;
+            border-radius: 30px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+    }
+
+    .content {
+        padding: 14px 0 14px 8px;
+        .name {
+            font-size: 1.6rem;
+            font-weight: 600;
+            word-wrap: break-word;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            color: #292929;
+            display: -webkit-box;
+            line-height: 1.8;
+            overflow: hidden;
+        }
+
+        .author {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 6px 0 4px;
+            .group-avatar {
+                span {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    text-transform: capitalize;
+                    font-size: 1.5rem;
+
+                    .avatar {
+                        position: relative;
+
+                        img {
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                        }
+                    }
+                }
+
+                .info {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-left: 36px;
+
+                    .icon-check {
+                        transform: translateY(1px) translateX(2px);
+                        color: var(--color-icon-blue);
+                    }
+                }
+            }
+
+            .btn-view-post {
+                font-size: 1.5rem;
+            }
+        }
+    }
+}
