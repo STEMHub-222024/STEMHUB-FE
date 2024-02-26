@@ -14,6 +14,7 @@
     --color-yellow: #f1bf5a;
     --color-orange: #f4876b;
     --color-pink: #b4708d;
+    --color-grey: #b0b0d1;
     --color-icon-blue: #1b74e4;
 
     //Default layout
@@ -71,9 +72,9 @@ input,
 a {
     color: var(--text-color);
     text-decoration: none;
-    &:hover {
-        color: var(--black);
-    }
+    // &:hover {
+    //     color: var(--black);
+    // }
 }
 
 ul {
@@ -114,13 +115,19 @@ ul {
 }
 
 .grid-column-5 {
-    width: 41.6667%;
+    width: 41.667%;
     padding-left: 12px;
     padding-right: 12px;
 }
 
 .grid-column-7 {
-    width: 58.333%;
+    width: 58.33%;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+.grid-column-8 {
+    width: 66.667%;
     padding-left: 12px;
     padding-right: 12px;
 }
