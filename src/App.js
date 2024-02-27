@@ -4,11 +4,13 @@ import { Fragment } from 'react';
 // import { Counter } from './features/counter/Counter';
 import { publicRouter, privateRouter } from '~/routes';
 import { DefaultLayout } from '~/components/Layouts';
+import ScrollOnTop from './components/Common/ScrollOnTop';
 
 function App() {
     const [allow, setAllow] = useState(false);
     return (
         <Router>
+            <ScrollOnTop />
             <div className="App">
                 <Routes>
                     {allow

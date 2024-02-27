@@ -7,7 +7,9 @@ const routes = {
     stem10: '/stem10',
     stem11: '/stem11',
     stem12: '/stem12',
-    upload: '/upload',
+    posts: '/posts',
+    login: '/login',
+    register: '/register',
     //private routes
 };
 

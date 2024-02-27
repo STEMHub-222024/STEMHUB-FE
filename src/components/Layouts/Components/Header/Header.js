@@ -51,7 +51,7 @@ function Header() {
                         <MenuItem title="STEM 10" to={config.routes.stem10} icon={null} />
                         <MenuItem title="STEM 11" to={config.routes.stem11} icon={null} />
                         <MenuItem title="STEM 12" to={config.routes.stem12} icon={null} />
-                        <MenuItem title="POSTS" to={config.routes.stem12} icon={null} />
+                        <MenuItem title="POSTS" to={config.routes.posts} icon={null} />
                     </Menu>
                 </aside>
                 <Search currentUser={currentUser} />
