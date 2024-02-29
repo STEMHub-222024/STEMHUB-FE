@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { IconCircleCheckFilled } from '@tabler/icons-react';
-import styles from './PostItem.module.scss';
+import styles from './CommonItem.module.scss';
 import images from '~/assets/images';
 import Heading from '~/components/Common/Heading';
 import Button from '~/components/Common/Button';
@@ -10,7 +10,7 @@ import FallbackAvatar from '~/components/Common/FallbackAvatar';
 
 const cx = classNames.bind(styles);
 
-function PostItem() {
+function CommonItem() {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('group-images')}>
@@ -37,4 +37,4 @@ function PostItem() {
     );
 }
 
-export default PostItem;
+export default CommonItem;

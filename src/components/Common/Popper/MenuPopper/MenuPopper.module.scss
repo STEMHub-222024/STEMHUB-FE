@@ -1,5 +1,8 @@
 ///Menu wrapper
 .menu-list {
+    --color-text-info: #757575;
+    --color-border: #dacece;
+
     width: 261px;
 
     .menu-item {
@@ -11,7 +14,38 @@
     background: var(--white);
     border-radius: 10px;
     box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.2);
-    padding: 8px !important;
+
+    .info {
+        display: flex;
+        align-items: center;
+        margin: 14px;
+        border-bottom: 1px solid var(--color-border);
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin: 16px;
+        }
+
+        .user-name {
+            display: flex;
+            flex-direction: column;
+            margin-right: 16px;
+
+            .heading {
+                font-size: 1.5rem;
+                font-weight: 600;
+            }
+
+            span {
+                color: var(--color-text-info);
+                font-size: 1.2rem;
+                font-weight: 400;
+            }
+        }
+    }
 }
 
 //Menu item
@@ -19,6 +53,8 @@
     width: 100%;
     font-weight: 400;
     justify-content: flex-start;
+    padding: 16px;
+    color: var(--text-color);
 
     &.separate {
         border-top: 1px solid rgba(22, 24, 35, 0.12);

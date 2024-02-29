@@ -7,7 +7,7 @@ import NavbarTopic from '~/components/Layouts/Components/NavbarTopic';
 import Topic from '~/components/Layouts/Components/Topic';
 import Button from '~/components/Common/Button';
 import Introduce from '~/components/Layouts/Components/Introduce';
-import PostItem from '~/features/postItem';
+import PostItem from '~/components/Layouts/Components/CommonItem';
 
 const cx = classNames.bind(styles);
 

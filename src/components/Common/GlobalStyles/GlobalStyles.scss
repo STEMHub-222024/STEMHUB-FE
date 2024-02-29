@@ -10,6 +10,7 @@
     --text-color-search: #667085;
     --white: #fff;
     --text-color: #212121;
+    --text-color-desc: #505050;
     --line-color: #e6e6e8;
     --color-yellow: #f1bf5a;
     --color-orange: #f4876b;
@@ -20,7 +21,7 @@
     //Default layout
     --default-layout-header-height: 60px;
     --default-layout-header-width: 1280px;
-    --default-layout-body-width: 1248px;
+    --default-layout-body-width: 1224px;
 
     //Font-family
     --font-family-trademark: Caladea;
@@ -72,9 +73,6 @@ input,
 a {
     color: var(--text-color);
     text-decoration: none;
-    // &:hover {
-    //     color: var(--black);
-    // }
 }
 
 ul {
@@ -96,11 +94,6 @@ ul {
 }
 
 // Test
-.grid-column-12 {
-    width: 100%;
-    padding-left: 12px;
-    padding-right: 12px;
-}
 
 .grid-column-3 {
     width: 25%;
@@ -128,6 +121,12 @@ ul {
 
 .grid-column-8 {
     width: 66.667%;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+.grid-column-12 {
+    width: 100%;
     padding-left: 12px;
     padding-right: 12px;
 }
