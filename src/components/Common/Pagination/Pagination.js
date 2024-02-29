@@ -25,7 +25,7 @@ function Pagination({ nPages, currentPage, setCurrentPage }) {
                     <div
                         key={pgNumber}
                         className={cx('page-item', {
-                            active: currentPage == pgNumber,
+                            active: currentPage === pgNumber,
                         })}
                         onClick={() => setCurrentPage(pgNumber)}
                     >

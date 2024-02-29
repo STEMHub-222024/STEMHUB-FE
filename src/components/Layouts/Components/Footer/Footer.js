@@ -12,6 +12,7 @@ import styles from './Footer.module.scss';
 import images from '~/assets/images';
 import Image from '~/components/Common/Image';
 import Heading from '~/components/Common/Heading';
+import config from '~/config';
 
 const cx = classNames.bind(styles);
 
@@ -43,12 +44,20 @@ function Footer() {
                                 </Heading>
 
                                 <div className={cx('option-one')}>
-                                    <a className={cx('link')}>About</a>
-                                    <a className={cx('link')}>Blog</a>
+                                    <a className={cx('link')} href={config.routes.home}>
+                                        About
+                                    </a>
+                                    <a className={cx('link')} href={config.routes.home}>
+                                        Blog
+                                    </a>
                                 </div>
                                 <div className={cx('option-tow')}>
-                                    <a className={cx('link')}>Course</a>
-                                    <a className={cx('link')}>Contact</a>
+                                    <a className={cx('link')} href={config.routes.home}>
+                                        Course
+                                    </a>
+                                    <a className={cx('link')} href={config.routes.home}>
+                                        Contact
+                                    </a>
                                 </div>
                             </div>
 
@@ -84,16 +93,16 @@ function Footer() {
                             <span>nvdqb73 2024 | All Rights Reserved</span>
                         </div>
                         <div className={cx('foundation')}>
-                            <a className={cx('link')}>
+                            <a className={cx('link')} href={config.routes.home}>
                                 <IconBrandFacebook size={18} className={cx('icon')} />
                             </a>
-                            <a className={cx('link')}>
+                            <a className={cx('link')} href={config.routes.home}>
                                 <IconBrandX size={18} className={cx('icon')} />
                             </a>
-                            <a className={cx('link')}>
+                            <a className={cx('link')} href={config.routes.home}>
                                 <IconBrandTiktok size={18} className={cx('icon')} />
                             </a>
-                            <a className={cx('link')}>
+                            <a className={cx('link')} href={config.routes.home}>
                                 <IconBrandInstagram size={18} className={cx('icon')} />
                             </a>
                         </div>

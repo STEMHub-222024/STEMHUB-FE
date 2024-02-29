@@ -15,7 +15,6 @@ function FormInput({ ...props }) {
         labelComeback,
         setUserName_L,
         setPassword_L,
-        dispatch,
     } = props;
 
     const classes = cx('labelGroup', {
