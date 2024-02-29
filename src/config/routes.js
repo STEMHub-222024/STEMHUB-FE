@@ -10,6 +10,7 @@ const routes = {
     posts: '/posts',
     login: '/login',
     register: '/register',
+    topic: '/topic/:topicId',
     //private routes
 };
 

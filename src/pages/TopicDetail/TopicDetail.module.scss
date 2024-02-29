@@ -1,0 +1,193 @@
+.wrapper {
+    padding: 0 26px 40px 26px;
+
+    .topic-detail-content {
+        padding: 26px;
+    }
+}
+
+// left body topic detail
+.group-title {
+    margin-bottom: 80px;
+
+    .heading {
+        color: var(--tex-color);
+        font-size: 2.8rem;
+        font-weight: 900;
+        margin: 20px 0;
+    }
+
+    .desc {
+        max-width: 840px;
+        font-size: 1.5rem;
+        line-height: 1.6;
+        word-wrap: break-word;
+        color: var(--text-color-desc);
+    }
+
+    .topicList {
+        .topicHeading {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 36px 0 4px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-left: -13px;
+            margin-right: -13px;
+            .col {
+                display: block;
+                padding-left: 12px;
+                padding-right: 12px;
+                .list {
+                    display: flex;
+                    flex-wrap: wrap;
+                    margin-bottom: 10px;
+                    padding-left: 0;
+
+                    li {
+                        color: var(--text-color);
+                        flex-basis: 50%;
+                        font-size: 1.4rem;
+                        line-height: 1.6;
+                        margin-bottom: 12px;
+                        padding: 0 24px;
+                        position: relative;
+
+                        .icon {
+                            color: var(--main-color);
+                            font-size: 1.4rem;
+                            left: 0;
+                            position: absolute;
+                            top: 2px;
+                        }
+
+                        span {
+                            color: var(--text-color);
+                            font-size: 1.4rem;
+                            line-height: 1.6;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+//  right body topic detail
+
+.purchaseBadge {
+    align-items: center;
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 60px;
+    margin-left: 24px;
+    padding-bottom: 20px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 90px;
+
+    .imgPreview {
+        border-radius: 16px;
+        margin: 2px 0 20px;
+        overflow: hidden;
+        position: relative;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        width: calc(100% - 2px);
+
+        .bg {
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+            background-size: 100% auto;
+            padding-top: 56.25%;
+            width: 100%;
+        }
+
+        .overlay {
+            background-color: var(--white);
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 14px 14px 8px 14px;
+            left: 50%;
+            position: absolute;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            transition: all 0.3s linear;
+            z-index: 1;
+        }
+
+        p {
+            bottom: 0;
+            color: var(--white);
+            font-size: 1.8rem;
+            font-weight: 550;
+            left: 0;
+            position: absolute;
+            right: 0;
+            text-align: center;
+            width: 100%;
+            z-index: 1;
+        }
+
+        &::after {
+            background-image: linear-gradient(180deg, rgba(30, 30, 28, 0), rgba(30, 30, 28, 0.9));
+            bottom: 0;
+            content: '';
+            display: block;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: all 0.3s linear;
+        }
+    }
+
+    h5 {
+        color: var(--primary);
+        font-size: 32px;
+        font-weight: 400;
+        margin: 0 auto;
+        opacity: 0.8;
+    }
+
+    .btn-join {
+        text-transform: capitalize;
+    }
+
+    button {
+        margin-top: 16px;
+    }
+
+    ul {
+        display: inline-block;
+        margin: 0;
+        padding: 24px 0 10px 4px;
+        text-align: left;
+
+        li {
+            font-size: 1.6rem;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            padding-left: 35px;
+            position: relative;
+
+            .icon {
+                left: 0;
+                position: absolute;
+                top: 4px;
+            }
+        }
+    }
+}
+
+.numberFormat {
+    max-width: 55px !important;
+    margin-left: 4px;
+}
+
