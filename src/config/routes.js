@@ -11,6 +11,7 @@ const routes = {
     login: '/login',
     register: '/register',
     topic: '/topic/:topicId',
+    topicLesson: '/topic/:topicId/:lessonId',
     //private routes
 };
 

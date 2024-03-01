@@ -2,7 +2,7 @@
 import config from '~/config';
 
 //Layouts
-// import { HeaderOnly } from '~/components/Layouts';
+import LessonLayout from '~/components/Layouts/LessonLayout';
 
 //public page
 import Home from '~/pages/Home';
@@ -12,6 +12,7 @@ import Posts from '~/pages/Posts';
 import TopicDetail from '~/pages/TopicDetail';
 import Login from '~/pages/Login';
 import Register from '~/pages/Register';
+import Video from '~/pages/Video';
 //private page
 import Stem12 from '~/pages/Stem12';
 
@@ -27,6 +28,7 @@ const publicRouter = [
     { path: config.routes.stem12, component: Stem12 },
     { path: config.routes.posts, component: Posts },
     { path: config.routes.topic, component: TopicDetail },
+    { path: config.routes.topicLesson, component: Video, layout: LessonLayout },
     { path: config.routes.login, component: Login, layout: null },
     { path: config.routes.register, component: Register, layout: null },
 ];

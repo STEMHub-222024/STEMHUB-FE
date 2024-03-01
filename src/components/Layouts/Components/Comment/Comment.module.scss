@@ -1,0 +1,115 @@
+.detailRow {
+    --background-comment: #f2f3f5;
+    --text-comment: #1c1e21;
+
+    margin-top: 50px;
+
+    .detailComment {
+        display: flex;
+        margin-top: 16px;
+        position: relative;
+
+        .avatarWrap {
+            flex-shrink: 0;
+            .avatarWrapper {
+                min-height: 45px;
+                min-width: 45px;
+                position: relative;
+                .avatar {
+                    background: transparent;
+                    border-radius: 50%;
+                    font-size: var(--font-size);
+                }
+            }
+        }
+
+        .commentBody {
+            flex: 1 1;
+            margin-left: 8px;
+            max-width: 592px;
+            padding-left: 4px;
+            .commentInner {
+                position: relative;
+
+                .commentWrapper {
+                    display: inline-block;
+                    max-width: 100%;
+
+                    .commentContent {
+                        max-width: 500px;
+                        min-width: 400px;
+                        background-color: var(--background-comment);
+                        border-radius: 18px;
+                        color: var(--text-comment);
+                        padding: 9px 12px;
+                        position: relative;
+
+                        .commentHeading {
+                            align-items: center;
+                            display: flex;
+                            justify-content: space-between;
+
+                            .commentAuthor {
+                                color: var(--black-color);
+                                display: inline-block;
+                                font-size: 1.4rem;
+                                font-weight: 600;
+                                margin: 0;
+                            }
+                        }
+
+                        .commentText {
+                            color: var(--black-color);
+                            line-height: 1.6;
+                            margin-bottom: 0;
+                            margin-top: 4px;
+                            overflow: hidden;
+                            margin-bottom: 5px !important;
+                            overflow-x: auto;
+                            word-break: break-word;
+                        }
+                    }
+                    .commentTime {
+                        align-items: center;
+                        display: flex;
+                        justify-content: space-between;
+                        margin-top: 8px;
+                        min-height: 27px;
+                        .createdAt {
+                            align-items: center;
+                            display: flex;
+                            font-size: 1.4rem;
+                            margin: 0;
+                            .createdAtLeft {
+                                align-items: center;
+                                display: flex;
+                                .iconWrapper {
+                                    background-color: transparent;
+                                    border: none;
+                                    outline: none;
+                                    text-align: center;
+
+                                    .likeComment {
+                                        color: #e87a5a;
+                                        font-size: 1.3rem;
+                                        margin: 0 4px;
+                                        &:hover {
+                                            cursor: pointer;
+                                            text-decoration: underline;
+                                        }
+                                    }
+                                }
+
+                                .replyComment {
+                                    color: #e87a5a;
+                                    font-size: 1.3rem;
+                                    margin: 0 4px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

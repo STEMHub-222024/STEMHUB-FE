@@ -9,6 +9,7 @@
     --text-color-trademark: #212121;
     --text-color-search: #667085;
     --white: #fff;
+    --black-color: #000;
     --text-color: #212121;
     --text-color-desc: #505050;
     --line-color: #e6e6e8;
@@ -36,6 +37,7 @@
 
 html {
     font-size: 62.5%;
+    scrollbar-width: thin;
 }
 
 body {

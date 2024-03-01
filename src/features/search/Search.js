@@ -6,7 +6,7 @@ import { IconSquareRoundedXFilled, IconLoader, IconSearch } from '@tabler/icons-
 // import * as searchServices from '~/services/searchServices';
 import Button from '~/components/Common/Button';
 import { Wrapper as PopperWrapper } from '~/components/Common/Popper';
-import SearchCourseItem from '~/components/Common/SearchCourseItem';
+import SearchCourseItem from '~/components/Layouts/Components/SearchCourseItem';
 import styles from './Search.module.scss';
 import { useDebounce } from '~/hooks';
 
