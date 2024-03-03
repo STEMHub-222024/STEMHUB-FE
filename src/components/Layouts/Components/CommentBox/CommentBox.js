@@ -23,7 +23,7 @@ function CommentBox() {
             <div className={cx('commentContent')}>
                 {showEditText ? (
                     <>
-                        <TextEditor height="280px" />
+                        <TextEditor height="280px" placeholder="Bạn có thắc mắc gì trong bài học này?" />
                         <div className={cx('actionWrapper')}>
                             <Button text small className={cx('cancel')} onClick={handleShowEditText}>
                                 Huỷ

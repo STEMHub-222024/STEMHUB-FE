@@ -51,6 +51,15 @@ body {
     text-rendering: optimizeSpeed;
     color: var(--text-color);
     overflow-y: overlay;
+
+    .rc-md-editor:not(.full) .rc-md-navigation {
+        background-color: #fff;
+        border-bottom: none;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 66px;
+        z-index: 1;
+    }
 }
 
 ::selection {

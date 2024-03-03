@@ -8,6 +8,7 @@ import LessonLayout from '~/components/Layouts/LessonLayout';
 import Home from '~/pages/Home';
 import Stem10 from '~/pages/Stem10';
 import Stem11 from '~/pages/Stem11';
+import NewPost from '~/pages/NewPost';
 import Posts from '~/pages/Posts';
 import PostsDetail from '~/pages/PostsDetail';
 import TopicDetail from '~/pages/TopicDetail';
@@ -27,6 +28,7 @@ const publicRouter = [
     { path: config.routes.stem10, component: Stem10 },
     { path: config.routes.stem11, component: Stem11 },
     { path: config.routes.stem12, component: Stem12 },
+    { path: config.routes.newPost, component: NewPost },
     { path: config.routes.posts, component: Posts },
     { path: config.routes.postsDetail, component: PostsDetail },
     { path: config.routes.topic, component: TopicDetail },

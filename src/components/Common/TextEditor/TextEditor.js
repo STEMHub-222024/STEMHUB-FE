@@ -9,7 +9,7 @@ const cx = classNames.bind(styles);
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
-function TextEditor({ height, html = false }) {
+function TextEditor({ placeholder, height, html = false, className }) {
     function handleEditorChange({ html, text }) {
         console.log('handleEditorChange', html, text);
     }
@@ -23,15 +23,19 @@ function TextEditor({ height, html = false }) {
         });
     }
 
+    const classes = cx('mdEdit', {
+        [className]: className,
+    });
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('text-editor')}>
                 <MdEditor
-                    placeholder="Bạn có thắc mắc gì trong bài học này?"
-                    id="54128"
+                    placeholder={placeholder}
                     onImageUpload={onImageUpload}
                     view={{ menu: true, md: true, html: html }}
                     style={{ height: height }}
+                    className={classes}
                     renderHTML={(text) => mdParser.render(text)}
                     onChange={handleEditorChange}
                 />
@@ -41,7 +45,9 @@ function TextEditor({ height, html = false }) {
 }
 
 TextEditor.propTypes = {
-    height: PropTypes.string.isRequired,
+    placeholder: PropTypes.string.isRequired,
+    height: PropTypes.string,
+    className: PropTypes.string,
 };
 
 export default TextEditor;
