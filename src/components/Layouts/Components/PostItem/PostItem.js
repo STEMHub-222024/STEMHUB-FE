@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
-import classNames from 'classnames/bind';
-import styles from './PostItem.module.scss';
+import { Link } from 'react-router-dom';
 import { IconCircleCheckFilled, IconDots } from '@tabler/icons-react';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';
 import Button from '~/components/Common/Button';
 import config from '~/config';
 import images from '~/assets/images';
-import { Link } from 'react-router-dom';
 import Heading from '~/components/Common/Heading';
 import Image from '~/components/Common/Image';
+
+import classNames from 'classnames/bind';
+import styles from './PostItem.module.scss';
 
 const cx = classNames.bind(styles);
 

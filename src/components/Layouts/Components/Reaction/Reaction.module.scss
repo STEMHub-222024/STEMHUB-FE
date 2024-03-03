@@ -1,0 +1,28 @@
+.wrapper {
+    color: #757575;
+    display: flex;
+    font-size: 1.6rem;
+    margin-top: 24px;
+    justify-content: center;
+
+    .btnReact {
+        display: flex;
+        padding: 4px 8px;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+
+        .active {
+            color: #ed2b48;
+        }
+
+        &:hover {
+            color: #333;
+            cursor: pointer;
+        }
+
+        span {
+            margin-left: 8px;
+        }
+    }
+}

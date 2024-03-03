@@ -9,6 +9,7 @@ import Home from '~/pages/Home';
 import Stem10 from '~/pages/Stem10';
 import Stem11 from '~/pages/Stem11';
 import Posts from '~/pages/Posts';
+import PostsDetail from '~/pages/PostsDetail';
 import TopicDetail from '~/pages/TopicDetail';
 import Login from '~/pages/Login';
 import Register from '~/pages/Register';
@@ -27,6 +28,7 @@ const publicRouter = [
     { path: config.routes.stem11, component: Stem11 },
     { path: config.routes.stem12, component: Stem12 },
     { path: config.routes.posts, component: Posts },
+    { path: config.routes.postsDetail, component: PostsDetail },
     { path: config.routes.topic, component: TopicDetail },
     { path: config.routes.topicLesson, component: Video, layout: LessonLayout },
     { path: config.routes.login, component: Login, layout: null },

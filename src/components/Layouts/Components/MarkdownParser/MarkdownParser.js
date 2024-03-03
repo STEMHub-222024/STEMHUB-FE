@@ -7,7 +7,10 @@ const cx = classNames.bind(styles);
 function MarkdownParser() {
     return (
         <div className={cx('wrapper')}>
-            <p>em bị lỗi ko lưu được file ai chỉ em fix vs dc k ạ </p>
+            <p>
+                Authentication và Authorization là một phần quan trọng trong việc phát triển phần mềm, giúp chúng ta xác
+                thực và phân quyền người dùng trước khi cho người dùng truy cập vào tài nguyên của ứng dụng.{' '}
+            </p>
         </div>
     );
 }

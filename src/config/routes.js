@@ -8,10 +8,11 @@ const routes = {
     stem11: '/stem11',
     stem12: '/stem12',
     posts: '/posts',
-    login: '/login',
-    register: '/register',
+    postsDetail: '/posts/:postsId',
     topic: '/topic/:topicId',
     topicLesson: '/topic/:topicId/:lessonId',
+    login: '/login',
+    register: '/register',
     //private routes
 };
 

@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@200;300;400;500;600;700&display=swap');
 @import 'slick-carousel/slick/slick.css';
 @import 'slick-carousel/slick/slick-theme.css';
+@import 'react-markdown-editor-lite/lib/index.css';
 :root {
     //Color
     --main-color: #7f56d9;
@@ -27,6 +28,9 @@
     //Font-family
     --font-family-trademark: Caladea;
     --font-family-button: Inter;
+
+    //line height
+    --line-height: 2;
 }
 
 * {
@@ -120,6 +124,12 @@ ul {
     padding-right: 12px;
 }
 
+.grid-column-6 {
+    width: 50%;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
 .grid-column-7 {
     width: 58.33%;
     padding-left: 12px;
@@ -128,6 +138,12 @@ ul {
 
 .grid-column-8 {
     width: 66.667%;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+.grid-column-9 {
+    width: 75%;
     padding-left: 12px;
     padding-right: 12px;
 }
