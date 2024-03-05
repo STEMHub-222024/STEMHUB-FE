@@ -9,6 +9,7 @@ import { Wrapper as PopperWrapper } from '~/components/Common/Popper';
 import SearchCourseItem from '~/components/Layouts/Components/SearchCourseItem';
 import styles from './Search.module.scss';
 import { useDebounce } from '~/hooks';
+import Heading from '~/components/Common/Heading';
 
 const cx = classNames.bind(styles);
 
@@ -37,6 +38,11 @@ function Search({ currentUser }) {
                 {
                     maKH: 1,
                     tenKH: 'công cụ hoá',
+                    hinh: 'https://scontent.fhan5-11.fna.fbcdn.net/v/t39.30808-6/428610209_891289042735105_7492010885795515272_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=c42490&_nc_eui2=AeEAmPm0bKjfF28Z6ynEq3DY-98yKOs3IJz73zIo6zcgnCHfb8lECPcLB2Juq_77BaDGA0d1feIKpABFnuFU9Lef&_nc_ohc=HSkd7RcJCvAAX-BtXPL&_nc_ht=scontent.fhan5-11.fna&oh=00_AfCRpG_PlJfuG8fj8EtuC2zXxhU0iA65NWccA2Fmv4j8_A&oe=65D9BF8F',
+                },
+                {
+                    maKH: 2,
+                    tenKH: 'Công cụ hoá',
                     hinh: 'https://scontent.fhan5-11.fna.fbcdn.net/v/t39.30808-6/428610209_891289042735105_7492010885795515272_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=c42490&_nc_eui2=AeEAmPm0bKjfF28Z6ynEq3DY-98yKOs3IJz73zIo6zcgnCHfb8lECPcLB2Juq_77BaDGA0d1feIKpABFnuFU9Lef&_nc_ohc=HSkd7RcJCvAAX-BtXPL&_nc_ht=scontent.fhan5-11.fna&oh=00_AfCRpG_PlJfuG8fj8EtuC2zXxhU0iA65NWccA2Fmv4j8_A&oe=65D9BF8F',
                 },
             ]);
@@ -79,7 +85,9 @@ function Search({ currentUser }) {
                 render={(attrs) => (
                     <div className={cx('search-result')} tabIndex="-1" {...attrs}>
                         <PopperWrapper>
-                            <h4 className={cx('search-title')}>KHÓA HỌC</h4>
+                            <Heading h3 className={cx('search-title')}>
+                                Topic
+                            </Heading>
                             {searchResult.map((result) => (
                                 <SearchCourseItem
                                     key={result.maKH}

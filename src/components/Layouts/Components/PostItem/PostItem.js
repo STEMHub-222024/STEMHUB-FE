@@ -18,7 +18,7 @@ function PostItem({ data }) {
         <div className={cx('wrapper')}>
             <div className={cx('header')}>
                 <div className={cx('author')}>
-                    <Button to={config.routes.home} className={cx('group-avatar')}>
+                    <Button to={config.routes.postsDetail} className={cx('group-avatar')}>
                         <FallbackAvatar className={cx('avatar')} linkImage={images.avatar_1} altImage="avatar" />
                         <div className={cx('info')}>
                             <span className={cx('user-name')}>duc nguyen</span>
@@ -35,7 +35,7 @@ function PostItem({ data }) {
 
             <div className={cx('body')}>
                 <div className={cx('content')}>
-                    <Link to={config.routes.home}>
+                    <Link to={config.routes.postsDetail}>
                         <Heading h2 className={cx('title')}>
                             {data.title}
                         </Heading>

@@ -9,7 +9,7 @@ import styles from './Header.module.scss';
 import images from '~/assets/images';
 import Button from '~/components/Common/Button';
 import Image from '~/components/Common/Image';
-import { IconBellFilled, IconUser, IconSettings, IconArrowBarRight, IconPencil } from '@tabler/icons-react';
+import { IconBellFilled, IconUser, IconReport, IconArrowBarRight, IconPencil } from '@tabler/icons-react';
 import { Menu, MenuItem } from '~/components/Layouts/Components/Menu';
 import { MenuPopper } from '~/components/Common/Popper/MenuPopper';
 import Search from '~/features/search';
@@ -23,17 +23,17 @@ function Header() {
         {
             icon: <IconUser size={15} color="#333" stroke={2} />,
             title: 'Trang cá nhân',
-            to: './huhu',
+            to: config.routes.personal,
         },
         {
             icon: <IconPencil size={15} color="#333" stroke={2} />,
             title: 'Viết blog',
-            to: './huhu',
+            to: config.routes.newPost,
         },
         {
-            icon: <IconSettings size={15} color="#333" stroke={2} />,
-            title: 'Cài đặt',
-            to: './huhu',
+            icon: <IconReport size={15} color="#333" stroke={2} />,
+            title: 'Bài viết của tôi',
+            to: '/',
         },
         {
             icon: <IconArrowBarRight size={15} color="#333" stroke={2} />,
