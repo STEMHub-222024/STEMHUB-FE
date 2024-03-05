@@ -12,6 +12,7 @@ const routes = {
     postsDetail: '/posts/:postsId',
     topic: '/topic/:topicId',
     topicLesson: '/topic/:topicId/:lessonId',
+    personal: '/personal',
     login: '/login',
     register: '/register',
     //private routes

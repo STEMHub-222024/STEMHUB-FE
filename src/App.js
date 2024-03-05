@@ -7,7 +7,7 @@ import { DefaultLayout } from '~/components/Layouts';
 import ScrollOnTop from './components/Common/ScrollOnTop';
 
 function App() {
-    const [allow, setAllow] = useState(false);
+    const [allow, setAllow] = useState(true);
     return (
         <Router>
             <ScrollOnTop />

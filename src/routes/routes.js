@@ -8,6 +8,7 @@ import LessonLayout from '~/components/Layouts/LessonLayout';
 import Home from '~/pages/Home';
 import Stem10 from '~/pages/Stem10';
 import Stem11 from '~/pages/Stem11';
+import Stem12 from '~/pages/Stem12';
 import NewPost from '~/pages/NewPost';
 import Posts from '~/pages/Posts';
 import PostsDetail from '~/pages/PostsDetail';
@@ -16,7 +17,7 @@ import Login from '~/pages/Login';
 import Register from '~/pages/Register';
 import Video from '~/pages/Video';
 //private page
-import Stem12 from '~/pages/Stem12';
+import Profile from '~/pages/Profile';
 
 // Not Found
 import Error from '~/pages/Error';
@@ -37,6 +38,6 @@ const publicRouter = [
     { path: config.routes.register, component: Register, layout: null },
 ];
 
-const privateRouter = [];
+const privateRouter = [...publicRouter, { path: config.routes.personal, component: Profile }];
 
 export { publicRouter, privateRouter };
