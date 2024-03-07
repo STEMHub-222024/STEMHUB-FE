@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
-import SlideShow from '~/features/slideShow';
+import SlideShow from '~/components/Common/SlideShow';
 import Heading from '~/components/Common/Heading';
 import NavbarTopic from '~/components/Layouts/Components/NavbarTopic';
 import Topic from '~/components/Layouts/Components/Topic';
@@ -9,9 +9,21 @@ import Button from '~/components/Common/Button';
 import Introduce from '~/components/Layouts/Components/Introduce';
 import PostItem from '~/components/Layouts/Components/CommonItem';
 
+// Service
+import { useEffect } from 'react';
+import * as stemServices from '~/services/stemServices';
+
 const cx = classNames.bind(styles);
 
 function Home() {
+    useEffect(() => {
+        const fetchApi = async () => {
+            const result = await stemServices.getStem();
+            console.log('result', result);
+        };
+        fetchApi();
+    }, []);
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('slideshow')}>
