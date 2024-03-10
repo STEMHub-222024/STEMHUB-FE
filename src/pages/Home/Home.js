@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import tinycolor from 'tinycolor2';
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
 import SlideShow from '~/components/Common/SlideShow';
@@ -11,19 +12,33 @@ import PostItem from '~/components/Layouts/Components/CommonItem';
 
 // Service
 import { useEffect } from 'react';
-import * as stemServices from '~/services/stemServices';
+
+//redux
+import { useDispatch, useSelector } from 'react-redux';
+import { getOutstanding } from '~/components/Layouts/Components/Topic/topicSlice';
+import { selectTopic } from '~/app/selectors';
+const controller = new AbortController();
 
 const cx = classNames.bind(styles);
 
 function Home() {
+    const dispatch = useDispatch();
+    const { showOutstanding } = useSelector(selectTopic);
+
     useEffect(() => {
         const fetchApi = async () => {
-            const result = await stemServices.getStem();
-            console.log('result', result);
+            try {
+                await dispatch(getOutstanding()).unwrap();
+            } catch (rejectedValueOrSerializedError) {
+                console.error(rejectedValueOrSerializedError);
+            }
         };
         fetchApi();
-    }, []);
 
+        return () => {
+            controller.abort();
+        };
+    }, [dispatch]);
     return (
         <div className={cx('wrapper')}>
             <div className={cx('slideshow')}>
@@ -44,30 +59,14 @@ function Home() {
                         {/* Topic */}
                         <div className={cx('topic-content')}>
                             <div className={cx('grid-row')}>
-                                <div className={cx('grid-column-3')}>
-                                    <Topic colorCode="#24d198" />
-                                </div>
-                                <div className={cx('grid-column-3')}>
-                                    <Topic colorCode="#00C1FF" />
-                                </div>
-                                <div className={cx('grid-column-3')}>
-                                    <Topic colorCode="#F15568" />
-                                </div>
-                                <div className={cx('grid-column-3')}>
-                                    <Topic colorCode="#7F56D9" />
-                                </div>
-                                <div className={cx('grid-column-3')}>
-                                    <Topic colorCode="#FF6905" />
-                                </div>
-                                <div className={cx('grid-column-3')}>
-                                    <Topic colorCode="#4883FF" />
-                                </div>
-                                <div className={cx('grid-column-3')}>
-                                    <Topic colorCode="#F49DA8" />
-                                </div>
-                                <div className={cx('grid-column-3')}>
-                                    <Topic colorCode="#198f51" />
-                                </div>
+                                {showOutstanding?.map((shine) => {
+                                    const randomColor = tinycolor.random().toString();
+                                    return (
+                                        <div key={shine.topicId} className={cx('grid-column-3')}>
+                                            <Topic colorCode={randomColor} shine={shine} />
+                                        </div>
+                                    );
+                                })}
                             </div>
                             <div className={cx('grid-row')}>
                                 <div className={cx('grid-column-12')}>

@@ -5,6 +5,8 @@
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     transition: transform linear 0.1s;
     will-change: transform;
+    display: flex;
+    flex-direction: column;
 
     &:hover {
         transform: translateY(-4px);
@@ -14,17 +16,21 @@
         background-repeat: no-repeat;
         background-size: contain;
         border-radius: 30px;
+        margin-bottom: -30%;
     }
 
     .content {
-        margin: -44% 22px 0 22px;
+        margin: 0 22px;
 
         .name {
+            padding: 12px 0 0 0;
+            display: flex;
+            align-items: center;
             font-size: 1.6rem;
             font-weight: 600;
             color: var(--text-color);
             line-height: 2.8rem;
-            height: 5.6rem;
+            height: 4rem;
             overflow: hidden;
             display: block;
             display: -webkit-box;

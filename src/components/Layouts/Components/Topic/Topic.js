@@ -8,22 +8,21 @@ import Button from '~/components/Common/Button';
 
 const cx = classNames.bind(styles);
 
-function Topic({ colorCode }) {
+function Topic({ colorCode, shine }) {
     return (
         <div className={cx('wrapper')}>
-            <div className={cx('images')} style={{ backgroundImage: `url(${images.topic_5})` }} />
+            <div className={cx('images')} style={{ backgroundImage: `url(${shine.topicImage})` }} />
             <div className={cx('content')}>
                 <Heading className={cx('name')} h4>
-                    Python for Financial Analysis Next and Algorithmic Trading
+                    {shine?.topicName}
                 </Heading>
                 <div className={cx('group-action')}>
                     <div className={cx('video-number')}>
                         <div className={cx('wrapper-icon')} style={{ backgroundColor: colorCode }}>
                             <IconPlayerPlayFilled size={12} className={cx('play-icon')} />
                         </div>
-                        <span className={cx('title')}>25x Lesson</span>
+                        <span className={cx('title')}>{shine?.view} View</span>
                     </div>
-
                     <Button mainColor small style={{ backgroundColor: colorCode, borderColor: colorCode }}>
                         Join
                     </Button>

@@ -7,6 +7,7 @@ const initialState = {
     errorMessage: '',
 };
 
+//action creator thunk
 export const getBannerAsync = createAsyncThunk('banner/fetchBanner', async (bannerData, { rejectWithValue }) => {
     try {
         const response = await bannerServices.getBanner();
@@ -40,6 +41,3 @@ export const bannerSlice = createSlice({
 export const {} = bannerSlice.actions;
 
 export default bannerSlice.reducer;
-
-//selector
-export const selectBanner = (state) => state.banner;

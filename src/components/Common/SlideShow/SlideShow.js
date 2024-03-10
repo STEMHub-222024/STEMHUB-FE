@@ -9,7 +9,8 @@ import SlidePrevArrow from '~/components/Common/SlidePrevArrow';
 
 // redux
 import { useDispatch, useSelector } from 'react-redux';
-import { getBannerAsync, selectBanner } from './slideShowSlice';
+import { getBannerAsync } from './slideShowSlice';
+import { selectBanner } from '~/app/selectors';
 
 const cx = classNames.bind(styles);
 
