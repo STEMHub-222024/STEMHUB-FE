@@ -7,10 +7,20 @@ export const getTopic = async () => {
     }
 };
 
-//outstanding
+export const getTopicId = async ({ topicId }) => {
+    const res = await httpRequest.get(`Topic/${topicId}`);
+    if (res.status === 200) {
+        return res.data;
+    }
+};
 
-export const getSuggestions = async () => {
-    const res = await httpRequest.get('Topic/suggestions');
+//outstanding
+export const getSuggestions = async ({ stemId }) => {
+    const res = await httpRequest.get('Topic/suggestions', {
+        params: {
+            stemId,
+        },
+    });
     if (res.status === 200) {
         return res.data;
     }

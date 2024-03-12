@@ -3,6 +3,7 @@ import * as topicServices from '~/services/topicServices';
 
 const initialState = {
     data: [],
+    topicIds: {},
     showOutstanding: [],
     status: 'idle',
     errorMessage: '',
@@ -20,7 +21,16 @@ export const getTopicAsync = createAsyncThunk('topic/getTopicAsync', async (topi
 
 export const getOutstanding = createAsyncThunk('topic/getOutstanding', async (outstandingData, { rejectWithValue }) => {
     try {
-        const response = await topicServices.getSuggestions();
+        const response = await topicServices.getSuggestions(outstandingData);
+        return response;
+    } catch (err) {
+        return rejectWithValue(err.message);
+    }
+});
+
+export const getTopicId = createAsyncThunk('topic/getTopicId', async (topicData, { rejectWithValue }) => {
+    try {
+        const response = await topicServices.getTopicId(topicData);
         return response;
     } catch (err) {
         return rejectWithValue(err.message);
@@ -30,15 +40,7 @@ export const getOutstanding = createAsyncThunk('topic/getOutstanding', async (ou
 export const topicSlice = createSlice({
     name: 'topic',
     initialState,
-    reducers: {
-        updateOutstanding(state, action) {
-            state.status = 'idle';
-            const { stemId } = action.payload;
-            state.showOutstanding = state?.data.filter((topic) => {
-                return topic?.stemId === stemId;
-            });
-        },
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(getTopicAsync.pending, (state) => {
@@ -58,15 +60,25 @@ export const topicSlice = createSlice({
             })
             .addCase(getOutstanding.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                state.data = action.payload.slice(0, 8);
+                state.showOutstanding = action.payload;
             })
             .addCase(getOutstanding.rejected, (state, action) => {
                 state.status = 'failed';
                 state.errorMessage = action.payload;
             });
+        builder
+            .addCase(getTopicId.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(getTopicId.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.topicIds = action.payload;
+            })
+            .addCase(getTopicId.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMessage = action.payload;
+            });
     },
 });
-
-export const { updateOutstanding } = topicSlice.actions;
 
 export default topicSlice.reducer;

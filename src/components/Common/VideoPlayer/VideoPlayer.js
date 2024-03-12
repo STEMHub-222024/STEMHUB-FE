@@ -1,14 +1,14 @@
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import ReactPlayer from 'react-player';
-import { useState } from 'react';
 
 import styles from './VideoPlayer.module.scss';
 
 const cx = classNames.bind(styles);
 
-function VideoPlayer({ ...props }) {
+function VideoPlayer({ pathVideo }) {
     const [played, setPlayed] = useState(0);
-
     return (
         <div className={cx('wrapper')}>
             <div className={cx('player')}>
@@ -16,7 +16,7 @@ function VideoPlayer({ ...props }) {
                     playing
                     width="100%"
                     height="100%"
-                    url="https://youtu.be/6-x1AlDudZw?si=U0xVZXcCAzNO73MJ"
+                    url={pathVideo}
                     controls
                     onProgress={(progress) => {
                         setPlayed(progress.played);
@@ -32,5 +32,9 @@ function VideoPlayer({ ...props }) {
         </div>
     );
 }
+
+VideoPlayer.propTypes = {
+    pathVideo: PropTypes.string,
+};
 
 export default VideoPlayer;

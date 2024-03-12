@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice';
-import bannerReducer from '~/components/Common/SlideShow/slideShowSlice';
-import topicReducer from '~/components/Layouts/Components/Topic/topicSlice';
-import navbarTopicReducer from '~/components/Layouts/Components/NavbarTopic/navbarTopicSlice';
+import bannerReducer from '~/app/slices/slideShowSlice';
+import topicReducer from '~/app/slices/topicSlice';
+import navbarTopicReducer from '~/app/slices/navbarTopicSlice';
+import lessonReducer from '~/app/slices/lessonSlice';
+import videoReducer from '~/app/slices/videoSlice';
 
 export const store = configureStore({
     reducer: {
@@ -10,5 +12,7 @@ export const store = configureStore({
         banner: bannerReducer,
         topic: topicReducer,
         navbarTopic: navbarTopicReducer,
+        lesson: lessonReducer,
+        video: videoReducer,
     },
 });

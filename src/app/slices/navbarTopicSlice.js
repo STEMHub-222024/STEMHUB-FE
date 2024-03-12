@@ -3,6 +3,7 @@ import * as stemServices from '~/services/stemServices';
 
 const initialState = {
     navbarTopicData: [],
+    isOnClickStem: '',
     status: 'idle',
     errorMessage: '',
 };
@@ -20,7 +21,12 @@ export const getStemAsync = createAsyncThunk('navbarTopic/getStemAsync', async (
 export const navbarTopicSlice = createSlice({
     name: 'navbarTopic',
     initialState,
-    reducers: {},
+    reducers: {
+        handleOnClickStem(state, action) {
+            const stemName = action.payload?.stemName.toLowerCase();
+            state.isOnClickStem = stemName;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(getStemAsync.pending, (state) => {
@@ -36,5 +42,7 @@ export const navbarTopicSlice = createSlice({
             });
     },
 });
+
+export const { handleOnClickStem } = navbarTopicSlice.actions;
 
 export default navbarTopicSlice.reducer;

@@ -12,17 +12,11 @@
         li {
             padding: 8px 0 12px 0;
             font-size: 1.6rem;
-
+            text-transform: capitalize;
+            font-weight: 400;
             strong {
                 margin-right: 4px;
             }
-        }
-
-        .dot {
-            font-size: 3.4rem;
-            margin: -12px 4px;
-            opacity: 1;
-            padding: 0px 0px;
         }
     }
 }

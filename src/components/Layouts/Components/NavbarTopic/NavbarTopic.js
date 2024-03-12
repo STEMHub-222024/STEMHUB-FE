@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import styles from './NavbarTopic.module.scss';
 import { Menu } from '~/components/Layouts/Components/Menu';
@@ -6,80 +6,52 @@ import Button from '~/components/Common/Button';
 
 //redux
 import { useDispatch, useSelector } from 'react-redux';
-import { getStemAsync } from './navbarTopicSlice';
-import { selectNavbarTopic, selectTopic } from '~/app/selectors';
-import { updateOutstanding, getOutstanding } from '~/components/Layouts/Components/Topic/topicSlice';
-
-//huỷ fetch
-const controller = new AbortController();
+import { selectNavbarTopic } from '~/app/selectors';
+import { getOutstanding } from '~/app/slices/topicSlice';
+import { handleOnClickStem } from '../../../../app/slices/navbarTopicSlice';
 
 const cx = classNames.bind(styles);
 
-function NavbarTopic() {
+function NavbarTopic({ checkStemDefault }) {
     const dispatch = useDispatch();
     const { navbarTopicData } = useSelector(selectNavbarTopic);
-    const { data } = useSelector(selectTopic);
-    useEffect(() => {
-        const fetchApi = async () => {
-            try {
-                const result = await dispatch(getStemAsync()).unwrap();
-                const defaultStem = result.find((stem) => {
-                    const activeDefault = checkStemDefault(stem?.stemName, 'STEM10');
-                    return activeDefault?.stemDefault;
-                });
 
-                if (defaultStem) {
-                    handleUpdateOutstanding(defaultStem?.stemId);
-                }
-            } catch (rejectedValueOrSerializedError) {
-                console.error(rejectedValueOrSerializedError);
-            }
-        };
+    const fetchApi = async (stemId) => {
+        try {
+            await dispatch(
+                getOutstanding({
+                    stemId,
+                }),
+            ).unwrap();
+        } catch (rejectedValueOrSerializedError) {
+            console.error(rejectedValueOrSerializedError);
+        }
+    };
 
-        fetchApi();
-
-        return () => {
-            controller.abort();
-        };
-    }, [dispatch]);
-
-    function handleTopiShow(e, stemId) {
+    function handleTopiShow(e, stemId, stemName) {
         const actives = document.getElementsByClassName(cx('active'));
 
         for (const element of actives) {
             element.classList.remove(cx('active'));
         }
         if (e.target.closest('.know')) {
-            handleUpdateOutstanding(stemId);
+            fetchApi(stemId);
+            dispatch(
+                handleOnClickStem({
+                    stemName,
+                }),
+            );
             e.target.parentNode.classList.add(cx('active'));
         } else {
-            handleUpdateOutstanding(stemId);
+            fetchApi(stemId);
+            dispatch(
+                handleOnClickStem({
+                    stemName,
+                }),
+            );
             e.target.classList.add(cx('active'));
         }
     }
-
-    const handleUpdateOutstanding = (stemId) => {
-        dispatch(
-            updateOutstanding({
-                stemId: stemId,
-            }),
-        );
-    };
-
-    const checkStemDefault = (stemName, defaultValue) => {
-        const upperCaseName = stemName.toUpperCase();
-        const stemDefault = upperCaseName.includes(defaultValue);
-        if (stemDefault) {
-            return {
-                upperCaseName,
-                stemDefault,
-            };
-        } else {
-            return {
-                upperCaseName,
-            };
-        }
-    };
 
     return (
         <Menu className={cx('menu-topic')}>
@@ -93,7 +65,7 @@ function NavbarTopic() {
                                 text
                                 mediumSmall
                                 know
-                                onClick={(e) => handleTopiShow(e, stem?.stemId)}
+                                onClick={(e) => handleTopiShow(e, stem?.stemId, stem?.stemName)}
                             >
                                 {activeDefault?.upperCaseName}
                             </Button>
@@ -104,5 +76,9 @@ function NavbarTopic() {
         </Menu>
     );
 }
+
+NavbarTopic.propTypes = {
+    checkStemDefault: PropTypes.func,
+};
 
 export default NavbarTopic;

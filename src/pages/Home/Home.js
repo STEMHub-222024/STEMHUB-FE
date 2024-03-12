@@ -10,13 +10,14 @@ import Button from '~/components/Common/Button';
 import Introduce from '~/components/Layouts/Components/Introduce';
 import PostItem from '~/components/Layouts/Components/CommonItem';
 
-// Service
+// Services
 import { useEffect } from 'react';
-
-//redux
 import { useDispatch, useSelector } from 'react-redux';
-import { getOutstanding } from '~/components/Layouts/Components/Topic/topicSlice';
-import { selectTopic } from '~/app/selectors';
+import { getOutstanding } from '~/app/slices/topicSlice';
+import { getStemAsync, handleOnClickStem } from '~/app/slices/navbarTopicSlice';
+import { selectTopic, selectNavbarTopic } from '~/app/selectors';
+
+//Clear fetch
 const controller = new AbortController();
 
 const cx = classNames.bind(styles);
@@ -24,11 +25,30 @@ const cx = classNames.bind(styles);
 function Home() {
     const dispatch = useDispatch();
     const { showOutstanding } = useSelector(selectTopic);
+    const { isOnClickStem } = useSelector(selectNavbarTopic);
 
     useEffect(() => {
         const fetchApi = async () => {
             try {
-                await dispatch(getOutstanding()).unwrap();
+                const result = await dispatch(getStemAsync()).unwrap();
+                if (result) {
+                    const defaultStem = result?.find((stem) => {
+                        const activeDefault = checkStemDefault(stem?.stemName, 'STEM10');
+                        return activeDefault?.stemDefault;
+                    });
+                    if (defaultStem) {
+                        await dispatch(
+                            getOutstanding({
+                                stemId: defaultStem?.stemId,
+                            }),
+                        ).unwrap();
+                        dispatch(
+                            handleOnClickStem({
+                                stemName: defaultStem?.stemName,
+                            }),
+                        );
+                    }
+                }
             } catch (rejectedValueOrSerializedError) {
                 console.error(rejectedValueOrSerializedError);
             }
@@ -39,6 +59,22 @@ function Home() {
             controller.abort();
         };
     }, [dispatch]);
+
+    const checkStemDefault = (stemName, defaultValue) => {
+        const upperCaseName = stemName.toUpperCase();
+        const stemDefault = upperCaseName.includes(defaultValue);
+        if (stemDefault) {
+            return {
+                upperCaseName,
+                stemDefault,
+            };
+        } else {
+            return {
+                upperCaseName,
+            };
+        }
+    };
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('slideshow')}>
@@ -54,7 +90,7 @@ function Home() {
                             <Heading h2 className={cx('title')}>
                                 Our Most <span>Popular Topic</span>
                             </Heading>
-                            <NavbarTopic />
+                            <NavbarTopic checkStemDefault={checkStemDefault} />
                         </header>
                         {/* Topic */}
                         <div className={cx('topic-content')}>
@@ -71,7 +107,7 @@ function Home() {
                             <div className={cx('grid-row')}>
                                 <div className={cx('grid-column-12')}>
                                     <div className={cx('btn-explore-all')}>
-                                        <Button mainColor borderMedium medium>
+                                        <Button mainColor borderMedium medium to={`/${isOnClickStem}`}>
                                             Explore all Topic
                                         </Button>
                                     </div>

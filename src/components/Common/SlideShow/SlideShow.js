@@ -9,7 +9,7 @@ import SlidePrevArrow from '~/components/Common/SlidePrevArrow';
 
 // redux
 import { useDispatch, useSelector } from 'react-redux';
-import { getBannerAsync } from './slideShowSlice';
+import { getBannerAsync } from '../../../app/slices/slideShowSlice';
 import { selectBanner } from '~/app/selectors';
 
 const cx = classNames.bind(styles);
@@ -27,7 +27,7 @@ function SlideShow() {
             }
         };
         fetchApi();
-    }, []);
+    }, [dispatch]);
 
     const classNs = cx('center');
 

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useParams } from 'react-router-dom';
 import {
     IconPlayerPlay,
     IconClipboardList,
@@ -11,13 +12,63 @@ import classNames from 'classnames/bind';
 import { NumericFormat } from 'react-number-format';
 import styles from './TopicDetail.module.scss';
 import Heading from '~/components/Common/Heading';
-import images from '~/assets/images';
 import Button from '~/components/Common/Button';
 import CurriculumOfCourse from '~/components/Common/CurriculumOfCourse';
+import { handleSplitParam } from '~/utils/splitParamUrl';
+
+//Service
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTopicId } from '~/app/slices/topicSlice';
+import { getLessonAsync, handleFilter } from '~/app/slices/lessonSlice';
+import { selectTopic, selectLesson } from '~/app/selectors';
+
+//Clear fetch
+const controller = new AbortController();
 
 const cx = classNames.bind(styles);
 
 function TopicDetail() {
+    const { topic } = useParams();
+    const dispatch = useDispatch();
+    const { topicIds } = useSelector(selectTopic);
+    const { lessonFilter } = useSelector(selectLesson).data;
+    useEffect(() => {
+        const fetchApi = async () => {
+            try {
+                const result = handleSplitParam(topic);
+                if (result) {
+                    await dispatch(
+                        getTopicId({
+                            topicId: result,
+                        }),
+                    ).unwrap();
+                    const lessonAll = await dispatch(getLessonAsync()).unwrap();
+                    if (lessonAll) {
+                        const lessonCurrents = lessonAll?.filter((lesson) => {
+                            return lesson?.topicId === result;
+                        });
+
+                        if (lessonCurrents) {
+                            dispatch(
+                                handleFilter({
+                                    lessonCurrents,
+                                }),
+                            );
+                        }
+                    }
+                }
+            } catch (rejectedValueOrSerializedError) {
+                console.error(rejectedValueOrSerializedError);
+            }
+        };
+        fetchApi();
+
+        return () => {
+            controller.abort();
+        };
+    }, [dispatch, topic]);
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('grid', { 'topic-detail-content': 'topic-detail-content' })}>
@@ -71,7 +122,7 @@ function TopicDetail() {
                                 </section>
                             </div>
                         </div>
-                        <CurriculumOfCourse />
+                        <CurriculumOfCourse data={lessonFilter} />
                     </div>
                     <div className={cx('grid-column-4')}>
                         <div className={cx('purchaseBadge')}>
@@ -79,7 +130,7 @@ function TopicDetail() {
                                 <div
                                     className={cx('bg')}
                                     style={{
-                                        backgroundImage: `url("${images.introduce_1}")`,
+                                        backgroundImage: `url("${topicIds?.topicImage}")`,
                                     }}
                                 ></div>
                                 <div className={cx('overlay')}>
@@ -90,8 +141,18 @@ function TopicDetail() {
 
                             <h5>Miễn phí</h5>
 
-                            <Button className={cx('btn-join')} mainColor medium borderMedium>
-                                Tham Gia học
+                            <Button
+                                className={cx('btn-join')}
+                                mainColor
+                                medium
+                                borderMedium
+                                to={
+                                    lessonFilter[0]?.lessonId
+                                        ? `${lessonFilter[0]?.lessonName}=${lessonFilter[0]?.lessonId}`
+                                        : ''
+                                }
+                            >
+                                {lessonFilter[0]?.lessonId ? 'Tham Gia học' : 'Sắp ra mắt'}
                             </Button>
 
                             <ul>

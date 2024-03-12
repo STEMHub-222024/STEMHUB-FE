@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { IconPlayerPlayFilled } from '@tabler/icons-react';
 import styles from './Topic.module.scss';
-import images from '~/assets/images';
 import Heading from '~/components/Common/Heading';
 import Button from '~/components/Common/Button';
 
@@ -23,7 +22,12 @@ function Topic({ colorCode, shine }) {
                         </div>
                         <span className={cx('title')}>{shine?.view} View</span>
                     </div>
-                    <Button mainColor small style={{ backgroundColor: colorCode, borderColor: colorCode }}>
+                    <Button
+                        mainColor
+                        small
+                        style={{ backgroundColor: colorCode, borderColor: colorCode }}
+                        to={`/${shine?.topicName}=${shine?.topicId}`}
+                    >
                         Join
                     </Button>
                 </div>
@@ -34,6 +38,7 @@ function Topic({ colorCode, shine }) {
 
 Topic.propTypes = {
     colorCode: PropTypes.string,
+    shine: PropTypes.object,
 };
 
 export default Topic;

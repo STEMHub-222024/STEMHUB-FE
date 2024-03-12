@@ -1,39 +1,51 @@
 import PropTypes from 'prop-types';
+import tinycolor from 'tinycolor2';
 import classNames from 'classnames/bind';
 import styles from './Stem11.module.scss';
 import Topic from '~/components/Layouts/Components/Topic';
 
+// Services
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTopicAsync } from '~/app/slices/topicSlice';
+import { selectTopic } from '~/app/selectors';
+
+//Clear fetch
+const controller = new AbortController();
+
 const cx = classNames.bind(styles);
 
 function Stem11() {
+    const dispatch = useDispatch();
+    const { data } = useSelector(selectTopic);
+
+    useEffect(() => {
+        const fetchApi = async () => {
+            try {
+                await dispatch(getTopicAsync()).unwrap();
+            } catch (rejectedValueOrSerializedError) {
+                console.error(rejectedValueOrSerializedError);
+            }
+        };
+        fetchApi();
+
+        return () => {
+            controller.abort();
+        };
+    }, [dispatch]);
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('grid')}>
                 <div className={cx('grid-row', { content: 'content' })}>
-                    <div className={cx('grid-column-3')}>
-                        <Topic colorCode="#24d198" />
-                    </div>
-                    <div className={cx('grid-column-3')}>
-                        <Topic colorCode="#00C1FF" />
-                    </div>
-                    <div className={cx('grid-column-3')}>
-                        <Topic colorCode="#F15568" />
-                    </div>
-                    <div className={cx('grid-column-3')}>
-                        <Topic colorCode="#7F56D9" />
-                    </div>
-                    <div className={cx('grid-column-3')}>
-                        <Topic colorCode="#FF6905" />
-                    </div>
-                    <div className={cx('grid-column-3')}>
-                        <Topic colorCode="#4883FF" />
-                    </div>
-                    <div className={cx('grid-column-3')}>
-                        <Topic colorCode="#F49DA8" />
-                    </div>
-                    <div className={cx('grid-column-3')}>
-                        <Topic colorCode="#198f51" />
-                    </div>
+                    {data?.map((shine) => {
+                        const randomColor = tinycolor.random().toString();
+                        return (
+                            <div key={shine.topicId} className={cx('grid-column-3')}>
+                                <Topic colorCode={randomColor} shine={shine} />
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>
