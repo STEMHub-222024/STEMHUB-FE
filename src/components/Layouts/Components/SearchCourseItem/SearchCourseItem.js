@@ -5,25 +5,30 @@ import { Link } from 'react-router-dom';
 
 import Image from '~/components/Common/Image';
 
+import { useDispatch } from 'react-redux';
+import { updateTopicSearch } from '~/app/slices/searchSlice';
+
 const cx = classNames.bind(styles);
 
 function SearchCourseItem({ ...props }) {
-    const { data, setSearchResult, setSearchValue } = props;
+    const dispatch = useDispatch();
+    const { data, setSearchValue } = props;
 
     const handleHideResult = () => {
         setSearchValue('');
-        setSearchResult([]);
+        dispatch(updateTopicSearch([]));
     };
     return (
-        <Link to={`/course/${data.maKH}`} className={cx('wrapper')} onClick={() => handleHideResult()}>
-            <Image className={cx('avatar')} src={data.hinh} alt={data.tenKH} />
-            <span className={cx('name')}>{data.tenKH}</span>
+        <Link to={`${data?.topicName}=${data?.topicId}`} className={cx('wrapper')} onClick={() => handleHideResult()}>
+            <Image className={cx('avatar')} src={data?.topicImage} alt={data?.topicName} />
+            <span className={cx('name')}>{data?.topicName}</span>
         </Link>
     );
 }
 
 SearchCourseItem.propTypes = {
     data: PropTypes.object,
+    setSearchValue: PropTypes.func,
 };
 
 export default SearchCourseItem;

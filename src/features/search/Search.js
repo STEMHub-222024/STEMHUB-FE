@@ -1,67 +1,72 @@
 import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import HeadlessTippy from '@tippyjs/react/headless';
 import { IconSquareRoundedXFilled, IconLoader, IconSearch } from '@tabler/icons-react';
 
-// import * as searchServices from '~/services/searchServices';
-import Button from '~/components/Common/Button';
-import { Wrapper as PopperWrapper } from '~/components/Common/Popper';
-import SearchCourseItem from '~/components/Layouts/Components/SearchCourseItem';
-import styles from './Search.module.scss';
 import { useDebounce } from '~/hooks';
+import styles from './Search.module.scss';
+import Button from '~/components/Common/Button';
 import Heading from '~/components/Common/Heading';
+import SearchCourseItem from '~/components/Layouts/Components/SearchCourseItem';
+import { Wrapper as PopperWrapper } from '~/components/Common/Popper';
+
+//Services
+import { useDispatch, useSelector } from 'react-redux';
+import { searchTopicAsync, updateTopicSearch } from '~/app/slices/searchSlice';
+import { selectSearch } from '~/app/selectors';
+
+//Clear fetch
+const controller = new AbortController();
 
 const cx = classNames.bind(styles);
 
 function Search({ currentUser }) {
+    const dispatch = useDispatch();
+    const { searchTopics, loading } = useSelector(selectSearch).data;
     const [searchValue, setSearchValue] = useState('');
-    const [searchResult, setSearchResult] = useState([]);
     const [showResult, setShowResult] = useState(false);
-    const [loading, setLoading] = useState(false);
-
     const debouncedValue = useDebounce(searchValue, 500);
-
     const inputRef = useRef();
 
     useEffect(() => {
         if (!debouncedValue.trim()) {
-            setSearchResult([]);
+            dispatch(updateTopicSearch([]));
             return;
         }
-
         const fetchApi = async () => {
-            setLoading(true);
+            try {
+                const result = await dispatch(
+                    searchTopicAsync({
+                        topicKey: debouncedValue,
+                    }),
+                ).unwrap();
 
-            // const result = await searchServices.search(debouncedValue);
+                // await Promise.all([searchTopic, searchLesson])
+                //     .then(function ([resultTopic, resultLesson]) {
+                //         console.log('result', resultTopic.concat(resultLesson));
+                //     })
+                //     .catch(function (err) {
+                //         console.log(err.response.data.message);
+                //     });
 
-            setSearchResult([
-                {
-                    maKH: 1,
-                    tenKH: 'công cụ hoá',
-                    hinh: 'https://scontent.fhan5-11.fna.fbcdn.net/v/t39.30808-6/428610209_891289042735105_7492010885795515272_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=c42490&_nc_eui2=AeEAmPm0bKjfF28Z6ynEq3DY-98yKOs3IJz73zIo6zcgnCHfb8lECPcLB2Juq_77BaDGA0d1feIKpABFnuFU9Lef&_nc_ohc=HSkd7RcJCvAAX-BtXPL&_nc_ht=scontent.fhan5-11.fna&oh=00_AfCRpG_PlJfuG8fj8EtuC2zXxhU0iA65NWccA2Fmv4j8_A&oe=65D9BF8F',
-                },
-                {
-                    maKH: 2,
-                    tenKH: 'Công cụ hoá',
-                    hinh: 'https://scontent.fhan5-11.fna.fbcdn.net/v/t39.30808-6/428610209_891289042735105_7492010885795515272_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=c42490&_nc_eui2=AeEAmPm0bKjfF28Z6ynEq3DY-98yKOs3IJz73zIo6zcgnCHfb8lECPcLB2Juq_77BaDGA0d1feIKpABFnuFU9Lef&_nc_ohc=HSkd7RcJCvAAX-BtXPL&_nc_ht=scontent.fhan5-11.fna&oh=00_AfCRpG_PlJfuG8fj8EtuC2zXxhU0iA65NWccA2Fmv4j8_A&oe=65D9BF8F',
-                },
-            ]);
-
-            // if (result === undefined) {
-            //     setSearchResult([]);
-            // } else {
-            //     setSearchResult(result);
-            //     setLoading(false);
-            // }
-
-            setLoading(false);
+                if (result === undefined) {
+                    dispatch(updateTopicSearch([]));
+                }
+            } catch (rejectedValueOrSerializedError) {
+                console.error(rejectedValueOrSerializedError);
+            }
         };
         fetchApi();
-    }, [debouncedValue]);
+
+        return () => {
+            controller.abort();
+        };
+    }, [dispatch, debouncedValue]);
 
     const handleClear = () => {
         setSearchValue('');
-        setSearchResult([]);
+        dispatch(updateTopicSearch([]));
         inputRef.current.focus();
     };
 
@@ -81,21 +86,25 @@ function Search({ currentUser }) {
         <div>
             <HeadlessTippy
                 interactive
-                visible={showResult && searchResult.length > 0}
+                visible={showResult && searchTopics.length > 0}
                 render={(attrs) => (
                     <div className={cx('search-result')} tabIndex="-1" {...attrs}>
                         <PopperWrapper>
                             <Heading h3 className={cx('search-title')}>
                                 Topic
                             </Heading>
-                            {searchResult.map((result) => (
-                                <SearchCourseItem
-                                    key={result.maKH}
-                                    data={result}
-                                    setSearchResult={setSearchResult}
-                                    setSearchValue={setSearchValue}
-                                />
-                            ))}
+                            {searchTopics
+                                ? searchTopics.map((result) => (
+                                      <SearchCourseItem
+                                          key={result.topicId}
+                                          data={result}
+                                          setSearchValue={setSearchValue}
+                                      />
+                                  ))
+                                : ''}
+                            <Heading h3 className={cx('search-title')}>
+                                Posts
+                            </Heading>
                         </PopperWrapper>
                     </div>
                 )}
@@ -139,5 +148,9 @@ function Search({ currentUser }) {
         </div>
     );
 }
+
+Search.propTypes = {
+    currentUser: PropTypes.bool,
+};
 
 export default Search;

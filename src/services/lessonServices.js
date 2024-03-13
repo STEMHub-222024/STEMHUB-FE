@@ -13,3 +13,14 @@ export const getLessonId = async ({ lessonId }) => {
         return res.data;
     }
 };
+
+export const searchLessonKey = async ({ lessonKey }) => {
+    const res = await httpRequest.get('Lesson/search', {
+        params: {
+            lessonKey,
+        },
+    });
+    if (res.status === 200) {
+        return res.data;
+    }
+};

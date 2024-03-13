@@ -25,3 +25,14 @@ export const getSuggestions = async ({ stemId }) => {
         return res.data;
     }
 };
+
+export const searchTopiKey = async ({ topicKey }) => {
+    const res = await httpRequest.get('Topic/search', {
+        params: {
+            topicKey,
+        },
+    });
+    if (res.status === 200) {
+        return res.data;
+    }
+};

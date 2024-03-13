@@ -3,3 +3,4 @@ export const selectTopic = (state) => state.topic;
 export const selectNavbarTopic = (state) => state.navbarTopic;
 export const selectLesson = (state) => state.lesson;
 export const selectVideo = (state) => state.video;
+export const selectSearch = (state) => state.search;
