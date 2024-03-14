@@ -68,7 +68,7 @@ function Register() {
                 },
             });
         }
-    }, [currentLogin]);
+    }, [dispatch, navigate, currentLogin]);
 
     const handleShowForm = () => {
         setCurrentLogin(false);
