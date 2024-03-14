@@ -1,36 +1,47 @@
+import { forwardRef } from 'react';
 import classNames from 'classnames/bind';
+
+import { useDispatch } from 'react-redux';
+import { setUserName, setPassword } from '~/app/slices/registerSlice';
+
 import styles from './FormInput.module.scss';
 
 const cx = classNames.bind(styles);
 
-function FormInput({ ...props }) {
-    const {
-        labelStyle,
-        placeholder,
-        value,
-        name,
-        type,
-        setCurrentLogin,
-        labelTitle,
-        labelComeback,
-        setUserName_L,
-        setPassword_L,
-    } = props;
+function FormInput({ medium, ...props }, ref) {
+    const dispatch = useDispatch();
 
-    const classes = cx('labelGroup', {
-        labelStyle,
-    });
+    const { id, labelStyle, placeholder, value, name, type, setCurrentLogin, labelTitle, labelComeback } = props;
 
-    const classComeback = cx('label', 'right', {
-        labelComeback,
-    });
-
+    const handleInputValue = (e) => {
+        switch (name) {
+            case 'username':
+                dispatch(setUserName(e.target.value));
+                break;
+            case 'password':
+                dispatch(setPassword(e.target.value));
+                break;
+            default:
+                return;
+        }
+    };
     return (
-        <div className={cx('wrapper')}>
-            <div className={classes}>
+        <div
+            className={cx('wrapper', {
+                'form-group': true,
+            })}
+        >
+            <div
+                className={cx('labelGroup', {
+                    labelStyle,
+                })}
+            >
                 <label className={cx('label')}>{labelTitle}</label>
                 <label
-                    className={classComeback}
+                    className={cx('label', {
+                        right: true,
+                        labelComeback,
+                    })}
                     onClick={() => {
                         setCurrentLogin(true);
                     }}
@@ -38,24 +49,27 @@ function FormInput({ ...props }) {
                     Quay lại
                 </label>
             </div>
+
             <div className={cx('inputWrap')}>
                 <input
+                    ref={ref}
+                    id={id}
                     value={value}
-                    onChange={(e) => {
-                        if (name === 'Username_login') {
-                            setUserName_L(e.target.value);
-                        } else if (name === 'password_login') {
-                            setPassword_L(e.target.value);
-                        }
-                    }}
+                    onChange={handleInputValue}
                     placeholder={placeholder}
                     name={name}
                     type={type}
+                    autoComplete="on"
                     maxLength={40}
                 />
             </div>
+            <span
+                className={cx('error-message', {
+                    'form-message': true,
+                })}
+            ></span>
         </div>
     );
 }
 
-export default FormInput;
+export default forwardRef(FormInput);

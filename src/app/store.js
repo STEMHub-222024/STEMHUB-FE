@@ -6,6 +6,8 @@ import navbarTopicReducer from '~/app/slices/navbarTopicSlice';
 import lessonReducer from '~/app/slices/lessonSlice';
 import videoReducer from '~/app/slices/videoSlice';
 import searchReducer from '~/app/slices/searchSlice';
+import registerReducer from '~/app/slices/registerSlice';
+import ingredientReducer from '~/app/slices/ingredientSlice';
 
 export const store = configureStore({
     reducer: {
@@ -16,5 +18,7 @@ export const store = configureStore({
         lesson: lessonReducer,
         video: videoReducer,
         search: searchReducer,
+        register: registerReducer,
+        ingredient: ingredientReducer,
     },
 });

@@ -17,7 +17,7 @@ import Search from '~/features/search';
 const cx = classNames.bind(styles);
 
 function Header() {
-    const [currentUser, setCurrentUser] = useState(true);
+    const [currentUser, setCurrentUser] = useState(false);
 
     const userMenu = [
         {
@@ -75,10 +75,10 @@ function Header() {
                         </div>
                     ) : (
                         <>
-                            <Button outline small rounded className={cx('custom-login')}>
+                            <Button outline small rounded className={cx('custom-login')} to={config.routes.login}>
                                 Login
                             </Button>
-                            <Button mainColor small rounded onClick={() => alert('Hi')}>
+                            <Button mainColor small rounded to={config.routes.register}>
                                 Get Started
                             </Button>
                         </>

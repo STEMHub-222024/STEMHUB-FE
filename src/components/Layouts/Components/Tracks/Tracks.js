@@ -14,7 +14,7 @@ function Tracks({ data, topicParameter }) {
                 </header>
                 <div className={cx('body')}>
                     {data
-                        ? data.map((lessonItem, index) => (
+                        ? data?.map((lessonItem, index) => (
                               <TrackItem
                                   key={lessonItem?.lessonId}
                                   data={lessonItem}

@@ -4,3 +4,5 @@ export const selectNavbarTopic = (state) => state.navbarTopic;
 export const selectLesson = (state) => state.lesson;
 export const selectVideo = (state) => state.video;
 export const selectSearch = (state) => state.search;
+export const selectRegister = (state) => state.register;
+export const selectIngredient = (state) => state.ingredient;

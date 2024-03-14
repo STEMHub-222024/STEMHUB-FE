@@ -2,6 +2,15 @@
     color: #292929;
     text-align: left;
     width: 100%;
+
+    .error-message {
+        font-size: 1.2rem;
+        line-height: 1.6rem;
+        padding: 4px 0 0;
+        color: #f33a58;
+        position: relative;
+        left: 16px;
+    }
 }
 
 .labelGroup {
@@ -19,7 +28,7 @@
 
 .label {
     display: block;
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 600;
     margin: 10px 0 10px 8px;
 }
@@ -28,7 +37,7 @@
     cursor: pointer;
 
     &:hover {
-        color: var(--main-color);
+        color: var(--primary);
     }
 }
 

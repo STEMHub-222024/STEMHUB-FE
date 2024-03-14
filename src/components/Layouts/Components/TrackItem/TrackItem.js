@@ -4,11 +4,10 @@ import classNames from 'classnames/bind';
 import { IconCircleCheckFilled, IconCircleCaretRight } from '@tabler/icons-react';
 
 import styles from './TrackItem.module.scss';
-
 const cx = classNames.bind(styles);
-
 function TrackItem({ data, index, topicParameter }) {
     const { lessonId, lessonName } = data;
+
     return (
         <>
             <div className={cx('wrapper')}>

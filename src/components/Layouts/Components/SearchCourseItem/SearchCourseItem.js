@@ -19,7 +19,7 @@ function SearchCourseItem({ ...props }) {
         dispatch(updateTopicSearch([]));
     };
     return (
-        <Link to={`${data?.topicName}=${data?.topicId}`} className={cx('wrapper')} onClick={() => handleHideResult()}>
+        <Link to={`/${data?.topicName}=${data?.topicId}`} className={cx('wrapper')} onClick={() => handleHideResult()}>
             <Image className={cx('avatar')} src={data?.topicImage} alt={data?.topicName} />
             <span className={cx('name')}>{data?.topicName}</span>
         </Link>

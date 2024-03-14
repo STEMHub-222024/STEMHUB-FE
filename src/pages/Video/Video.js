@@ -8,7 +8,7 @@ import Powered from '~/components/Layouts/Components/Powered';
 import Heading from '~/components/Common/Heading';
 import VideoPlayer from '~/components/Common/VideoPlayer';
 import Comment from '~/components/Layouts/Components/Comment';
-import { handleSplitParam } from '~/utils/splitParamUrl';
+import { handleSplitParam, handleSplitParamBefore } from '~/utils/splitParamUrl';
 
 //Services
 import { useEffect } from 'react';
@@ -25,11 +25,12 @@ function Video() {
     const { lessonId } = useParams();
     const dispatch = useDispatch();
     const { videoFilter } = useSelector(selectVideo).data;
-
+    const titleLesson = handleSplitParamBefore(lessonId);
     useEffect(() => {
         const fetchApi = async () => {
             try {
                 const result = handleSplitParam(lessonId);
+
                 if (result) {
                     const videoAll = await dispatch(getVideoAsync()).unwrap();
                     if (videoAll) {
@@ -65,7 +66,7 @@ function Video() {
 
             <div className={cx('content')}>
                 <div className={cx('contentTop')}>
-                    <Heading>{videoFilter?.videoTitle ? videoFilter?.videoTitle : 'Tiêu đề'}</Heading>
+                    <Heading>{titleLesson}</Heading>
                     <button className={cx('addNote')}>
                         <IconSquareRoundedPlus size={20} strokeWidth={1} />
                         <span className={cx('label')}>

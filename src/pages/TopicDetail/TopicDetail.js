@@ -21,7 +21,8 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTopicId } from '~/app/slices/topicSlice';
 import { getLessonAsync, handleFilter } from '~/app/slices/lessonSlice';
-import { selectTopic, selectLesson } from '~/app/selectors';
+import { getIngredientAsync, handleFillerIngredient } from '~/app/slices/ingredientSlice';
+import { selectTopic, selectLesson, selectIngredient } from '~/app/selectors';
 
 //Clear fetch
 const controller = new AbortController();
@@ -33,6 +34,7 @@ function TopicDetail() {
     const dispatch = useDispatch();
     const { topicIds } = useSelector(selectTopic);
     const { lessonFilter } = useSelector(selectLesson).data;
+    const { ingredientFilter } = useSelector(selectIngredient).data;
     useEffect(() => {
         const fetchApi = async () => {
             try {
@@ -43,16 +45,32 @@ function TopicDetail() {
                             topicId: result,
                         }),
                     ).unwrap();
-                    const lessonAll = await dispatch(getLessonAsync()).unwrap();
+                    const lessonAllPromise = dispatch(getLessonAsync()).unwrap();
+                    const ingredientAllPromise = dispatch(getIngredientAsync()).unwrap();
+
+                    const [lessonAll, ingredientAll] = await Promise.all([lessonAllPromise, ingredientAllPromise]);
+
                     if (lessonAll) {
-                        const lessonCurrents = lessonAll?.filter((lesson) => {
+                        const lessonCurrents = lessonAll.filter((lesson) => {
                             return lesson?.topicId === result;
                         });
-
                         if (lessonCurrents) {
                             dispatch(
                                 handleFilter({
                                     lessonCurrents,
+                                }),
+                            );
+                        }
+                    }
+
+                    if (ingredientAll) {
+                        const ingredientCurrents = ingredientAll.filter((ingredient) => {
+                            return ingredient?.topicId === result;
+                        });
+                        if (ingredientCurrents) {
+                            dispatch(
+                                handleFillerIngredient({
+                                    ingredientCurrents,
                                 }),
                             );
                         }
@@ -77,10 +95,7 @@ function TopicDetail() {
                         <div className={cx('group-title')}>
                             <Heading className={cx('heading')}>Bài viết nổi bật</Heading>
                             <div className={cx('desc')}>
-                                <p>
-                                    Tổng hợp các bài viết chia sẻ về kinh nghiệm tự học lập trình online và các kỹ thuật
-                                    lập trình web.
-                                </p>
+                                <p>{topicIds?.description}</p>
                             </div>
                             <div className={cx('topicList')}>
                                 <Heading className={cx('topicHeading')} h2>
@@ -89,34 +104,14 @@ function TopicDetail() {
                                 <section className={cx('row')}>
                                     <section className={cx('col')}>
                                         <ul className={cx('list')}>
-                                            <li>
-                                                <IconCheck className={cx('icon')} size={20} />
-                                                <span>Biết cách xây dựng giao diện web với HTML, CSS</span>
-                                            </li>
-                                            <li>
-                                                <IconCheck className={cx('icon')} size={20} />
-                                                <span>Biết cách xây dựng giao diện web với HTML, CSS</span>
-                                            </li>
-                                            <li>
-                                                <IconCheck className={cx('icon')} size={20} />
-                                                <span>Biết cách xây dựng giao diện web với HTML, CSS</span>
-                                            </li>
-                                            <li>
-                                                <IconCheck className={cx('icon')} size={20} />
-                                                <span>Biết cách xây dựng giao diện web với HTML, CSS</span>
-                                            </li>
-                                            <li>
-                                                <IconCheck className={cx('icon')} size={20} />
-                                                <span>Biết cách xây dựng giao diện web với HTML, CSS</span>
-                                            </li>
-                                            <li>
-                                                <IconCheck className={cx('icon')} size={20} />
-                                                <span>Biết cách xây dựng giao diện web với HTML, CSS</span>
-                                            </li>
-                                            <li>
-                                                <IconCheck className={cx('icon')} size={20} />
-                                                <span>Biết cách xây dựng giao diện web với HTML, CSS</span>
-                                            </li>
+                                            {ingredientFilter
+                                                ? ingredientFilter.map((ingredient) => (
+                                                      <li key={ingredient?.ingredientsId}>
+                                                          <IconCheck className={cx('icon')} size={20} />
+                                                          <span>{ingredient?.ingredientsName}</span>
+                                                      </li>
+                                                  ))
+                                                : ''}
                                         </ul>
                                     </section>
                                 </section>
