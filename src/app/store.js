@@ -8,6 +8,7 @@ import videoReducer from '~/app/slices/videoSlice';
 import searchReducer from '~/app/slices/searchSlice';
 import authReducer from '~/app/slices/authSlice';
 import ingredientReducer from '~/app/slices/ingredientSlice';
+import userReducer from '~/app/slices/userSlice';
 
 export const store = configureStore({
     reducer: {
@@ -20,5 +21,6 @@ export const store = configureStore({
         search: searchReducer,
         auth: authReducer,
         ingredient: ingredientReducer,
+        user: userReducer,
     },
 });

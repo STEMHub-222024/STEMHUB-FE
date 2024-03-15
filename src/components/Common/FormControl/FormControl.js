@@ -1,13 +1,24 @@
 import { forwardRef } from 'react';
 import classNames from 'classnames/bind';
-
 import styles from './FormControl.module.scss';
 import FormInput from './FormInput';
 
 const cx = classNames.bind(styles);
 
 function FormControl({ ...props }, ref) {
-    const { id, labelStyle, placeholder, name, type, value, setCurrentLogin, labelTitle, labelComeback } = props;
+    const {
+        id,
+        labelStyle,
+        placeholder,
+        name,
+        type,
+        value,
+        setCurrentLogin,
+        labelTitle,
+        labelComeback,
+        showBack,
+        maxLengthToken,
+    } = props;
 
     return (
         <div className={cx('wrapper')}>
@@ -22,6 +33,8 @@ function FormControl({ ...props }, ref) {
                 type={type}
                 setCurrentLogin={setCurrentLogin}
                 labelComeback={labelComeback}
+                showBack={showBack}
+                maxLengthToken={maxLengthToken}
             />
         </div>
     );

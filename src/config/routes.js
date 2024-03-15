@@ -10,11 +10,12 @@ const routes = {
     newPost: '/new-post',
     posts: '/posts',
     postsDetail: '/posts/:postsId',
-    topic: '/:topic',
-    topicLesson: '/:topic/:lessonId',
+    topic: '/topic/:topic',
+    topicLesson: '/topic/:topic/:lessonId',
     personal: '/personal',
     login: '/login',
     register: '/register',
+    forgotPassword: '/forgotPassword',
     //private routes
 };
 

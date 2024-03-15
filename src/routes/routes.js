@@ -13,9 +13,10 @@ import NewPost from '~/pages/NewPost';
 import Posts from '~/pages/Posts';
 import PostsDetail from '~/pages/PostsDetail';
 import TopicDetail from '~/pages/TopicDetail';
+import Video from '~/pages/Video';
 import Login from '~/pages/Login';
 import Register from '~/pages/Register';
-import Video from '~/pages/Video';
+import ForgotPassword from '~/pages/ForgotPassword';
 //private page
 import Profile from '~/pages/Profile';
 
@@ -36,6 +37,7 @@ const publicRouter = [
     { path: config.routes.topicLesson, component: Video, layout: LessonLayout },
     { path: config.routes.login, component: Login, layout: null },
     { path: config.routes.register, component: Register, layout: null },
+    { path: config.routes.forgotPassword, component: ForgotPassword, layout: null },
 ];
 
 const privateRouter = [...publicRouter, { path: config.routes.personal, component: Profile }];

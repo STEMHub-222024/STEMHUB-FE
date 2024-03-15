@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { IconEyeClosed, IconEye, IconLoader2 } from '@tabler/icons-react';
 
@@ -9,23 +10,58 @@ import FormControl from '~/components/Common/FormControl';
 import images from '~/assets/images';
 import styles from './Login.module.scss';
 import config from '~/config';
+import Validator, { isRequired, minLength, isValidPassword } from '~/utils/validation';
+
+//Service
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUserAsync } from '~/app/slices/authSlice';
+import { selectAuth } from '~/app/selectors';
 
 const cx = classNames.bind(styles);
 
 function Login() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { userName, password, loading } = useSelector(selectAuth).data;
     const [currentLogin, setCurrentLogin] = useState(true);
-    const [userName_L, setUserName_L] = useState('');
-    const [password_L, setPassword_L] = useState('');
     const [isShowPassword, setIsShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
 
     let IconPassword = IconEyeClosed;
-
     let inputType = 'password';
     if (isShowPassword) {
         IconPassword = IconEye;
         inputType = 'text';
     }
+
+    useEffect(() => {
+        if (!currentLogin) {
+            Validator({
+                form: '#form-2',
+                formGroupSelector: '.form-group',
+                errorSelector: '.form-message',
+                rules: [
+                    isRequired('#username'),
+                    minLength('#password', 8),
+                    isValidPassword('#password'),
+                    isRequired('input[name="gender"]'),
+                ],
+                onSubmit(data) {
+                    const fetchApi = async () => {
+                        try {
+                            const result = await dispatch(loginUserAsync(data)).unwrap();
+                            if (result) {
+                                navigate(config.routes.home);
+                                console.log('Đăng nhập thành công...!');
+                            }
+                        } catch (rejectedValueOrSerializedError) {
+                            console.error(rejectedValueOrSerializedError);
+                        }
+                    };
+                    fetchApi();
+                },
+            });
+        }
+    }, [dispatch, navigate, currentLogin]);
 
     const handleShowForm = () => {
         setCurrentLogin(false);
@@ -49,24 +85,27 @@ function Login() {
                             </div>
                         ) : (
                             <>
-                                <div className={cx('formBody')}>
+                                <form
+                                    className={cx('formBody', {
+                                        form: true,
+                                    })}
+                                    id="form-2"
+                                >
                                     <FormControl
+                                        id="username"
                                         labelTitle="Tên đăng nhâp"
                                         placeholder="Tên đăng nhập"
-                                        name="Username_login"
+                                        name="username"
                                         type="text"
-                                        value={userName_L}
-                                        setUserName_L={setUserName_L}
                                         setCurrentLogin={setCurrentLogin}
                                     />
                                     <div className={cx('inputPassword')}>
                                         <FormControl
+                                            id="password"
                                             labelStyle
                                             placeholder="Mật khẩu"
-                                            name="password_login"
+                                            name="password"
                                             type={inputType}
-                                            value={password_L}
-                                            setPassword_L={setPassword_L}
                                         />
                                         <IconPassword
                                             className={cx('icon')}
@@ -76,13 +115,13 @@ function Login() {
                                     </div>
 
                                     <Button
-                                        className={userName_L && password_L ? cx('btnSubmit') : cx('btnDisabled')}
-                                        disabled={userName_L && password_L ? false : true}
+                                        className={userName && password ? cx('btnSubmit') : cx('btnDisabled')}
+                                        disabled={userName && password ? false : true}
                                     >
                                         {loading && <IconLoader2 className={cx('loading')} size={20} />}
                                         &nbsp;Đăng nhập
                                     </Button>
-                                </div>
+                                </form>
                             </>
                         )}
                         <div className={cx('NoAcc')}>
@@ -94,12 +133,14 @@ function Login() {
                         {currentLogin ? (
                             <div className={cx('displayNone')}></div>
                         ) : (
-                            <p className={cx('forgotPassword')}>Quên mật khẩu?</p>
+                            <Link to={config.routes.forgotPassword} className={cx('forgotPassword')}>
+                                Quên mật khẩu?
+                            </Link>
                         )}
                     </div>
                     <div className={cx('footer')}>
                         Việc bạn tiếp tục sử dụng trang web này đồng nghĩa bạn đồng ý với
-                        <a href="http://localhost:3003/terms">Điều khoản sử dụng</a>
+                        <a href={config.routes.home}>Điều khoản sử dụng</a>
                         của chúng tôi.
                     </div>
                 </div>

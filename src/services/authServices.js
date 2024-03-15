@@ -14,3 +14,13 @@ export const postAuthUser = async ({ username, firstName, lastName, email, passw
         return res.data;
     }
 };
+
+export const loginAuthUser = async ({ username, password }) => {
+    const res = await httpRequest.post('Auth/login', {
+        username,
+        password,
+    });
+    if (res.status === 200) {
+        return res.data;
+    }
+};

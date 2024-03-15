@@ -6,3 +6,4 @@ export const selectVideo = (state) => state.video;
 export const selectSearch = (state) => state.search;
 export const selectAuth = (state) => state.auth;
 export const selectIngredient = (state) => state.ingredient;
+export const selectUser = (state) => state.user;

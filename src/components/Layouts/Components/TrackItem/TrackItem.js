@@ -11,7 +11,7 @@ function TrackItem({ data, index, topicParameter }) {
     return (
         <>
             <div className={cx('wrapper')}>
-                <Link className={cx('info')} to={`/${topicParameter}/${lessonName}=${lessonId}`}>
+                <Link className={cx('info')} to={`/topic/${topicParameter}/${lessonName}=${lessonId}`}>
                     <h3 className={cx('title')}>
                         {`${index + 1}. `}
                         {lessonName}

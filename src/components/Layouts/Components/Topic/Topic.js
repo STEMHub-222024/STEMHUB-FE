@@ -26,7 +26,7 @@ function Topic({ colorCode, shine }) {
                         mainColor
                         small
                         style={{ backgroundColor: colorCode, borderColor: colorCode }}
-                        to={`/${shine?.topicName}=${shine?.topicId}`}
+                        to={`/topic/${shine?.topicName}=${shine?.topicId}`}
                     >
                         Join
                     </Button>

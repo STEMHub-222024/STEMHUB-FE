@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { IconEyeClosed, IconEye } from '@tabler/icons-react';
 
@@ -55,7 +55,7 @@ function Register() {
                         try {
                             const result = await dispatch(registerUserAsync(data)).unwrap();
                             if (result) {
-                                navigate('/login');
+                                navigate(config.routes.login);
                                 console.log('Đăng ký thành công...!');
                             }
                         } catch (rejectedValueOrSerializedError) {
@@ -168,12 +168,14 @@ function Register() {
                         {currentLogin ? (
                             <div className={cx('displayNone')}></div>
                         ) : (
-                            <p className={cx('forgotPassword')}>Quên mật khẩu?</p>
+                            <Link to={config.routes.forgotPassword} className={cx('forgotLinkassword')}>
+                                Quên mật khẩu?
+                            </Link>
                         )}
                     </div>
                     <div className={cx('footer')}>
                         Việc bạn tiếp tục sử dụng trang web này đồng nghĩa bạn đồng ý với
-                        <a href="http://localhost:3003/terms">Điều khoản sử dụng</a>
+                        <a href={config.routes.home}>Điều khoản sử dụng</a>
                         của chúng tôi.
                     </div>
                 </div>
