@@ -12,8 +12,8 @@ import SignInButton from '~/components/Common/SignInButton';
 import FormControl from '~/components/Common/FormControl';
 //Services
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUserAsync } from '~/app/slices/registerSlice';
-import { selectRegister } from '~/app/selectors';
+import { registerUserAsync } from '~/app/slices/authSlice';
+import { selectAuth } from '~/app/selectors';
 import Validator, { isRequired, isEmail, minLength, isValidPassword } from '~/utils/validation';
 
 // const Validator = require('~/utils/validation');
@@ -23,7 +23,7 @@ function Register() {
     const inputNameRef = useRef();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { userName, password } = useSelector(selectRegister).data;
+    const { userName, password } = useSelector(selectAuth).data;
     const [currentLogin, setCurrentLogin] = useState(true);
     const [isShowPassword, setIsShowPassword] = useState(false);
 
@@ -60,8 +60,7 @@ function Register() {
                             }
                         } catch (rejectedValueOrSerializedError) {
                             inputNameRef.current.focus();
-                            console.error('Đăng ký thất bại...!');
-                            console.error('error register', rejectedValueOrSerializedError);
+                            console.error(rejectedValueOrSerializedError);
                         }
                     };
                     fetchApi();

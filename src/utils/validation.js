@@ -19,8 +19,6 @@ function Validator({ form, formGroupSelector, rules, errorSelector, onSubmit }) 
         var parentElement = getParent(inputElement, formGroupSelector);
         if (parentElement) {
             var errorElement = parentElement.querySelector(errorSelector);
-        } else {
-            console.error('errorElement');
         }
         var errorMessage;
 

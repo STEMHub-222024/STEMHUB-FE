@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import classNames from 'classnames/bind';
 
 import { useDispatch } from 'react-redux';
-import { setUserName, setPassword } from '~/app/slices/registerSlice';
+import { setUserName, setPassword } from '~/app/slices/authSlice';
 
 import styles from './FormInput.module.scss';
 

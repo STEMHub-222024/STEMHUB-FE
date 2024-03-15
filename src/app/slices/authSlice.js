@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import * as registerServices from '~/services/registerServices';
+import * as AuthServices from '~/services/authServices';
 
 const initialState = {
     data: {
@@ -15,10 +15,10 @@ export const registerUserAsync = createAsyncThunk(
     'register/registerUserAsync',
     async (infoData, { rejectWithValue }) => {
         try {
-            const response = await registerServices.postAuthUser(infoData);
+            const response = await AuthServices.postAuthUser(infoData);
             return response;
         } catch (err) {
-            return rejectWithValue(err.message);
+            return rejectWithValue(err.response.data.message);
         }
     },
 );
