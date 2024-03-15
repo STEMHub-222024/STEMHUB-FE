@@ -168,7 +168,7 @@ function Register() {
                         {currentLogin ? (
                             <div className={cx('displayNone')}></div>
                         ) : (
-                            <Link to={config.routes.forgotPassword} className={cx('forgotLinkassword')}>
+                            <Link to={config.routes.forgotPassword} className={cx('forgotPassword')}>
                                 Quên mật khẩu?
                             </Link>
                         )}
