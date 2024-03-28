@@ -1,46 +1,44 @@
-# Getting Started with Create React App and Redux
+# Website STEM
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+## Using Technology
 
-## Available Scripts
+### **Frontend**
 
-In the project directory, you can run:
+- ReactJs
+- Redux, Redux-toolkit
 
-### `yarn start`
+### Backend
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Asp.net core API
+- SQL Server
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Description 
 
-### `yarn test`
+The site will primarily focus on helps high school students view steam topics in the current education system, allowing students to search for a specific topic and view the content of the lessons, as well as can manage personal information.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
+## Installation
+### Step 1: [Clone project Font-End](https://github.com/STEMHub-222024/STEMHUB-FE.git)
+### Step 2: [Clone project Back-End](https://github.com/STEMHub-222024/STEMHUB-BE.git)
+### Step 3: Install Environment
+1. [Node js](https://nodejs.org/dist/v10.16.3/node-v10.16.3-x64.msi).
+### Step 4 - Edit content  
+1. Edit file `.env.development` 
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![Open file](https://github.com/STEMHub-222024/STEMHUB-FE/assets/88336997/96a9d27e-79a8-4050-a1d1-68098fad179b)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. Run `npm install `
+   
+3. Edit file `appsettings.json` 
+![Open file](https://github.com/Nvdqb73/barber-ui/assets/88336997/ddfb8b43-45dc-4041-822a-0c5859cd94a3)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Step 3: On cmd screen
+- At the BE directory path: dotnet ef database update => Run `dotnet run`
+- At the BE directory path: Run `npm start`
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## **Feature**
+-   Login / Sign out
+-   Search Topic & Post
+-   Watching Topic & lesson
+## Other
+- Interface Admin: https://github.com/STEMHub-222024/STEMHUB-BE/tree/master
