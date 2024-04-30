@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { IconEyeClosed, IconEye, IconLoader2 } from '@tabler/icons-react';
 
+import { toast } from 'react-toastify';
 import Button from '~/components/Common/Button';
 import Image from '~/components/Common/Image';
 import SignInButton from '~/components/Common/SignInButton';
@@ -49,12 +51,21 @@ function Login() {
                     const fetchApi = async () => {
                         try {
                             const result = await dispatch(loginUserAsync(data)).unwrap();
-                            if (result) {
+                            if (result.isSuccess === true) {
+                                const { refreshToken, accessToken } = result.response;
+                                const expiresAccessToken = new Date(accessToken.expiryTokenDate);
+                                const expiresRefreshToken = new Date(refreshToken.expiryTokenDate);
+                                Cookies.set('accessToken', accessToken.token, { expires: expiresAccessToken });
+                                Cookies.set('refreshToken', refreshToken.token, { expires: expiresRefreshToken });
+                                Cookies.set('saveRefreshToken', JSON.stringify(result.response), {
+                                    expires: 7,
+                                });
+
+                                toast.success('Đăng nhập thành công...!');
                                 navigate(config.routes.home);
-                                console.log('Đăng nhập thành công...!');
                             }
                         } catch (rejectedValueOrSerializedError) {
-                            console.error(rejectedValueOrSerializedError);
+                            toast.error(rejectedValueOrSerializedError);
                         }
                     };
                     fetchApi();

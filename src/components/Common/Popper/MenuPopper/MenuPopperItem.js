@@ -9,7 +9,7 @@ const classes = cx('menu-item');
 
 function MenuPopperItem({ data }) {
     return (
-        <Button className={classes} leftIcon={data.icon} to={data.to}>
+        <Button className={classes} leftIcon={data.icon} to={data.to} onClick={data.logout}>
             {data.title}
         </Button>
     );

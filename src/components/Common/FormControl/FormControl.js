@@ -18,10 +18,15 @@ function FormControl({ ...props }, ref) {
         labelComeback,
         showBack,
         maxLengthToken,
+        hidden,
     } = props;
 
     return (
-        <div className={cx('wrapper')}>
+        <div
+            className={cx('wrapper', {
+                hidden,
+            })}
+        >
             <FormInput
                 ref={ref}
                 id={id}

@@ -93,18 +93,23 @@ function Search({ currentUser }) {
                             <Heading h3 className={cx('search-title')}>
                                 Topic
                             </Heading>
-                            {searchTopics
-                                ? searchTopics.map((result) => (
-                                      <SearchCourseItem
-                                          key={result.topicId}
-                                          data={result}
-                                          setSearchValue={setSearchValue}
-                                      />
-                                  ))
-                                : ''}
-                            <Heading h3 className={cx('search-title')}>
+                            {searchTopics.length > 0 ? (
+                                searchTopics.map((result) => (
+                                    <SearchCourseItem
+                                        key={result.topicId}
+                                        data={result}
+                                        setSearchValue={setSearchValue}
+                                    />
+                                ))
+                            ) : (
+                                <div className={cx('wrapper')}>
+                                    {/* {console.log('1')} suy nghĩ */}
+                                    <h2>Không tìm thấy kết quả!</h2>
+                                </div>
+                            )}
+                            {/* <Heading h3 className={cx('search-title')}>
                                 Posts
-                            </Heading>
+                            </Heading> */}
                         </PopperWrapper>
                     </div>
                 )}

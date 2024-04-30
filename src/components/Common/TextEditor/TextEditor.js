@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import classNames from 'classnames/bind';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
+import { setContent_C } from '~/app/slices/commentSlice';
 
 import styles from './TextEditor.module.scss';
 
@@ -10,8 +12,11 @@ const cx = classNames.bind(styles);
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 function TextEditor({ placeholder, height, html = false, className }) {
-    function handleEditorChange({ html, text }) {
-        console.log('handleEditorChange', html, text);
+    const dispatch = useDispatch();
+
+    //have text
+    function handleEditorChange({ html }) {
+        dispatch(setContent_C(html));
     }
     function onImageUpload(file) {
         return new Promise((resolve) => {

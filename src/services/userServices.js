@@ -9,7 +9,7 @@ export const optEmail = async ({ emailUser }) => {
     }
 };
 
-export const resetPassword = async ({ emailUser, token, passwordUser, confirmPassword }) => {
+export const resetPassword = async ({ emailUser, passwordUser, confirmPassword, token }) => {
     const res = await httpRequest.post('User/api/resetpassword', {
         email: emailUser,
         token,

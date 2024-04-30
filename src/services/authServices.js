@@ -24,3 +24,21 @@ export const loginAuthUser = async ({ username, password }) => {
         return res.data;
     }
 };
+
+export const getUserCurrent = async ({ accessToken }) => {
+    const res = await httpRequest.get('/Auth/info', {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+    if (res.status === 200) {
+        return res.data;
+    }
+};
+
+export const refreshToken = async (infoData) => {
+    const res = await httpRequest.post('Auth/Refresh-Token', infoData);
+    if (res.status === 200) {
+        return res.data;
+    }
+};

@@ -11,7 +11,8 @@ import Heading from '~/components/Common/Heading';
 
 const cx = classNames.bind(styles);
 
-function MenuPopper({ children, items = [] }) {
+function MenuPopper({ children, items = [], infoUserCurrent }) {
+    const { username, lastName, firtsName } = infoUserCurrent;
     const renderItems = () => {
         return items.map((item, index) => <MenuPopperItem key={index} data={item} />);
     };
@@ -28,9 +29,9 @@ function MenuPopper({ children, items = [] }) {
                             <Image className={cx('user-avatar')} src={images.avatar_1} alt="Nguyen văn A" />
                             <div className={cx('user-name')}>
                                 <Heading h5 className={cx('heading')}>
-                                    Nguyễn Việt Đức
+                                    {`${lastName} ${firtsName}`}
                                 </Heading>
-                                <span>@4218-nguyen-viet-duc</span>
+                                <span>@{username}</span>
                             </div>
                         </div>
                         {renderItems()}

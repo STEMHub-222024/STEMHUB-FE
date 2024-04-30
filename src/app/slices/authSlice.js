@@ -7,7 +7,10 @@ const initialState = {
         password: '',
         email: '',
         infoUserNew: {},
+        infoUserCurrent: {},
         loading: false,
+        dataNewToken: {},
+        allow: false,
     },
     status: 'idle',
     errorMessage: '',
@@ -31,6 +34,24 @@ export const loginUserAsync = createAsyncThunk('auth/loginUserAsync', async (inf
     }
 });
 
+export const getUserCurrentAsync = createAsyncThunk('auth/getUserCurrent', async (infoData, { rejectWithValue }) => {
+    try {
+        const response = await AuthServices.getUserCurrent(infoData);
+        return response;
+    } catch (err) {
+        return rejectWithValue(err.response.data.message);
+    }
+});
+
+export const refreshTokenAsync = createAsyncThunk('auth/refreshTokenAsync', async (infoData, { rejectWithValue }) => {
+    try {
+        const response = await AuthServices.refreshToken(infoData);
+        return response;
+    } catch (err) {
+        return rejectWithValue(err.response.data.message);
+    }
+});
+
 export const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -44,6 +65,9 @@ export const authSlice = createSlice({
         },
         setEmail(state, action) {
             state.data.email = action.payload;
+        },
+        setAllow(state, action) {
+            state.data.allow = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -76,9 +100,33 @@ export const authSlice = createSlice({
                 state.errorMessage = action.payload;
                 state.data.loading = false;
             });
+        builder
+            .addCase(getUserCurrentAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(getUserCurrentAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.data.infoUserCurrent = action.payload;
+            })
+            .addCase(getUserCurrentAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMessage = action.payload;
+            });
+        builder
+            .addCase(refreshTokenAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(refreshTokenAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.data.dataNewToken = action.payload;
+            })
+            .addCase(refreshTokenAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMessage = action.payload;
+            });
     },
 });
 
-export const { setUserName, setPassword, setEmail } = authSlice.actions;
+export const { setUserName, setPassword, setEmail, setAllow } = authSlice.actions;
 
 export default authSlice.reducer;

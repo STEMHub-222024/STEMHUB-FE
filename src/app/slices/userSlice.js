@@ -19,7 +19,7 @@ export const optEmailAsync = createAsyncThunk('user/optEmailAsync', async (infoD
         const response = await userService.optEmail(infoData);
         return response;
     } catch (err) {
-        return rejectWithValue(err.response.data.message);
+        return rejectWithValue(err.response.data);
     }
 });
 
@@ -28,7 +28,7 @@ export const resetPasswordAsync = createAsyncThunk('user/resetPasswordAsync', as
         const response = await userService.resetPassword(infoData);
         return response;
     } catch (err) {
-        return rejectWithValue(err.response.data.message);
+        return rejectWithValue(err.response.data);
     }
 });
 

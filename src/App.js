@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Fragment } from 'react';
 // import { Counter } from './features/counter/Counter';
 import { publicRouter, privateRouter } from '~/routes';
 import { DefaultLayout } from '~/components/Layouts';
 import ScrollOnTop from './components/Common/ScrollOnTop';
+import { useSelector } from 'react-redux';
+import { selectAuth } from './app/selectors';
 
 function App() {
-    const [allow, setAllow] = useState(true);
+    const { allow } = useSelector(selectAuth).data;
+
     return (
         <Router>
             <ScrollOnTop />

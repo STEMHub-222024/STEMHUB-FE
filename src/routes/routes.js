@@ -17,15 +17,16 @@ import Video from '~/pages/Video';
 import Login from '~/pages/Login';
 import Register from '~/pages/Register';
 import ForgotPassword from '~/pages/ForgotPassword';
+import ResetPassword from '~/pages/ResetPassword';
 //private page
 import Profile from '~/pages/Profile';
 
 // Not Found
-import Error from '~/pages/Error';
+// import Error from '~/pages/Error';
 
 //Route
 const publicRouter = [
-    { path: config.routes.error404, component: Error, layout: null },
+    { path: config.routes.error404, component: Login, layout: null },
     { path: config.routes.home, component: Home },
     { path: config.routes.stem10, component: Stem10 },
     { path: config.routes.stem11, component: Stem11 },
@@ -38,6 +39,7 @@ const publicRouter = [
     { path: config.routes.login, component: Login, layout: null },
     { path: config.routes.register, component: Register, layout: null },
     { path: config.routes.forgotPassword, component: ForgotPassword, layout: null },
+    { path: config.routes.resetPassword, component: ResetPassword, layout: null },
 ];
 
 const privateRouter = [...publicRouter, { path: config.routes.personal, component: Profile }];

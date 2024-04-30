@@ -1,23 +1,34 @@
 import 'tippy.js/dist/tippy.css';
-import Tippy from '@tippyjs/react';
-
-import classNames from 'classnames/bind';
-import { useState } from 'react';
+import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
+import Tippy from '@tippyjs/react';
+import classNames from 'classnames/bind';
+import { useDispatch, useSelector } from 'react-redux';
+
+import Search from '~/features/search';
 import config from '~/config';
 import styles from './Header.module.scss';
 import images from '~/assets/images';
 import Button from '~/components/Common/Button';
 import Image from '~/components/Common/Image';
-import { IconBellFilled, IconUser, IconReport, IconArrowBarRight, IconPencil } from '@tabler/icons-react';
 import { Menu, MenuItem } from '~/components/Layouts/Components/Menu';
 import { MenuPopper } from '~/components/Common/Popper/MenuPopper';
-import Search from '~/features/search';
+import { IconBellFilled, IconUser, IconReport, IconArrowBarRight, IconPencil } from '@tabler/icons-react';
+import { selectAuth } from '~/app/selectors';
+import { setAllow } from '~/app/slices/authSlice';
 
 const cx = classNames.bind(styles);
 
 function Header() {
-    const [currentUser, setCurrentUser] = useState(false);
+    const dispatch = useDispatch();
+    const { infoUserCurrent, allow } = useSelector(selectAuth).data;
+
+    const handleLogout = () => {
+        Cookies.remove('accessToken');
+        Cookies.remove('refreshToken');
+        Cookies.remove('saveRefreshToken');
+        dispatch(setAllow(false));
+    };
 
     const userMenu = [
         {
@@ -38,6 +49,7 @@ function Header() {
         {
             icon: <IconArrowBarRight size={15} color="#333" stroke={2} />,
             title: 'Đăng Xuất',
+            logout: handleLogout,
         },
     ];
 
@@ -59,9 +71,9 @@ function Header() {
                         <MenuItem title="POSTS" to={config.routes.posts} icon={null} />
                     </Menu>
                 </aside>
-                <Search currentUser={currentUser} />
+                <Search currentUser={allow} />
                 <div className={cx('actions')}>
-                    {currentUser ? (
+                    {allow ? (
                         <div className={cx('group-action')}>
                             <Tippy content="Hihi">
                                 <button className={cx('action-btn')}>
@@ -69,7 +81,7 @@ function Header() {
                                 </button>
                             </Tippy>
 
-                            <MenuPopper items={userMenu}>
+                            <MenuPopper items={userMenu} infoUserCurrent={infoUserCurrent}>
                                 <Image className={cx('user-avatar')} src={images.avatar_1} alt="Nguyen văn A" />
                             </MenuPopper>
                         </div>

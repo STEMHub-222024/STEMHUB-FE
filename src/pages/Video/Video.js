@@ -57,7 +57,7 @@ function Video() {
             controller.abort();
         };
     }, [dispatch, lessonId]);
-
+   
     return (
         <>
             <div className={cx('wrapper')}>
@@ -79,7 +79,7 @@ function Video() {
                 <p>Tham gia các cộng đồng để cùng học hỏi, chia sẻ và "thám thính"</p>
 
                 <div className={cx('contentBottom')}>
-                    <Comment />
+                    <Comment lessonId={videoFilter.lessonId} />
                 </div>
             </div>
             <Powered />

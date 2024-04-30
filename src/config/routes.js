@@ -12,11 +12,12 @@ const routes = {
     postsDetail: '/posts/:postsId',
     topic: '/topic/:topic',
     topicLesson: '/topic/:topic/:lessonId',
-    personal: '/personal',
     login: '/login',
     register: '/register',
     forgotPassword: '/forgotPassword',
+    resetPassword: '/resetPassword',
     //private routes
+    personal: '/personal',
 };
 
 export default routes;

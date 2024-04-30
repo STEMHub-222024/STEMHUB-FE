@@ -2,17 +2,21 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { IconCameraUp } from '@tabler/icons-react';
+import { useSelector } from 'react-redux';
 
 import styles from './Profile.module.scss';
 import Heading from '~/components/Common/Heading';
 import images from '~/assets/images';
 import Image from '~/components/Common/Image';
 import Button from '~/components/Common/Button';
+import { selectAuth } from '~/app/selectors';
+
 const cx = classNames.bind(styles);
 
 function Profile() {
-    const [firstName, setFirsName] = useState('Jonathan');
-    const [lastName, setLastName] = useState('Doe');
+    const { infoUserCurrent } = useSelector(selectAuth).data;
+    const [firstName, setFirsName] = useState(infoUserCurrent?.firtsName);
+    const [lastName, setLastName] = useState(infoUserCurrent?.lastName);
     const handleFirsName = (e) => {
         setFirsName(e.target.value);
     };
@@ -20,6 +24,11 @@ function Profile() {
     const handleLastName = (e) => {
         setLastName(e.target.value);
     };
+    const handleSaveInfo = () => {
+        console.log('firstName', firstName);
+        console.log('lastName', lastName);
+    };
+
     return (
         <div className={cx('wrapper')}>
             <Heading className={cx('heading')} h2>
@@ -42,15 +51,15 @@ function Profile() {
                 </div>
                 <div className={cx('group-input')}>
                     <span className={cx('title')}>User Name</span>
-                    <input type="text" name="userName" value="Jonathan" disabled />
+                    <input type="text" name="userName" value={infoUserCurrent?.username} disabled />
                 </div>
                 <div className={cx('group-input')}>
                     <span className={cx('title')}>Email</span>
-                    <input type="text" name="email" value="Jonathan" disabled />
+                    <input type="text" name="email" value={infoUserCurrent?.email} disabled />
                 </div>
             </div>
 
-            <Button className={cx('btn-save')} mainColor medium borderMedium>
+            <Button className={cx('btn-save')} mainColor medium borderMedium onClick={handleSaveInfo}>
                 Save
             </Button>
         </div>

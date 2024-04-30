@@ -16,6 +16,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getOutstanding } from '~/app/slices/topicSlice';
 import { getStemAsync, handleOnClickStem } from '~/app/slices/navbarTopicSlice';
 import { selectTopic, selectNavbarTopic } from '~/app/selectors';
+import { setAllow } from '~/app/slices/authSlice';
+import checkCookie from '~/utils/checkCookieExists';
 
 //Clear fetch
 const controller = new AbortController();
@@ -26,6 +28,16 @@ function Home() {
     const dispatch = useDispatch();
     const { showOutstanding } = useSelector(selectTopic);
     const { isOnClickStem } = useSelector(selectNavbarTopic);
+
+    useEffect(() => {
+        checkCookie(dispatch)
+            .then((isUser) => {
+                dispatch(setAllow(isUser));
+            })
+            .catch((isUser) => {
+                dispatch(setAllow(isUser));
+            });
+    }, [dispatch]);
 
     useEffect(() => {
         const fetchApi = async () => {
