@@ -4,6 +4,7 @@ import classNames from 'classnames/bind';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import { setContent_C } from '~/app/slices/commentSlice';
+import { setMarkdown, setHtmlContent } from '~/app/slices/postSlice';
 
 import styles from './TextEditor.module.scss';
 
@@ -11,12 +12,17 @@ const cx = classNames.bind(styles);
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
-function TextEditor({ placeholder, height, html = false, className }) {
+function TextEditor({ placeholder, height, showHtml = false, className }) {
     const dispatch = useDispatch();
 
     //have text
-    function handleEditorChange({ html }) {
-        dispatch(setContent_C(html));
+    function handleEditorChange({ html, text }) {
+        if (showHtml) {
+            dispatch(setMarkdown(text));
+            dispatch(setHtmlContent(html));
+        } else {
+            dispatch(setContent_C(html));
+        }
     }
     function onImageUpload(file) {
         return new Promise((resolve) => {
@@ -38,7 +44,7 @@ function TextEditor({ placeholder, height, html = false, className }) {
                 <MdEditor
                     placeholder={placeholder}
                     onImageUpload={onImageUpload}
-                    view={{ menu: true, md: true, html: html }}
+                    view={{ menu: true, md: true, html: showHtml }}
                     style={{ height: height }}
                     className={classes}
                     renderHTML={(text) => mdParser.render(text)}

@@ -8,3 +8,4 @@ export const selectAuth = (state) => state.auth;
 export const selectIngredient = (state) => state.ingredient;
 export const selectUser = (state) => state.user;
 export const selectComment = (state) => state.comment;
+export const selectPosts = (state) => state.posts;

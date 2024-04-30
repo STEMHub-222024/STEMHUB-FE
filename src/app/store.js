@@ -10,6 +10,7 @@ import authReducer from '~/app/slices/authSlice';
 import ingredientReducer from '~/app/slices/ingredientSlice';
 import userReducer from '~/app/slices/userSlice';
 import commentReducer from '~/app/slices/commentSlice';
+import postsReducer from '~/app/slices/postSlice';
 
 export const store = configureStore({
     reducer: {
@@ -24,5 +25,6 @@ export const store = configureStore({
         ingredient: ingredientReducer,
         user: userReducer,
         comment: commentReducer,
+        posts: postsReducer,
     },
 });

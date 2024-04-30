@@ -3,6 +3,7 @@ import config from '~/config';
 
 //Layouts
 import LessonLayout from '~/components/Layouts/LessonLayout';
+import PostsLayout from '~/components/Layouts/PostsLayout';
 
 //public page
 import Home from '~/pages/Home';
@@ -31,7 +32,6 @@ const publicRouter = [
     { path: config.routes.stem10, component: Stem10 },
     { path: config.routes.stem11, component: Stem11 },
     { path: config.routes.stem12, component: Stem12 },
-    { path: config.routes.newPost, component: NewPost },
     { path: config.routes.posts, component: Posts },
     { path: config.routes.postsDetail, component: PostsDetail },
     { path: config.routes.topic, component: TopicDetail },
@@ -42,6 +42,10 @@ const publicRouter = [
     { path: config.routes.resetPassword, component: ResetPassword, layout: null },
 ];
 
-const privateRouter = [...publicRouter, { path: config.routes.personal, component: Profile }];
+const privateRouter = [
+    ...publicRouter,
+    { path: config.routes.personal, component: Profile },
+    { path: config.routes.newPost, component: NewPost, layout: PostsLayout },
+];
 
 export { publicRouter, privateRouter };

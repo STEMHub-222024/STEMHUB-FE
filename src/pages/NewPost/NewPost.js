@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import styles from './NewPost.module.scss';
 import ContentEditable from '~/components/Common/ContentEditable';
@@ -11,7 +10,7 @@ function NewPost() {
         <div className={cx('wrapper')}>
             <ContentEditable className={cx('title-input')} />
             <div className={cx('text-editor')}>
-                <TextEditor className={cx('text-content')} html placeholder='Nội dung viết ở đây' />
+                <TextEditor className={cx('text-content')} showHtml placeholder="Nội dung viết ở đây" />
             </div>
         </div>
     );

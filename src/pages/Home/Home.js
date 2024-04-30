@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import tinycolor from 'tinycolor2';
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
@@ -131,6 +130,7 @@ function Home() {
                 <div className={cx('introduce', { 'grid-row': 'grid-row' })}>
                     <Introduce />
                 </div>
+                {/* POSTS */}
                 <div className={cx('posts-content')}>
                     <div className={cx('grid-row')}>
                         <div className={cx('grid-column-3')}>
@@ -160,7 +160,5 @@ function Home() {
         </div>
     );
 }
-
-Home.propTypes = {};
 
 export default Home;

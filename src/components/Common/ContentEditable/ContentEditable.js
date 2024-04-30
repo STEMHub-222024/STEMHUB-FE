@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './ContentEditable.module.scss';
+import { useDispatch } from 'react-redux';
+import { setTitle } from '~/app/slices/postSlice';
 
 const cx = classNames.bind(styles);
 
 function ContentEditable({ className }) {
-    const [content, setContent] = useState('');
+    const dispatch = useDispatch();
 
     const handleInput = (event) => {
-        const newContent = event.target.textContent;
-        setContent(newContent);
+        dispatch(setTitle(event.target.textContent));
     };
 
     const classes = cx('wrapper', {
