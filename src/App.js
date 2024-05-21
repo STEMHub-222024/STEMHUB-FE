@@ -1,16 +1,30 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 // import { Counter } from './features/counter/Counter';
 import { publicRouter, privateRouter } from '~/routes';
 import { DefaultLayout } from '~/components/Layouts';
 import ScrollOnTop from './components/Common/ScrollOnTop';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+// Check Auth
 import { selectAuth } from './app/selectors';
+import { setAllow } from '~/app/slices/authSlice';
+import checkCookie from '~/utils/checkCookieExists';
 
 function App() {
+    const dispatch = useDispatch();
     const { allow } = useSelector(selectAuth).data;
 
+    useEffect(() => {
+        checkCookie(dispatch)
+            .then((isUser) => {
+                dispatch(setAllow(isUser));
+            })
+            .catch((isUser) => {
+                dispatch(setAllow(isUser));
+            });
+    }, [dispatch]);
     return (
         <Router>
             <ScrollOnTop />

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { IconCircleCheckFilled, IconDots } from '@tabler/icons-react';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';

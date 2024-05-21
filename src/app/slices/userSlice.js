@@ -9,10 +9,20 @@ const initialState = {
         confirmPassword: '',
         infoReset: {},
         loading: false,
+        userInfo: {},
     },
     status: 'idle',
     errorMessage: '',
 };
+
+export const getUserIdAsync = createAsyncThunk('user/getUserIdAsync', async (infoData, { rejectWithValue }) => {
+    try {
+        const response = await userService.getUserId(infoData);
+        return response;
+    } catch (err) {
+        return rejectWithValue(err.response.data);
+    }
+});
 
 export const optEmailAsync = createAsyncThunk('user/optEmailAsync', async (infoData, { rejectWithValue }) => {
     try {
@@ -79,6 +89,18 @@ export const userSlice = createSlice({
                 state.status = 'failed';
                 state.errorMessage = action.payload;
                 state.data.loading = false;
+            });
+        builder
+            .addCase(getUserIdAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(getUserIdAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.data.userInfo = action.payload;
+            })
+            .addCase(getUserIdAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMessage = action.payload;
             });
     },
 });

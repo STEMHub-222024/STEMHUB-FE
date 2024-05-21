@@ -1,5 +1,12 @@
 import * as httpRequest from '~/utils/httpRequest';
 
+export const getUserId = async ({ userId }) => {
+    const res = await httpRequest.get(`User/${userId}`);
+    if (res.status === 200) {
+        return res.data;
+    }
+};
+
 export const optEmail = async ({ emailUser }) => {
     const res = await httpRequest.post('User/forgot-password', {
         email: emailUser,

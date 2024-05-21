@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
@@ -16,7 +17,6 @@ import { registerUserAsync } from '~/app/slices/authSlice';
 import { selectAuth } from '~/app/selectors';
 import Validator, { isRequired, isEmail, minLength, isValidPassword } from '~/utils/validation';
 
-// const Validator = require('~/utils/validation');
 const cx = classNames.bind(styles);
 
 function Register() {
@@ -56,7 +56,7 @@ function Register() {
                             const result = await dispatch(registerUserAsync(data)).unwrap();
                             if (result) {
                                 navigate(config.routes.login);
-                                console.log('Đăng ký thành công...!');
+                                message.success('Đăng ký thành công...!');
                             }
                         } catch (rejectedValueOrSerializedError) {
                             inputNameRef.current.focus();

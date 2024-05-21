@@ -20,7 +20,6 @@
     .commentContent {
         flex: 1 1;
         max-width: 710px;
-
         .placeholder {
             align-items: center;
             border-bottom: 1px solid #ccc;
@@ -51,7 +50,13 @@
                     opacity: 0.8;
                 }
             }
-
+            .btnSubmit {
+                background-color: var(--main-color);
+                color: var(--white);
+                &:hover {
+                    background: linear-gradient(0deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06)), var(--main-color);
+                }
+            }
             .ok {
                 background: #ccc;
                 color: var(--white);

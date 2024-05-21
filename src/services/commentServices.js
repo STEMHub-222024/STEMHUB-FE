@@ -5,10 +5,10 @@ export const getComment = async () => {
     return res.data;
 };
 
-export const getCommentIdLesson = async ({ lessonId }) => {
+export const getCommentIdLesson = async ({ newLessonId }) => {
     const res = await httpRequest.get('Comment', {
         params: {
-            lessonId,
+            lessonId: newLessonId,
         },
     });
     return res.data;
@@ -24,6 +24,15 @@ export const postComment = async ({ content_C, lessonId, userId }) => {
         content_C,
         lessonId,
         userId,
+    });
+    return res.data;
+};
+
+export const deleteComment = async ({ commentId, accessToken }) => {
+    const res = await httpRequest.deleteRequest(`Comment/${commentId}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
     });
     return res.data;
 };

@@ -1,5 +1,6 @@
 import 'tippy.js/dist/tippy.css';
 import Cookies from 'js-cookie';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Tippy from '@tippyjs/react';
 import classNames from 'classnames/bind';
@@ -14,14 +15,27 @@ import Image from '~/components/Common/Image';
 import { Menu, MenuItem } from '~/components/Layouts/Components/Menu';
 import { MenuPopper } from '~/components/Common/Popper/MenuPopper';
 import { IconBellFilled, IconUser, IconReport, IconArrowBarRight, IconPencil } from '@tabler/icons-react';
+
+// Check Auth
 import { selectAuth } from '~/app/selectors';
 import { setAllow } from '~/app/slices/authSlice';
+import checkCookie from '~/utils/checkCookieExists';
 
 const cx = classNames.bind(styles);
 
 function Header() {
     const dispatch = useDispatch();
     const { infoUserCurrent, allow } = useSelector(selectAuth).data;
+
+    useEffect(() => {
+        checkCookie(dispatch)
+            .then((isUser) => {
+                dispatch(setAllow(isUser));
+            })
+            .catch((isUser) => {
+                dispatch(setAllow(isUser));
+            });
+    }, [dispatch]);
 
     const handleLogout = () => {
         Cookies.remove('accessToken');

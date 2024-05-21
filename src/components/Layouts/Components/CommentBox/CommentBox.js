@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useLayoutEffect, memo } from 'react';
+import { message } from 'antd';
+import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames/bind';
 import styles from './CommentBox.module.scss';
@@ -7,21 +8,33 @@ import FallbackAvatar from '~/components/Common/FallbackAvatar';
 import images from '~/assets/images';
 import TextEditor from '~/components/Common/TextEditor';
 import Button from '~/components/Common/Button';
-import config from '~/config';
-import { commentPostAsync, updateComment } from '~/app/slices/commentSlice';
+import { commentPostAsync } from '~/app/slices/commentSlice';
 import { selectComment, selectAuth } from '~/app/selectors';
 import { handleSplitParam } from '~/utils/splitParamUrl';
+
+// Check Auth
+import { setAllow } from '~/app/slices/authSlice';
+import checkCookie from '~/utils/checkCookieExists';
 
 const cx = classNames.bind(styles);
 
 function CommentBox({ commentByLessonIds }) {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const { lessonId } = useParams();
     const { content_C } = useSelector(selectComment).data;
     const { infoUserCurrent } = useSelector(selectAuth).data;
-
     const [showEditText, setShowEditText] = useState(false);
+    const [resetToken, setIsResetToken] = useState(false);
+
+    useLayoutEffect(() => {
+        checkCookie(dispatch)
+            .then((isUser) => {
+                dispatch(setAllow(isUser));
+            })
+            .catch((isUser) => {
+                dispatch(setAllow(isUser));
+            });
+    }, [dispatch, resetToken]);
 
     const handleShowEditText = () => {
         setShowEditText(!showEditText);
@@ -29,11 +42,11 @@ function CommentBox({ commentByLessonIds }) {
 
     const handleComment = async () => {
         if (!infoUserCurrent.userId) {
-            navigate(config.routes.login);
+            setIsResetToken(!resetToken);
         } else {
             const lessonIdSplit = handleSplitParam(lessonId);
             if (!lessonIdSplit) {
-                console.log('LessonId does not exist');
+                message.warning('LessonId does not exist');
             }
             await dispatch(
                 commentPostAsync({
@@ -41,16 +54,6 @@ function CommentBox({ commentByLessonIds }) {
                     lessonId: lessonIdSplit,
                     userId: infoUserCurrent.userId,
                 }),
-            );
-            dispatch(
-                updateComment([
-                    ...commentByLessonIds,
-                    {
-                        content_C,
-                        lessonId: lessonIdSplit,
-                        userId: infoUserCurrent.userId,
-                    },
-                ]),
             );
         }
         setShowEditText(!showEditText);
@@ -96,4 +99,4 @@ function CommentBox({ commentByLessonIds }) {
     );
 }
 
-export default CommentBox;
+export default memo(CommentBox);

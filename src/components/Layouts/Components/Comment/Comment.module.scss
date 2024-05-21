@@ -116,3 +116,12 @@
         }
     }
 }
+
+.iconRemoveComment {
+    cursor: pointer;
+    width: 18px;
+
+    &:hover {
+        color: red;
+    }
+}

@@ -59,15 +59,24 @@ export const commentGetIdAsync = createAsyncThunk(
     },
 );
 
+export const removeCommentByIdAsync = createAsyncThunk(
+    'comment/removeCommentByIdAsync',
+    async (infoData, { rejectWithValue }) => {
+        try {
+            const response = await commentServices.deleteComment(infoData);
+            return response;
+        } catch (err) {
+            return rejectWithValue(err.response.data.message);
+        }
+    },
+);
+
 export const commentSlice = createSlice({
     name: 'comment',
     initialState,
     reducers: {
         setContent_C(state, action) {
             state.data.content_C = action.payload;
-        },
-        updateComment(state, action) {
-            state.filter.commentByLessonIds = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -77,6 +86,7 @@ export const commentSlice = createSlice({
             })
             .addCase(commentPostAsync.fulfilled, (state, action) => {
                 state.status = 'succeeded';
+                state.filter.commentByLessonIds.push(action.payload);
                 state.data.commentNew = action.payload;
             })
             .addCase(commentPostAsync.rejected, (state, action) => {
@@ -107,9 +117,23 @@ export const commentSlice = createSlice({
                 state.status = 'failed';
                 state.errorMessage = action.payload;
             });
+        builder
+            .addCase(removeCommentByIdAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(removeCommentByIdAsync.fulfilled, (state, action) => {
+                const newCommentByLessonIds = state.filter.commentByLessonIds.filter((item) => {
+                    return item.commentId !== action.meta.arg.commentId;
+                });
+                state.filter.commentByLessonIds = newCommentByLessonIds;
+            })
+            .addCase(removeCommentByIdAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMessage = action.payload;
+            });
     },
 });
 
-export const { setContent_C, updateComment } = commentSlice.actions;
+export const { setContent_C } = commentSlice.actions;
 
 export default commentSlice.reducer;

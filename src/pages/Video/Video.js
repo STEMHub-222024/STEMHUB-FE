@@ -1,4 +1,3 @@
-import PropTYpes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { IconSquareRoundedPlus } from '@tabler/icons-react';
@@ -57,7 +56,7 @@ function Video() {
             controller.abort();
         };
     }, [dispatch, lessonId]);
-   
+
     return (
         <>
             <div className={cx('wrapper')}>
@@ -79,7 +78,7 @@ function Video() {
                 <p>Tham gia các cộng đồng để cùng học hỏi, chia sẻ và "thám thính"</p>
 
                 <div className={cx('contentBottom')}>
-                    <Comment lessonId={videoFilter.lessonId} />
+                    <Comment />
                 </div>
             </div>
             <Powered />
