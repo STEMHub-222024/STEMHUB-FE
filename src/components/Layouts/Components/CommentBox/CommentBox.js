@@ -1,30 +1,30 @@
-import { useState, useLayoutEffect, memo } from 'react';
+import { useState, useLayoutEffect, memo, useEffect } from 'react';
 import { message } from 'antd';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames/bind';
 import styles from './CommentBox.module.scss';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';
-import images from '~/assets/images';
 import TextEditor from '~/components/Common/TextEditor';
 import Button from '~/components/Common/Button';
 import { commentPostAsync } from '~/app/slices/commentSlice';
 import { selectComment, selectAuth } from '~/app/selectors';
 import { handleSplitParam } from '~/utils/splitParamUrl';
-
+import { getUserIdAsync } from '~/app/slices/userSlice';
 // Check Auth
 import { setAllow } from '~/app/slices/authSlice';
 import checkCookie from '~/utils/checkCookieExists';
 
 const cx = classNames.bind(styles);
 
-function CommentBox({ commentByLessonIds }) {
+function CommentBox() {
     const dispatch = useDispatch();
     const { lessonId } = useParams();
     const { content_C } = useSelector(selectComment).data;
     const { infoUserCurrent } = useSelector(selectAuth).data;
     const [showEditText, setShowEditText] = useState(false);
     const [resetToken, setIsResetToken] = useState(false);
+    const [userInfo, setUserInfo] = useState({});
 
     useLayoutEffect(() => {
         checkCookie(dispatch)
@@ -35,6 +35,24 @@ function CommentBox({ commentByLessonIds }) {
                 dispatch(setAllow(isUser));
             });
     }, [dispatch, resetToken]);
+
+    useEffect(() => {
+        const fetchApi = async () => {
+            try {
+                const res = await dispatch(
+                    getUserIdAsync({
+                        userId: infoUserCurrent.userId,
+                    }),
+                ).unwrap();
+                if (res) {
+                    setUserInfo(res);
+                }
+            } catch (rejectedValueOrSerializedError) {
+                console.error(rejectedValueOrSerializedError);
+            }
+        };
+        fetchApi();
+    }, [dispatch, infoUserCurrent]);
 
     const handleShowEditText = () => {
         setShowEditText(!showEditText);
@@ -61,7 +79,7 @@ function CommentBox({ commentByLessonIds }) {
     return (
         <div className={cx('commentWrapper')}>
             <div className={cx('avatarWrapper')}>
-                <FallbackAvatar className={cx('avatar')} linkImage={images.avatar_1} altImage="nguyen van a" />
+                <FallbackAvatar className={cx('avatar')} linkImage={userInfo?.image ?? ''} altImage="nguyen van a" />
             </div>
             <div className={cx('commentContent')}>
                 {showEditText ? (
