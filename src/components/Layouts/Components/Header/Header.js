@@ -1,6 +1,6 @@
 import 'tippy.js/dist/tippy.css';
 import Cookies from 'js-cookie';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Tippy from '@tippyjs/react';
 import classNames from 'classnames/bind';
@@ -27,7 +27,7 @@ function Header() {
     const dispatch = useDispatch();
     const { infoUserCurrent, allow } = useSelector(selectAuth).data;
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         checkCookie(dispatch)
             .then((isUser) => {
                 dispatch(setAllow(isUser));

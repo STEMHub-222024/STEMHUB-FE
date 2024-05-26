@@ -10,6 +10,9 @@
         padding: 40px 0 24px 0;
     }
     .group-avatar {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 22px;
         .avatar {
             width: 100px;
             height: 100px;
@@ -48,6 +51,15 @@
                 color: var(--Object-Black-60, rgba(27, 27, 27, 0.6));
             }
 
+            .error-message {
+                font-size: 1.2rem;
+                line-height: 1.6rem;
+                padding: 4px 0 0;
+                color: #f33a58;
+                position: relative;
+                left: 16px;
+            }
+
             input {
                 line-height: 30px;
                 font-size: 1.6rem;
@@ -57,6 +69,6 @@
     }
 
     .btn-save {
-        margin-bottom: 12px;
+        margin: auto;
     }
 }

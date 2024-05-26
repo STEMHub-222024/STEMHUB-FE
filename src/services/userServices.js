@@ -27,3 +27,16 @@ export const resetPassword = async ({ emailUser, passwordUser, confirmPassword, 
         return res.data;
     }
 };
+
+export const putUserById = async ({ lastName, firstName, email, phoneNumber, image, userId }) => {
+    const res = await httpRequest.post(`User/${userId}`, {
+        lastName,
+        firstName,
+        email,
+        phoneNumber,
+        image,
+    });
+    if (res.status === 200) {
+        return res.data;
+    }
+};

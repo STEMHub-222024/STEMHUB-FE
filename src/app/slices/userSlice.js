@@ -42,6 +42,16 @@ export const resetPasswordAsync = createAsyncThunk('user/resetPasswordAsync', as
     }
 });
 
+export const putUserIdAsync = createAsyncThunk('user/putUserIdAsync', async (infoData, { rejectWithValue }) => {
+    try {
+        console.log('infoData', infoData);
+        const response = await userService.putUserById(infoData);
+        return response;
+    } catch (err) {
+        return rejectWithValue(err.response.data);
+    }
+});
+
 export const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -99,6 +109,18 @@ export const userSlice = createSlice({
                 state.data.userInfo = action.payload;
             })
             .addCase(getUserIdAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMessage = action.payload;
+            });
+        builder
+            .addCase(putUserIdAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(putUserIdAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.data.userInfo = action.payload;
+            })
+            .addCase(putUserIdAsync.rejected, (state, action) => {
                 state.status = 'failed';
                 state.errorMessage = action.payload;
             });
