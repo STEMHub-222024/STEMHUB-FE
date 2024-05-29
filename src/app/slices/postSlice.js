@@ -12,6 +12,15 @@ const initialState = {
     errorMassage: '',
 };
 
+export const getPostsAsync = createAsyncThunk('post/getPostsAsync', async (infoData, { rejectWithValue }) => {
+    try {
+        const response = await postServices.getPosts();
+        return response;
+    } catch (err) {
+        return rejectWithValue(err.response.data.message);
+    }
+});
+
 export const postPostsAsync = createAsyncThunk('post/postPostsAsync', async (infoData, { rejectWithValue }) => {
     try {
         const response = await postServices.postPosts(infoData);
@@ -36,6 +45,18 @@ export const postSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        builder
+            .addCase(getPostsAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(getPostsAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.data.posts = action.payload.slice(-8);
+            })
+            .addCase(getPostsAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMassage = action.payload;
+            });
         builder
             .addCase(postPostsAsync.pending, (state) => {
                 state.status = 'loading';

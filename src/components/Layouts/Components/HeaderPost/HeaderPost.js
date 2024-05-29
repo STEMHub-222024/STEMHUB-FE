@@ -1,11 +1,11 @@
 import 'tippy.js/dist/tippy.css';
-import { useRef, useState } from 'react';
+import { useRef, useState, useLayoutEffect } from 'react';
 import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
 import Tippy from '@tippyjs/react';
 import classNames from 'classnames/bind';
+import { message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-
 import config from '~/config';
 import styles from './HeaderPost.module.scss';
 import images from '~/assets/images';
@@ -20,9 +20,13 @@ import {
     IconArrowBarRight,
     IconPencil,
 } from '@tabler/icons-react';
-import { selectAuth, selectPosts } from '~/app/selectors';
-import { setAllow } from '~/app/slices/authSlice';
 import Modal from '~/components/Common/Modal';
+import { selectAuth, selectPosts } from '~/app/selectors';
+import { postPostsAsync } from '~/app/slices/postSlice';
+
+//Auth
+import { setAllow } from '~/app/slices/authSlice';
+import checkCookie from '~/utils/checkCookieExists';
 
 const cx = classNames.bind(styles);
 
@@ -30,9 +34,20 @@ function HeaderPost() {
     const fileInputRef = useRef(null);
     const dispatch = useDispatch();
     const { infoUserCurrent } = useSelector(selectAuth).data;
-    const { title, markdown, htmlContent } = useSelector(selectPosts).data;
+    const { title, markdown, htmlContent, posts } = useSelector(selectPosts).data;
     const [backgroundImage, setBackgroundImage] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [resetToken, setResetToken] = useState(false);
+
+    useLayoutEffect(() => {
+        checkCookie(dispatch)
+            .then((isUser) => {
+                dispatch(setAllow(isUser));
+            })
+            .catch((isUser) => {
+                dispatch(setAllow(isUser));
+            });
+    }, [dispatch, resetToken]);
 
     const handleLogout = () => {
         Cookies.remove('accessToken');
@@ -64,8 +79,27 @@ function HeaderPost() {
         },
     ];
 
-    const handlePost = () => {
-        console.log('data', title, markdown, htmlContent, infoUserCurrent.userId);
+    const handlePost = async () => {
+        if (!infoUserCurrent.userId) {
+            setResetToken(!resetToken);
+        } else {
+            try {
+                const newData = {
+                    title,
+                    markdown,
+                    htmlContent,
+                    userId: infoUserCurrent.userId,
+                };
+                const res = await dispatch(postPostsAsync(newData)).unwrap();
+                if (res) {
+                    // Chuyen huong
+                    // console.log('1');
+                    // setIsModalOpen(!isModalOpen);
+                }
+            } catch (error) {
+                console.error('Failed to fetch user:', error);
+            }
+        }
     };
 
     const handleModal = () => {
@@ -83,9 +117,11 @@ function HeaderPost() {
             const imageURL = URL.createObjectURL(file);
             setBackgroundImage(imageURL);
         } else {
-            console.log('Không có file nào được chọn.');
+            message.info('Không có file nào được chọn.');
         }
     };
+
+    console.log('posts', posts);
 
     return (
         <>
@@ -159,7 +195,7 @@ function HeaderPost() {
                             )}
                         </div>
                         <div contentEditable={false} className={cx('title-review')}>
-                            s
+                            {title}
                         </div>
                         <p>
                             <strong>Lưu ý: </strong>

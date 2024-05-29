@@ -13,10 +13,12 @@ import PostItem from '~/components/Layouts/Components/CommonItem';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOutstanding } from '~/app/slices/topicSlice';
+import { getPostsAsync } from '~/app/slices/postSlice';
 import { getStemAsync, handleOnClickStem } from '~/app/slices/navbarTopicSlice';
-import { selectTopic, selectNavbarTopic } from '~/app/selectors';
+import { selectTopic, selectNavbarTopic, selectPosts } from '~/app/selectors';
 import { setAllow } from '~/app/slices/authSlice';
 import checkCookie from '~/utils/checkCookieExists';
+import config from '~/config';
 
 //Clear fetch
 const controller = new AbortController();
@@ -27,6 +29,7 @@ function Home() {
     const dispatch = useDispatch();
     const { showOutstanding } = useSelector(selectTopic);
     const { isOnClickStem } = useSelector(selectNavbarTopic);
+    const { posts } = useSelector(selectPosts).data;
 
     useEffect(() => {
         checkCookie(dispatch)
@@ -69,6 +72,17 @@ function Home() {
         return () => {
             controller.abort();
         };
+    }, [dispatch]);
+
+    useEffect(() => {
+        const fetchApi = async () => {
+            try {
+                await dispatch(getPostsAsync());
+            } catch (rejectedValueOrSerializedError) {
+                console.error(rejectedValueOrSerializedError);
+            }
+        };
+        fetchApi();
     }, [dispatch]);
 
     const checkStemDefault = (stemName, defaultValue) => {
@@ -133,23 +147,17 @@ function Home() {
                 {/* POSTS */}
                 <div className={cx('posts-content')}>
                     <div className={cx('grid-row')}>
-                        <div className={cx('grid-column-3')}>
-                            <PostItem />
-                        </div>
-                        <div className={cx('grid-column-3')}>
-                            <PostItem />
-                        </div>
-                        <div className={cx('grid-column-3')}>
-                            <PostItem />
-                        </div>
-                        <div className={cx('grid-column-3')}>
-                            <PostItem />
-                        </div>
+                        {posts &&
+                            posts.map((post) => (
+                                <div key={post.newspaperArticleId} className={cx('grid-column-3')}>
+                                    <PostItem data={post} />
+                                </div>
+                            ))}
                     </div>
                     <div className={cx('grid-row')}>
                         <div className={cx('grid-column-12')}>
                             <div className={cx('btn-explore-all')}>
-                                <Button mainColor borderMedium medium>
+                                <Button to={config.routes.posts} mainColor borderMedium medium>
                                     Explore all Posts
                                 </Button>
                             </div>

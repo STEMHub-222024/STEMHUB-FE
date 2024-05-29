@@ -14,7 +14,7 @@ export const postPosts = async ({ title, markdown, htmlContent, userId }) => {
         htmlContent,
         userId,
     });
-    if (res.status === 200) {
+    if (res) {
         return res.data;
     }
 };
