@@ -104,7 +104,7 @@ function Profile() {
     };
 
     const handleFileChange = ({ fileList: newFileList }) => setFileList(newFileList);
-
+    //  {/* Fix */}
     const uploadButton = (
         <button style={{ border: 0, background: 'none' }} type="button">
             <PlusOutlined />

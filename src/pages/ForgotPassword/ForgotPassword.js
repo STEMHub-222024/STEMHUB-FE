@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import classNames from 'classnames/bind';
-import { IconEyeClosed, IconEye, IconLoader2 } from '@tabler/icons-react';
+import { IconLoader2 } from '@tabler/icons-react';
 
 import Button from '~/components/Common/Button';
 import Image from '~/components/Common/Image';
@@ -12,7 +12,7 @@ import Validator, { isRequired, isEmail } from '~/utils/validation';
 import { toast } from 'react-toastify';
 //Service
 import { useDispatch, useSelector } from 'react-redux';
-import { optEmailAsync, resetPasswordAsync } from '~/app/slices/userSlice';
+import { optEmailAsync } from '~/app/slices/userSlice';
 import { selectUser } from '~/app/selectors';
 
 const cx = classNames.bind(styles);

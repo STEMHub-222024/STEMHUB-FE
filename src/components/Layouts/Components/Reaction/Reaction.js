@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { IconHeart, IconHeartFilled, IconMessageCircle2 } from '@tabler/icons-react';
 

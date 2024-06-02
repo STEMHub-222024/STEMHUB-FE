@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import tinycolor from 'tinycolor2';
 import classNames from 'classnames/bind';
 import styles from './Stem10.module.scss';

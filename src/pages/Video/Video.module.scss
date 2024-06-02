@@ -31,14 +31,27 @@
             user-select: none;
             display: flex;
             align-items: center;
+            &:hover {
+                background-color: var(--main-color);
+            }
+
+            &:hover .label {
+                color: var(--white);
+            }
+
+            &:hover .icon {
+                color: var(--white);
+            }
 
             .label {
                 margin: 0 8px;
+                font-weight: 700;
+                text-decoration: dotted;
 
                 .num {
                     margin-left: 4px;
                     font-feature-settings: 'tnum';
-                    font-size: 1.3rem;
+                    font-size: 1.4rem;
                     font-variant-numeric: tabular-nums;
                     font-weight: 600;
                 }

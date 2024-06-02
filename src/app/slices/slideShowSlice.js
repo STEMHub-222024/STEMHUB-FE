@@ -38,6 +38,4 @@ export const bannerSlice = createSlice({
     },
 });
 
-export const {} = bannerSlice.actions;
-
 export default bannerSlice.reducer;

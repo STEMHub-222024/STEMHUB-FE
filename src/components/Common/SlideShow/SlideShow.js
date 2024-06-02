@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import Slider from 'react-slick';
 import classNames from 'classnames/bind';
 import styles from './SlideShow.module.scss';
@@ -9,7 +8,7 @@ import SlidePrevArrow from '~/components/Common/SlidePrevArrow';
 
 // redux
 import { useDispatch, useSelector } from 'react-redux';
-import { getBannerAsync } from '../../../app/slices/slideShowSlice';
+import { getBannerAsync } from '~/app/slices/slideShowSlice';
 import { selectBanner } from '~/app/selectors';
 
 const cx = classNames.bind(styles);
