@@ -7,14 +7,24 @@ const initialState = {
         markdown: '',
         htmlContent: '',
         posts: [],
+        post: {},
     },
     status: 'idle',
     errorMassage: '',
 };
 
-export const getPostsAsync = createAsyncThunk('post/getPostsAsync', async (infoData, { rejectWithValue }) => {
+export const getPostsAsync = createAsyncThunk('post/getPostsAsync', async (_, { rejectWithValue }) => {
     try {
         const response = await postServices.getPosts();
+        return response;
+    } catch (err) {
+        return rejectWithValue(err.response.data.message);
+    }
+});
+
+export const getPostsByIdAsync = createAsyncThunk('post/getPostsByIdAsync', async (infoData, { rejectWithValue }) => {
+    try {
+        const response = await postServices.getPostsById(infoData);
         return response;
     } catch (err) {
         return rejectWithValue(err.response.data.message);
@@ -66,6 +76,18 @@ export const postSlice = createSlice({
                 state.data.posts.push(action.payload);
             })
             .addCase(postPostsAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMassage = action.payload;
+            });
+        builder
+            .addCase(getPostsByIdAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(getPostsByIdAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.data.post = action.payload;
+            })
+            .addCase(getPostsByIdAsync.rejected, (state, action) => {
                 state.status = 'failed';
                 state.errorMassage = action.payload;
             });

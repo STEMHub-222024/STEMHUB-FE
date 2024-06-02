@@ -16,6 +16,7 @@ const routes = {
     register: '/register',
     forgotPassword: '/forgotPassword',
     resetPassword: '/resetPassword',
+
     //private routes
     personal: '/personal',
 };

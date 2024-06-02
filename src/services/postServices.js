@@ -7,6 +7,11 @@ export const getPosts = async () => {
     }
 };
 
+export const getPostsById = async ({ postsId }) => {
+    const res = await httpRequest.get(`NewspaperArticle/${postsId}`);
+    return res.data;
+};
+
 export const postPosts = async ({ title, markdown, htmlContent, userId }) => {
     const res = await httpRequest.post('NewspaperArticle', {
         title,

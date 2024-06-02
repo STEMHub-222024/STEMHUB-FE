@@ -1,70 +1,42 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames/bind';
 import styles from './Posts.module.scss';
 import PostItem from '~/components/Layouts/Components/PostItem';
 import Heading from '~/components/Common/Heading';
-import images from '~/assets/images';
 import Pagination from '~/components/Common/Pagination';
+import { getPostsAsync } from '~/app/slices/postSlice';
+import { selectPosts } from '~/app/selectors';
 
 const cx = classNames.bind(styles);
 
 function Posts() {
-    const [data, setData] = useState([
-        {
-            title: 'Authentication & Authorization trong ReactJS',
-            desc: 'Authentication và Authorization là một phần quan trọng trong việc phát triển phần mềm, giúp chúng ta xác thực và phân quyền...',
-            image: images.posts_1,
-        },
-        {
-            title: 'Hướng dẫn chi tiết cách sử dụng Dev Mode trong khóa Pro',
-            desc: 'Chào bạn! Nếu bạn đã là học viên khóa Pro của F8, chắc hẳn bạn đã biết tới "Dev Mode" - giúp thực hành code song song khi xem.',
-            image: images.posts_2,
-        },
-        {
-            title: 'Cách chỉnh theme Oh-my-posh cho Powershell',
-            desc: 'Hello ae mọi người nhé, mọi người (đặc biệt là lập trình viên Software) chắc hẳn đã nghe tới Powershell, nhưng bù lại cái màn hình...',
-            image: images.posts_3,
-        },
-        {
-            title: 'Sự khác biệt giữa var, let và const trong JavaScript',
-            desc: 'Tôi muốn thảo luận chi tiết về các từ khóa var,...',
-            image: images.posts_4,
-        },
-        {
-            title: 'Cách chỉnh theme Oh-my-posh cho Powershell',
-            desc: 'Hello ae mọi người nhé, mọi người (đặc biệt là lập trình viên Software) chắc hẳn đã nghe tới Powershell, nhưng bù lại cái màn hình...',
-            image: images.posts_3,
-        },
-        {
-            title: 'Sự khác biệt giữa var, let và const trong JavaScript',
-            desc: 'Tôi muốn thảo luận chi tiết về các từ khóa var,...',
-            image: images.posts_4,
-        },
-        {
-            title: 'Cách chỉnh theme Oh-my-posh cho Powershell',
-            desc: 'Hello ae mọi người nhé, mọi người (đặc biệt là lập trình viên Software) chắc hẳn đã nghe tới Powershell, nhưng bù lại cái màn hình...',
-            image: images.posts_3,
-        },
-        {
-            title: 'Sự khác biệt giữa var, let và const trong JavaScript',
-            desc: 'Tôi muốn thảo luận chi tiết về các từ khóa var,...',
-            image: images.posts_4,
-        },
-    ]);
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const [recordsPerPage] = useState(3);
+    const dispatch = useDispatch();
+    const { posts } = useSelector(selectPosts).data;
+    const currentPageNew = localStorage.getItem('currentPage');
+    const [currentPage, setCurrentPage] = useState(parseInt(currentPageNew) ?? 1);
+    const [recordsPerPage] = useState(6);
 
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentRecords = data.slice(indexOfFirstRecord, indexOfLastRecord);
-    const nPages = Math.ceil(data.length / recordsPerPage);
+    const currentRecords = posts.slice(indexOfFirstRecord, indexOfLastRecord);
+    const nPages = Math.ceil(posts.length / recordsPerPage);
 
+    localStorage.setItem('currentPage', currentPage);
+
+    useEffect(() => {
+        const fetchApi = async () => {
+            try {
+                await dispatch(getPostsAsync());
+            } catch (rejectedValueOrSerializedError) {
+                console.error(rejectedValueOrSerializedError);
+            }
+        };
+        fetchApi();
+    }, [dispatch]);
     return (
         <div className={cx('wrapper')}>
             <div className={cx('grid')}>
-                {/* <div className={cx('grid-row')}>
-                    <div className={cx('grid-column-8')}> */}
                 <div className={cx('posts-content')}>
                     <div className={cx('grid-row')}>
                         <div className={cx('grid-column-12')}>
@@ -85,9 +57,6 @@ function Posts() {
                         </div>
                     </div>
                 </div>
-                {/* </div>
-                    <div className={cx('grid-column-4')}></div>
-                </div> */}
             </div>
         </div>
     );

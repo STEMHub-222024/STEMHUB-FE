@@ -14,7 +14,7 @@ const cx = classNames.bind(styles);
 
 function CommonItem({ data }) {
     const dispatch = useDispatch();
-    const { title, userId } = data;
+    const { newspaperArticleId, title, userId } = data;
     const [userInfo, setUserInfo] = useState({});
 
     useEffect(() => {
@@ -55,7 +55,7 @@ function CommonItem({ data }) {
                             <IconCircleCheckFilled size={15} className={cx('icon-check')} />
                         </div>
                     </Button>
-                    <Button className={cx('btn-view-post')} mainColor small>
+                    <Button to={`/posts/${newspaperArticleId}`} className={cx('btn-view-post')} mainColor small>
                         View article
                     </Button>
                 </div>
