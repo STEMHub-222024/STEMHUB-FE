@@ -1,5 +1,12 @@
 import * as httpRequest from '~/utils/httpRequest';
 
+export const getUseAll = async () => {
+    const res = await httpRequest.get('User');
+    if (res.status === 200) {
+        return res.data;
+    }
+};
+
 export const getUserId = async ({ userId }) => {
     const res = await httpRequest.get(`User/${userId}`);
     if (res.status === 200) {

@@ -35,7 +35,7 @@ const safetySettings = [
 ];
 
 async function run(prompt) {
-    const chatSession = model.startChat({
+    const chatSession = model?.startChat({
         generationConfig,
         safetySettings,
         history: [],

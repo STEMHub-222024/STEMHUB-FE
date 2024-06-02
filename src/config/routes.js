@@ -22,6 +22,12 @@ const routes = {
 
     //admin
     admin: '/admin/',
+    learner: '/admin/learner',
+    postsAdmin: '/admin/posts',
+    banner: '/admin/banner',
+    steam10Admin: '/admin/stem10',
+    steam11Admin: '/admin/stem11',
+    steam12Admin: '/admin/stem12',
 };
 
 export default routes;

@@ -25,6 +25,10 @@ import Profile from '~/pages/Profile';
 
 // Admin
 import Dashboard from '~/pages/Admin/Dashboard/Dashboard';
+import Learner from '~/pages/Admin/Learner';
+import AdminStem10 from '~/pages/Admin/Stem10';
+import AdminStem11 from '~/pages/Admin/Stem11';
+import AdminStem12 from '~/pages/Admin/Stem12';
 
 // Not Found
 // import Error from '~/pages/Error';
@@ -46,6 +50,10 @@ const publicRouter = [
     { path: config.routes.resetPassword, component: ResetPassword, layout: null },
     //Admin
     { path: config.routes.admin, component: Dashboard, layout: AdminLayout },
+    { path: config.routes.learner, component: Learner, layout: AdminLayout },
+    { path: config.routes.steam10Admin, component: AdminStem10, layout: AdminLayout },
+    { path: config.routes.steam11Admin, component: AdminStem11, layout: AdminLayout },
+    { path: config.routes.steam12Admin, component: AdminStem12, layout: AdminLayout },
 ];
 
 const privateRouter = [
