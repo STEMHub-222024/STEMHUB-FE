@@ -19,6 +19,9 @@ const routes = {
 
     //private routes
     personal: '/personal',
+
+    //admin
+    admin: '/admin/',
 };
 
 export default routes;

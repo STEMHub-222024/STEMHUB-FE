@@ -4,6 +4,7 @@ import config from '~/config';
 //Layouts
 import LessonLayout from '~/components/Layouts/LessonLayout';
 import PostsLayout from '~/components/Layouts/PostsLayout';
+import AdminLayout from '~/components/Layouts/AdminLayout/AdminLayout';
 
 //public page
 import Home from '~/pages/Home';
@@ -21,6 +22,9 @@ import ForgotPassword from '~/pages/ForgotPassword';
 import ResetPassword from '~/pages/ResetPassword';
 //private page
 import Profile from '~/pages/Profile';
+
+// Admin
+import Dashboard from '~/pages/Admin/Dashboard/Dashboard';
 
 // Not Found
 // import Error from '~/pages/Error';
@@ -40,6 +44,8 @@ const publicRouter = [
     { path: config.routes.register, component: Register, layout: null },
     { path: config.routes.forgotPassword, component: ForgotPassword, layout: null },
     { path: config.routes.resetPassword, component: ResetPassword, layout: null },
+    //Admin
+    { path: config.routes.admin, component: Dashboard, layout: AdminLayout },
 ];
 
 const privateRouter = [
