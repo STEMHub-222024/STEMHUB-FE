@@ -105,15 +105,17 @@ function HeaderPost() {
             try {
                 const newData = {
                     title,
+                    image: backgroundImage,
                     markdown,
                     htmlContent,
                     userId: infoUserCurrent.userId,
                 };
+                console.log('newData', newData);
                 const res = await dispatch(postPostsAsync(newData)).unwrap();
                 if (res) {
                     // Chuyen huong
                     console.log('1');
-                    // setIsModalOpen(!isModalOpen);
+                    setIsModalOpen(!isModalOpen);
                 }
             } catch (error) {
                 console.error('Failed to fetch user:', error);

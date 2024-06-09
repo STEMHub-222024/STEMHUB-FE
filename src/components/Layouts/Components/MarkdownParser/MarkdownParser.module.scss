@@ -1,11 +1,11 @@
 .wrapper {
     word-wrap: break-word;
     color: var(--text-color);
-    font-size: 1.4rem;
     line-height: 2;
     line-height: var(--line-height, 2);
 
-    p {
-        margin: 6px 0;
+    ul,
+    ol {
+        margin-left: 18px;
     }
 }

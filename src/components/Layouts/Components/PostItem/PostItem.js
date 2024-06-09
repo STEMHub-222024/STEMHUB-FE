@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { IconCircleCheckFilled, IconDots } from '@tabler/icons-react';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';
 import Button from '~/components/Common/Button';
-import config from '~/config';
 import images from '~/assets/images';
 import Heading from '~/components/Common/Heading';
 import Image from '~/components/Common/Image';
@@ -40,7 +39,7 @@ function PostItem({ data }) {
         <div className={cx('wrapper')}>
             <div className={cx('header')}>
                 <div className={cx('author')}>
-                    <Button to={config.routes.personal} className={cx('group-avatar')}>
+                    <Button to={`/posts/${data.newspaperArticleId}`} className={cx('group-avatar')}>
                         <FallbackAvatar
                             className={cx('avatar')}
                             linkImage={images.avatar_1 ?? userInfo.image}
@@ -66,7 +65,7 @@ function PostItem({ data }) {
                             {data.title}
                         </Heading>
                     </Link>
-                    <p className={cx('desc')}>{data.markdown}</p>
+                    <p className={cx('desc')}></p>
                 </div>
                 <div className={cx('thumb')}>
                     <Link to={`/posts/${data.newspaperArticleId}`}>

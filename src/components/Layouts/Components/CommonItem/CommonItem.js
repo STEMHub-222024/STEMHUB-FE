@@ -17,6 +17,7 @@ function CommonItem({ data }) {
     const { newspaperArticleId, title, userId } = data;
     const [userInfo, setUserInfo] = useState({});
 
+    // console.log('data', data);
     useEffect(() => {
         const fetchUsers = async () => {
             try {

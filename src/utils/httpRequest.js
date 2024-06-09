@@ -9,13 +9,13 @@ export const get = async (path, options = {}) => {
     return response;
 };
 
-export const post = async (path, options = {}) => {
-    const response = await httpRequest.post(path, options);
+export const post = async (path, data, options = {}) => {
+    const response = await httpRequest.post(path, data, options);
     return response;
 };
 
-export const put = async (path, options = {}) => {
-    const response = await httpRequest.put(path, options);
+export const put = async (path, data, options = {}) => {
+    const response = await httpRequest.put(path, data, options);
     return response;
 };
 
