@@ -1,6 +1,6 @@
 import 'tippy.js/dist/tippy.css';
 import Cookies from 'js-cookie';
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Tippy from '@tippyjs/react';
 import classNames from 'classnames/bind';
@@ -20,12 +20,15 @@ import { IconBellFilled, IconUser, IconReport, IconArrowBarRight, IconPencil } f
 import { selectAuth } from '~/app/selectors';
 import { setAllow } from '~/app/slices/authSlice';
 import checkCookie from '~/utils/checkCookieExists';
+import { getUserIdAsync } from '~/app/slices/userSlice';
 
 const cx = classNames.bind(styles);
 
 function Header() {
     const dispatch = useDispatch();
     const { infoUserCurrent, allow } = useSelector(selectAuth).data;
+    const [resetToken, setResetToken] = useState(false);
+    const [userInfo, setUserInfo] = useState({});
 
     useLayoutEffect(() => {
         checkCookie(dispatch)
@@ -35,7 +38,23 @@ function Header() {
             .catch((isUser) => {
                 dispatch(setAllow(isUser));
             });
-    }, [dispatch]);
+    }, [dispatch, resetToken]);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            if (!infoUserCurrent.userId) {
+                setResetToken(!resetToken);
+            } else {
+                try {
+                    const res = await dispatch(getUserIdAsync({ userId: infoUserCurrent.userId })).unwrap();
+                    if (res) setUserInfo(res);
+                } catch (error) {
+                    console.error('Failed to fetch user:', error);
+                }
+            }
+        };
+        fetchUser();
+    }, [dispatch, infoUserCurrent, resetToken]);
 
     const handleLogout = () => {
         Cookies.remove('accessToken');
@@ -96,7 +115,11 @@ function Header() {
                             </Tippy>
 
                             <MenuPopper items={userMenu} infoUserCurrent={infoUserCurrent}>
-                                <Image className={cx('user-avatar')} src={images.avatar_1} alt="Nguyen văn A" />
+                                <Image
+                                    className={cx('user-avatar')}
+                                    src={userInfo.image ?? images.avatar_1}
+                                    alt={userInfo.firstName ?? 'Avatar'}
+                                />
                             </MenuPopper>
                         </div>
                     ) : (

@@ -1,5 +1,5 @@
 import 'tippy.js/dist/tippy.css';
-import { useRef, useState, useLayoutEffect } from 'react';
+import { useRef, useState, useLayoutEffect, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
 import Tippy from '@tippyjs/react';
@@ -23,10 +23,12 @@ import {
 import Modal from '~/components/Common/Modal';
 import { selectAuth, selectPosts } from '~/app/selectors';
 import { postPostsAsync } from '~/app/slices/postSlice';
+import { getUserIdAsync } from '~/app/slices/userSlice';
 
 //Auth
 import { setAllow } from '~/app/slices/authSlice';
 import checkCookie from '~/utils/checkCookieExists';
+import { deleteImage, postImage } from '~/services/uploadImage';
 
 const cx = classNames.bind(styles);
 
@@ -34,10 +36,11 @@ function HeaderPost() {
     const fileInputRef = useRef(null);
     const dispatch = useDispatch();
     const { infoUserCurrent } = useSelector(selectAuth).data;
-    const { title, markdown, htmlContent, posts } = useSelector(selectPosts).data;
+    const { title, markdown, htmlContent } = useSelector(selectPosts).data;
     const [backgroundImage, setBackgroundImage] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [resetToken, setResetToken] = useState(false);
+    const [userInfo, setUserInfo] = useState({});
 
     useLayoutEffect(() => {
         checkCookie(dispatch)
@@ -48,6 +51,22 @@ function HeaderPost() {
                 dispatch(setAllow(isUser));
             });
     }, [dispatch, resetToken]);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            if (!infoUserCurrent.userId) {
+                setResetToken(!resetToken);
+            } else {
+                try {
+                    const res = await dispatch(getUserIdAsync({ userId: infoUserCurrent.userId })).unwrap();
+                    if (res) setUserInfo(res);
+                } catch (error) {
+                    console.error('Failed to fetch user:', error);
+                }
+            }
+        };
+        fetchUser();
+    }, [dispatch, infoUserCurrent, resetToken]);
 
     const handleLogout = () => {
         Cookies.remove('accessToken');
@@ -93,7 +112,7 @@ function HeaderPost() {
                 const res = await dispatch(postPostsAsync(newData)).unwrap();
                 if (res) {
                     // Chuyen huong
-                    // console.log('1');
+                    console.log('1');
                     // setIsModalOpen(!isModalOpen);
                 }
             } catch (error) {
@@ -110,19 +129,26 @@ function HeaderPost() {
     const handleFileClick = () => {
         fileInputRef.current.click();
     };
+    const handleFileChange = async (event) => {
+        const currentImageURL = backgroundImage;
 
-    const handleFileChange = (event) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
-            const imageURL = URL.createObjectURL(file);
-            setBackgroundImage(imageURL);
+            if (file) {
+                try {
+                    const imageURL = await postImage(file);
+                    setBackgroundImage(imageURL.fileUrl);
+                    if (currentImageURL) {
+                        await deleteImage(currentImageURL.split('uploadimage/')[1]);
+                    }
+                } catch (error) {
+                    message.error('Tải hình ảnh lên không thành công!');
+                }
+            }
         } else {
             message.info('Không có file nào được chọn.');
         }
     };
-
-    console.log('posts', posts);
-
     return (
         <>
             <header className={cx('wrapper')}>
@@ -158,7 +184,11 @@ function HeaderPost() {
                             </Tippy>
 
                             <MenuPopper items={userMenu} infoUserCurrent={infoUserCurrent}>
-                                <Image className={cx('user-avatar')} src={images.avatar_1} alt="Nguyen văn A" />
+                                <Image
+                                    className={cx('user-avatar')}
+                                    src={userInfo.image ?? images.avatar_1}
+                                    alt={userInfo.firstName ?? 'Avatar'}
+                                />
                             </MenuPopper>
                         </div>
                     </div>

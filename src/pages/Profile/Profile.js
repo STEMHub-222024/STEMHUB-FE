@@ -149,7 +149,7 @@ function Profile() {
         }
     };
     const handleFileRemove = async (file) => {
-        if (!file.url) return;
+        if (!file.url || file.url === undefined) return;
         setImageWaitRemove(file.url);
     };
 
