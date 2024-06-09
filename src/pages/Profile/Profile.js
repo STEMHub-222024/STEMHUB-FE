@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useEffect } from 'react';
+import React, { useState, useLayoutEffect, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './Profile.module.scss';
@@ -8,10 +8,11 @@ import { selectAuth } from '~/app/selectors';
 import { getUserIdAsync, putUserIdAsync } from '~/app/slices/userSlice';
 import Validator, { isRequired, isEmail } from '~/utils/validation';
 import { PlusOutlined } from '@ant-design/icons';
-import { Image as ImageNew, Upload } from 'antd';
+import { Image as ImageNew, Upload, message } from 'antd';
 import { setAllow } from '~/app/slices/authSlice';
 import checkCookie from '~/utils/checkCookieExists';
 import getBase64 from '~/utils/getBase64';
+import { postImage, deleteImage } from '~/services/uploadImage';
 
 const cx = classNames.bind(styles);
 
@@ -28,6 +29,7 @@ function Profile() {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [fileList, setFileList] = useState([]);
+    const [imageWaitRemove, setImageWaitRemove] = useState('');
 
     useLayoutEffect(() => {
         checkCookie(dispatch)
@@ -60,6 +62,15 @@ function Profile() {
         setLastName(userInfo.lastName || '');
         setPhone(userInfo.phoneNumber || '');
         setEmail(userInfo.email || '');
+        setFileList(
+            [
+                {
+                    name: 'Avatar',
+                    status: 'done',
+                    url: userInfo.image,
+                },
+            ] || [],
+        );
     }, [userInfo]);
 
     const handleChange = (setter) => (e) => setter(e.target.value);
@@ -80,14 +91,27 @@ function Profile() {
             if (!infoUserCurrent.userId) {
                 setResetToken(!resetToken);
             } else {
+                if (imageWaitRemove) {
+                    try {
+                        await deleteImage(imageWaitRemove.split('uploadimage/')[1]);
+                    } catch (error) {
+                        console.error('Failed to fetch user:', error);
+                    }
+                }
                 try {
+                    const { lastName, firstName, email, phone } = data;
                     const newData = {
-                        ...data,
-                        image: fileList[0].thumbUrl,
+                        lastName,
+                        firstName,
+                        email,
+                        phoneNumber: phone,
+                        image: fileList[0]?.url ?? '',
                         userId: infoUserCurrent.userId,
                     };
                     const res = await dispatch(putUserIdAsync(newData)).unwrap();
-                    console.log('res', res);
+                    if (res) {
+                        message.success(res.message);
+                    }
                 } catch (error) {
                     console.error('Failed to fetch user:', error);
                 }
@@ -103,8 +127,32 @@ function Profile() {
         setPreviewOpen(true);
     };
 
-    const handleFileChange = ({ fileList: newFileList }) => setFileList(newFileList);
-    //  {/* Fix */}
+    const handleFileChange = async ({ fileList: newFileList }) => {
+        if (newFileList.length > 0 && newFileList[0].status !== 'uploading') {
+            const response = await postImage(newFileList[0].originFileObj);
+            if (response) {
+                setFileList((prev) => [
+                    ...prev,
+                    {
+                        uid: newFileList[0].uid,
+                        name: newFileList[0].name,
+                        status: 'done',
+                        url: response.fileUrl,
+                    },
+                ]);
+            } else {
+                setFileList(newFileList);
+                message.error('Tải hình ảnh lên không thành công!');
+            }
+        } else {
+            setFileList(newFileList);
+        }
+    };
+    const handleFileRemove = async (file) => {
+        if (!file.url) return;
+        setImageWaitRemove(file.url);
+    };
+
     const uploadButton = (
         <button style={{ border: 0, background: 'none' }} type="button">
             <PlusOutlined />
@@ -120,11 +168,14 @@ function Profile() {
             <form className={cx('formBody', { form: true })} id="form-1">
                 <div id="file" className={cx('group-avatar')}>
                     <Upload
-                        listType="picture-circle"
+                        listType="picture-card"
                         fileList={fileList}
                         onPreview={handlePreview}
                         onChange={handleFileChange}
                         maxCount={1}
+                        beforeUpload={() => false}
+                        onRemove={handleFileRemove}
+                        id="file"
                     >
                         {fileList.length >= 1 ? null : uploadButton}
                     </Upload>

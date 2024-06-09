@@ -44,7 +44,6 @@ export const resetPasswordAsync = createAsyncThunk('user/resetPasswordAsync', as
 
 export const putUserIdAsync = createAsyncThunk('user/putUserIdAsync', async (infoData, { rejectWithValue }) => {
     try {
-        console.log('infoData', infoData);
         const response = await userService.putUserById(infoData);
         return response;
     } catch (err) {

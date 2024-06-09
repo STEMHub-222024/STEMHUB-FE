@@ -36,7 +36,7 @@ export const resetPassword = async ({ emailUser, passwordUser, confirmPassword, 
 };
 
 export const putUserById = async ({ lastName, firstName, email, phoneNumber, image, userId }) => {
-    const res = await httpRequest.post(`User/${userId}`, {
+    const res = await httpRequest.put(`User/${userId}`, {
         lastName,
         firstName,
         email,
