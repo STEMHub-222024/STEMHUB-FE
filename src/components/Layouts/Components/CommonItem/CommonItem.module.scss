@@ -11,12 +11,12 @@
     }
 
     .group-images {
-        height: 170px;
+        height: 200px;
 
         .images {
             padding-top: 100%;
             background-repeat: no-repeat;
-            background-size: contain;
+            background-size: 100% 200px;
             border-radius: 30px;
             border-bottom-left-radius: 30px;
             border-bottom-right-radius: 30px;

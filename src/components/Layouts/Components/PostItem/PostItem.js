@@ -42,7 +42,7 @@ function PostItem({ data }) {
                     <Button to={`/posts/${data.newspaperArticleId}`} className={cx('group-avatar')}>
                         <FallbackAvatar
                             className={cx('avatar')}
-                            linkImage={images.avatar_1 ?? userInfo.image}
+                            linkImage={userInfo.image ?? images.avatar_1}
                             altImage="avatar"
                         />
                         <div className={cx('info')}>

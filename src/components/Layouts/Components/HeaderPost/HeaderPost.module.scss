@@ -153,6 +153,13 @@
             line-height: 1.4;
             outline: none;
         }
+        .title-placeholder:empty::before {
+            color: #b3b3b1;
+            content: attr(data-empty-text);
+            pointer-events: none;
+            font-size: 1.8rem;
+            font-weight: 400;
+        }
         p {
             color: var(--desc-color);
             font-size: 1.4rem;

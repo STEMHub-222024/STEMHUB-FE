@@ -14,10 +14,10 @@ const cx = classNames.bind(styles);
 
 function CommonItem({ data }) {
     const dispatch = useDispatch();
-    const { newspaperArticleId, title, userId } = data;
+    const { newspaperArticleId, title, userId, image } = data;
     const [userInfo, setUserInfo] = useState({});
 
-    // console.log('data', data);
+    console.log('data', data);
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -38,7 +38,7 @@ function CommonItem({ data }) {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('group-images')}>
-                <div className={cx('images')} style={{ backgroundImage: `url(${images.posts_1})` }}></div>
+                <div className={cx('images')} style={{ backgroundImage: `url(${image ?? images.posts_1})` }}></div>
             </div>
             <div className={cx('content')}>
                 <Heading className={cx('name')} h4>

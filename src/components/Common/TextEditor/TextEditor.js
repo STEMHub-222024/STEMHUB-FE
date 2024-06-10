@@ -22,7 +22,7 @@ import { postImage, deleteImage } from '~/services/uploadImage';
 const cx = classNames.bind(styles);
 
 const mdParser = new MarkdownIt({
-    html: false, // Sử dụng HTML cho các danh sách
+    html: true,
     linkify: true,
     typographer: true,
     highlight: function (str, lang) {
@@ -31,7 +31,7 @@ const mdParser = new MarkdownIt({
                 return hljs.highlight(lang, str).value;
             } catch (__) {}
         }
-        return ''; // use external default escaping
+        return '';
     },
 })
     .use(emoji)
@@ -116,6 +116,10 @@ function TextEditor({ placeholder, height = '500px', showHtml = false, className
         [className]: className,
     });
 
+    const renderHTML = (text) => {
+        return <div className={cx('wrapperEdit')} dangerouslySetInnerHTML={{ __html: mdParser.render(text) }}></div>;
+    };
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('text-editor')}>
@@ -125,16 +129,16 @@ function TextEditor({ placeholder, height = '500px', showHtml = false, className
                     view={{ menu: true, md: true, html: showHtml }}
                     style={{ height: height }}
                     className={classes}
-                    renderHTML={(text) => mdParser.render(text)}
+                    renderHTML={renderHTML}
                     onChange={handleEditorChange}
                     config={{
                         view: {
-                            menu: true, // Hiển thị menu
-                            md: true, // Hiển thị tab Markdown
-                            html: true, // Hiển thị tab HTML
+                            menu: true,
+                            md: true,
+                            html: true,
                         },
                         shortcuts: {
-                            toggleUnorderedList: 'Cmd-Shift-U', // Phím tắt để chuyển đổi giữa danh sách không có thứ tự
+                            toggleUnorderedList: 'Shift-U',
                         },
                     }}
                 />

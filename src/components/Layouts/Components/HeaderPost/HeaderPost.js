@@ -97,7 +97,10 @@ function HeaderPost() {
             logout: handleLogout,
         },
     ];
-
+    const handleTitlePlaceholder = (e) => {
+        const newTitle = e.target.textContent;
+        console.log('New Title:', newTitle);
+    };
     const handlePost = async () => {
         if (!infoUserCurrent.userId) {
             setResetToken(!resetToken);
@@ -226,9 +229,15 @@ function HeaderPost() {
                                 ''
                             )}
                         </div>
-                        <div contentEditable={false} className={cx('title-review')}>
-                            {title}
-                        </div>
+                        <div className={cx('title-review')}>{title}</div>
+                        <div
+                            contentEditable={true}
+                            className={cx('title-review', {
+                                'title-placeholder': true,
+                            })}
+                            data-empty-text="Nhập mô tả khi tin được hiển thị"
+                            onInput={handleTitlePlaceholder}
+                        ></div>
                         <p>
                             <strong>Lưu ý: </strong>
                             Chỉnh sửa tại đây sẽ thay đổi cách bài viết được hiển thị tại trang chủ, tin nổi bật - Chứ
