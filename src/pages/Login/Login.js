@@ -60,8 +60,6 @@ function Login() {
                                 Cookies.set('saveRefreshToken', JSON.stringify(result.response), {
                                     expires: 7,
                                 });
-
-                                toast.success('Đăng nhập thành công...!');
                                 navigate(config.routes.home);
                             }
                         } catch (rejectedValueOrSerializedError) {

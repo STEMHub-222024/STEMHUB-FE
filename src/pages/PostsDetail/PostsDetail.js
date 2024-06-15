@@ -9,8 +9,8 @@ import config from '~/config';
 import Heading from '~/components/Common/Heading';
 import Reaction from '~/components/Layouts/Components/Reaction';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';
-import images from '~/assets/images';
 import MarkdownParser from '~/components/Layouts/Components/MarkdownParser';
+import formatDateToNow from '~/utils/formatDateToNow';
 
 import { getUserIdAsync } from '~/app/slices/userSlice';
 import { getPostsByIdAsync } from '~/app/slices/postSlice';
@@ -22,7 +22,7 @@ function PostsDetail() {
     const { postsId } = useParams();
     const dispatch = useDispatch();
     const { post } = useSelector(selectPosts).data;
-    const { title, htmlContent, userId } = post;
+    const { title, htmlContent, userId, create_at } = post;
     const [userInfo, setUserInfo] = useState({});
 
     useEffect(() => {
@@ -62,11 +62,11 @@ function PostsDetail() {
                 <div className={cx('grid-row')}>
                     <div className={cx('grid-column-3', { repositoryMarginLeft: true })}>
                         <div className={cx('aside')}>
-                            <Button to={config.routes.home} text>
+                            <div style={{ textAlign: 'center' }}>
                                 <Heading className={cx('userName')} h4>
-                                    {userInfo.firstName}
+                                    {`${userInfo.firstName} ${userInfo.lastName}`}
                                 </Heading>
-                            </Button>
+                            </div>
                             <p className={cx('userTitle')}></p>
                             <hr />
                             <Reaction />
@@ -81,19 +81,21 @@ function PostsDetail() {
                                         <FallbackAvatar
                                             className={cx('avatar')}
                                             pro
-                                            linkImage={userInfo.image ?? images.avatar_1}
+                                            linkImage={userInfo.image}
                                             altImage="avatar"
                                         />
                                     </Link>
                                     <div className={cx('info')}>
                                         <Link to={config.routes.home}>
-                                            <span className={cx('name')}>{userInfo.firstName}</span>
+                                            <span
+                                                className={cx('name')}
+                                            >{`${userInfo.firstName} ${userInfo.lastName}`}</span>
                                         </Link>
-                                        <p className={cx('time')}>5 tháng trước</p>
+                                        <p className={cx('time')}>{create_at && formatDateToNow(create_at)}</p>
                                     </div>
                                 </div>
                                 <div className={cx('actions')}>
-                                    <Button text onClick={() => console.log('1')}>
+                                    <Button text>
                                         <IconDots size={20} />
                                     </Button>
                                 </div>

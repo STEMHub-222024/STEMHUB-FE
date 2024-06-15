@@ -49,7 +49,7 @@ function Heading({ className, onClick, children, ...passProps }) {
 }
 
 Heading.propTypes = {
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node,
     className: PropTypes.string,
     onClick: PropTypes.func,
     passProps: PropTypes.object,

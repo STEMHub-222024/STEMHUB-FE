@@ -60,7 +60,7 @@ function Register() {
                             }
                         } catch (rejectedValueOrSerializedError) {
                             inputNameRef.current.focus();
-                            console.error(rejectedValueOrSerializedError);
+                            message.error('Đăng ký thất bại...!');
                         }
                     };
                     fetchApi();

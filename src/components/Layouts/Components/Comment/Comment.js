@@ -2,12 +2,11 @@ import classNames from 'classnames/bind';
 import Cookies from 'js-cookie';
 import { message, Popconfirm } from 'antd';
 import { useEffect, useLayoutEffect, useState, memo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { IconTrash } from '@tabler/icons-react';
 
 import styles from './Comment.module.scss';
 import CommentBox from '~/components/Layouts/Components/CommentBox';
-import config from '~/config';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';
 import MarkdownParser from '~/components/Layouts/Components/MarkdownParser';
 import { handleSplitParam } from '~/utils/splitParamUrl';
@@ -96,72 +95,70 @@ function Comment() {
     };
     return (
         <div className={cx('detailRow')}>
-            {allow && (
-                <>
-                    <CommentBox commentByLessonIds={commentByLessonIds} />
-                    <div className={cx('container')}>
-                        {commentByLessonIds && commentByLessonIds.length > 0
-                            ? commentByLessonIds.map((comment) => {
-                                  const user = userInfoMap[comment.userId];
-                                  return (
-                                      <div key={comment.commentId} className={cx('detailComment')}>
-                                          <div className={cx('avatarWrap')}>
-                                              <Link to={config.routes.home}>
-                                                  <div className={cx('avatarWrapper')}>
-                                                      <FallbackAvatar
-                                                          className={cx('avatar')}
-                                                          linkImage={user?.image ?? ''}
-                                                          altImage={user?.lastName ?? 'image'}
-                                                      />
-                                                  </div>
-                                              </Link>
+            <>
+                {allow && <CommentBox commentByLessonIds={commentByLessonIds} />}
+                <div className={cx('container')}>
+                    {commentByLessonIds && commentByLessonIds.length > 0
+                        ? commentByLessonIds.map((comment) => {
+                              const user = userInfoMap[comment.userId];
+                              return (
+                                  <div key={comment.commentId} className={cx('detailComment')}>
+                                      <div className={cx('avatarWrap')}>
+                                          <div>
+                                              <div className={cx('avatarWrapper')}>
+                                                  <FallbackAvatar
+                                                      className={cx('avatar')}
+                                                      linkImage={user?.image}
+                                                      altImage={user?.lastName ?? 'avatar'}
+                                                  />
+                                              </div>
                                           </div>
-                                          <div className={cx('commentBody')}>
-                                              <div className={cx('commentInner')}>
-                                                  <div className={cx('commentWrapper')}>
-                                                      <div className={cx('commentContent')}>
-                                                          <div className={cx('commentHeading')}>
-                                                              <Link to={config.routes.home}>
-                                                                  <span
-                                                                      className={cx('commentAuthor')}
-                                                                  >{`${user?.firstName} ${user?.lastName}`}</span>
-                                                              </Link>
-                                                              {comment.userId === infoUserCurrent.userId && (
-                                                                  <Popconfirm
-                                                                      title="Xoá Bình luận"
-                                                                      description="Bạn có chắc muốn xoá không?"
-                                                                      onConfirm={() => confirm(comment.commentId)}
-                                                                      okText="Xoá"
-                                                                      cancelText="Không"
-                                                                  >
-                                                                      <IconTrash className={cx('iconRemoveComment')} />
-                                                                  </Popconfirm>
-                                                              )}
+                                      </div>
+                                      <div className={cx('commentBody')}>
+                                          <div className={cx('commentInner')}>
+                                              <div className={cx('commentWrapper')}>
+                                                  <div className={cx('commentContent')}>
+                                                      <div className={cx('commentHeading')}>
+                                                          <div>
+                                                              <span
+                                                                  className={cx('commentAuthor')}
+                                                              >{`${user?.firstName} ${user?.lastName}`}</span>
                                                           </div>
-                                                          <div className={cx('commentText')}>
-                                                              <MarkdownParser content_C={comment.content_C} />
-                                                          </div>
+                                                          {allow && comment.userId === infoUserCurrent.userId && (
+                                                              <Popconfirm
+                                                                  title="Xoá Bình luận"
+                                                                  description="Bạn có chắc muốn xoá không?"
+                                                                  onConfirm={() => confirm(comment.commentId)}
+                                                                  okText="Xoá"
+                                                                  cancelText="Không"
+                                                              >
+                                                                  <IconTrash className={cx('iconRemoveComment')} />
+                                                              </Popconfirm>
+                                                          )}
                                                       </div>
-                                                      <div className={cx('commentTime')}>
-                                                          <div className={cx('createdAt')}>
-                                                              <div className={cx('createdAtLeft')}>
-                                                                  <button className={cx('iconWrapper')}>
-                                                                      <span className={cx('likeComment')}>Thích</span>
-                                                                  </button>
-                                                                  <span className={cx('replyComment')}>Trả lời</span>
-                                                              </div>
+                                                      <div className={cx('commentText')}>
+                                                          <MarkdownParser content_C={comment.content_C} />
+                                                      </div>
+                                                  </div>
+                                                  <div className={cx('commentTime')}>
+                                                      <div className={cx('createdAt')}>
+                                                          <div className={cx('createdAtLeft')}>
+                                                              <button className={cx('iconWrapper')}>
+                                                                  <span className={cx('likeComment')}>Thích</span>
+                                                              </button>
+                                                              <span className={cx('replyComment')}>Trả lời</span>
                                                           </div>
                                                       </div>
                                                   </div>
                                               </div>
                                           </div>
                                       </div>
-                                  );
-                              })
-                            : ''}
-                    </div>
-                </>
-            )}
+                                  </div>
+                              );
+                          })
+                        : ''}
+                </div>
+            </>
         </div>
     );
 }

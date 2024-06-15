@@ -13,6 +13,7 @@ import { setAllow } from '~/app/slices/authSlice';
 import checkCookie from '~/utils/checkCookieExists';
 import getBase64 from '~/utils/getBase64';
 import { postImage, deleteImage } from '~/services/uploadImage';
+import images from '~/assets/images';
 
 const cx = classNames.bind(styles);
 
@@ -30,6 +31,7 @@ function Profile() {
     const [previewImage, setPreviewImage] = useState('');
     const [fileList, setFileList] = useState([]);
     const [imageWaitRemove, setImageWaitRemove] = useState('');
+    console.log('infoUserCurrent', infoUserCurrent);
 
     useLayoutEffect(() => {
         checkCookie(dispatch)
@@ -67,7 +69,7 @@ function Profile() {
                 {
                     name: 'Avatar',
                     status: 'done',
-                    url: userInfo.image,
+                    url: userInfo.image ?? images.avatar_1,
                 },
             ] || [],
         );

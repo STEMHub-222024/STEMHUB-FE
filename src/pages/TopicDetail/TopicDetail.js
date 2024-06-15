@@ -1,12 +1,5 @@
 import { useParams } from 'react-router-dom';
-import {
-    IconPlayerPlay,
-    IconClipboardList,
-    IconMovie,
-    IconUsersGroup,
-    IconBattery4,
-    IconCheck,
-} from '@tabler/icons-react';
+import { IconPlayerPlay, IconMovie, IconUsersGroup, IconBattery4, IconCheck } from '@tabler/icons-react';
 import classNames from 'classnames/bind';
 import { NumericFormat } from 'react-number-format';
 import styles from './TopicDetail.module.scss';
@@ -16,12 +9,15 @@ import CurriculumOfCourse from '~/components/Common/CurriculumOfCourse';
 import { handleSplitParam } from '~/utils/splitParamUrl';
 
 //Service
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTopicId } from '~/app/slices/topicSlice';
 import { getLessonAsync, handleFilter } from '~/app/slices/lessonSlice';
 import { getIngredientAsync, handleFillerIngredient } from '~/app/slices/ingredientSlice';
 import { selectTopic, selectLesson, selectIngredient } from '~/app/selectors';
+
+import { Modal } from 'antd';
+import VideoPlayer from '~/components/Common/VideoPlayer';
 
 //Clear fetch
 const controller = new AbortController();
@@ -34,6 +30,9 @@ function TopicDetail() {
     const { topicIds } = useSelector(selectTopic);
     const { lessonFilter } = useSelector(selectLesson).data;
     const { ingredientFilter } = useSelector(selectIngredient).data;
+    const [open, setOpen] = useState(false);
+    const [setPlayedTime] = useState('0:00');
+
     useEffect(() => {
         const fetchApi = async () => {
             try {
@@ -87,99 +86,116 @@ function TopicDetail() {
     }, [dispatch, topic]);
 
     return (
-        <div className={cx('wrapper')}>
-            <div className={cx('grid', { 'topic-detail-content': 'topic-detail-content' })}>
-                <div className={cx('grid-row')}>
-                    <div className={cx('grid-column-8')}>
-                        <div className={cx('group-title')}>
-                            <Heading className={cx('heading')}>Bài viết nổi bật</Heading>
-                            <div className={cx('desc')}>
-                                <p>{topicIds?.description}</p>
-                            </div>
-                            <div className={cx('topicList')}>
-                                <Heading className={cx('topicHeading')} h2>
-                                    Nguyên liệu chuẩn bị
-                                </Heading>
-                                <section className={cx('row')}>
-                                    <section className={cx('col')}>
-                                        <ul className={cx('list')}>
-                                            {ingredientFilter
-                                                ? ingredientFilter.map((ingredient) => (
-                                                      <li key={ingredient?.ingredientsId}>
-                                                          <IconCheck className={cx('icon')} size={20} />
-                                                          <span>{ingredient?.ingredientsName}</span>
-                                                      </li>
-                                                  ))
-                                                : ''}
-                                        </ul>
-                                    </section>
-                                </section>
-                            </div>
-                        </div>
-                        <CurriculumOfCourse data={lessonFilter} />
-                    </div>
-                    <div className={cx('grid-column-4')}>
-                        <div className={cx('purchaseBadge')}>
-                            <div className={cx('imgPreview')}>
-                                <div
-                                    className={cx('bg')}
-                                    style={{
-                                        backgroundImage: `url("${topicIds?.topicImage}")`,
-                                    }}
-                                ></div>
-                                <div className={cx('overlay')}>
-                                    <IconPlayerPlay size={35} stroke={3} style={{ color: '#7f56d9' }} />
+        <>
+            <div className={cx('wrapper')}>
+                <div className={cx('grid', { 'topic-detail-content': 'topic-detail-content' })}>
+                    <div className={cx('grid-row')}>
+                        <div className={cx('grid-column-8')}>
+                            <div className={cx('group-title')}>
+                                <Heading className={cx('heading')}>Bài viết nổi bật</Heading>
+                                <div className={cx('desc')}>
+                                    <p>{topicIds?.description}</p>
                                 </div>
-                                <p>Xem giới thiệu khóa học</p>
+                                <div className={cx('topicList')}>
+                                    <Heading className={cx('topicHeading')} h2>
+                                        Nguyên liệu chuẩn bị
+                                    </Heading>
+                                    <section className={cx('row')}>
+                                        <section className={cx('col')}>
+                                            <ul className={cx('list')}>
+                                                {ingredientFilter
+                                                    ? ingredientFilter.map((ingredient) => (
+                                                          <li key={ingredient?.ingredientsId}>
+                                                              <IconCheck className={cx('icon')} size={20} />
+                                                              <span>{ingredient?.ingredientsName}</span>
+                                                          </li>
+                                                      ))
+                                                    : ''}
+                                            </ul>
+                                        </section>
+                                    </section>
+                                </div>
                             </div>
+                            <CurriculumOfCourse data={lessonFilter} />
+                        </div>
+                        <div className={cx('grid-column-4')}>
+                            <div className={cx('purchaseBadge')}>
+                                <div className={cx('imgPreview')}>
+                                    <div
+                                        className={cx('bg')}
+                                        style={{
+                                            backgroundImage: `url("${topicIds?.topicImage}")`,
+                                        }}
+                                    ></div>
+                                    <div className={cx('overlay')} onClick={() => setOpen(true)}>
+                                        <IconPlayerPlay size={35} stroke={3} style={{ color: '#7f56d9' }} />
+                                    </div>
+                                    <p>Xem giới thiệu chủ đề</p>
+                                </div>
 
-                            <h5>Miễn phí</h5>
+                                <h5>Miễn phí</h5>
 
-                            <Button
-                                className={cx('btn-join')}
-                                mainColor
-                                medium
-                                borderMedium
-                                to={
-                                    lessonFilter[0]?.lessonId
-                                        ? `${lessonFilter[0]?.lessonName}=${lessonFilter[0]?.lessonId}`
-                                        : ''
-                                }
-                            >
-                                {lessonFilter[0]?.lessonId ? 'Tham Gia học' : 'Sắp ra mắt'}
-                            </Button>
+                                <Button
+                                    className={cx('btn-join')}
+                                    mainColor
+                                    medium
+                                    borderMedium
+                                    to={
+                                        lessonFilter[0]?.lessonId
+                                            ? `${lessonFilter[0]?.lessonName}=${lessonFilter[0]?.lessonId}`
+                                            : ''
+                                    }
+                                >
+                                    {lessonFilter[0]?.lessonId ? 'Tham Gia học' : 'Sắp ra mắt'}
+                                </Button>
 
-                            <ul>
-                                <li>
-                                    <IconClipboardList className={cx('icon')} size={20} stroke={2} />
-                                    <span>Giang Viên nguyen viet duc</span>
-                                </li>
-                                <li>
-                                    <IconMovie className={cx('icon')} size={20} stroke={2} />
-                                    <span>Tổng số 13 bài học</span>
-                                </li>
-                                <li>
-                                    <IconUsersGroup className={cx('icon')} size={20} stroke={2} />
-                                    <span>
-                                        Tổng số
-                                        <NumericFormat
-                                            className={cx('numberFormat')}
-                                            value="14"
-                                            thousandSeparator="./"
-                                        />
-                                        học viên
-                                    </span>
-                                </li>
-                                <li>
-                                    <IconBattery4 className={cx('icon')} size={20} stroke={2} />
-                                    <span>Học mọi lúc, mọi nơi</span>
-                                </li>
-                            </ul>
+                                <ul>
+                                    <li>
+                                        <IconMovie className={cx('icon')} size={20} stroke={2} />
+                                        <span className={cx('list-item')}>Tổng số {lessonFilter.length} bài học</span>
+                                    </li>
+                                    <li>
+                                        <IconUsersGroup className={cx('icon')} size={20} stroke={2} />
+                                        <span className={cx('list-item')}>
+                                            Tổng số lượt xem
+                                            <NumericFormat
+                                                className={cx('numberFormat')}
+                                                value={topicIds?.view}
+                                                thousandSeparator="./"
+                                            />
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <IconBattery4 className={cx('icon')} size={20} stroke={2} />
+                                        <span className={cx('list-item')}>Học mọi lúc, mọi nơi</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <Modal
+                title="Giới thiệu chủ đề"
+                centered
+                open={open}
+                onCancel={() => setOpen(false)}
+                width={1000}
+                footer={null}
+            >
+                <div style={{ textAlign: 'center' }}>
+                    {topicIds.videoReview ? (
+                        <VideoPlayer pathVideo={topicIds.videoReview} setPlayedTime={setPlayedTime} />
+                    ) : (
+                        <div style={{ padding: '20px' }}>
+                            <h3>Thông báo</h3>
+                            <p>Hiện tại không có video nào để xem.</p>
+                        </div>
+                    )}
+                </div>
+            </Modal>
+        </>
     );
 }
 

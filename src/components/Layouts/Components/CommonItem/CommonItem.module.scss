@@ -73,6 +73,16 @@
                         transform: translateY(1px) translateX(2px);
                         color: var(--color-icon-blue);
                     }
+                    .user-name {
+                        word-wrap: break-word;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 1;
+                        color: #292929;
+                        display: -webkit-box;
+                        line-height: 1.4;
+                        width: 94px;
+                        overflow: hidden;
+                    }
                 }
             }
 

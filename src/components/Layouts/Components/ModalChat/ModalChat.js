@@ -2,7 +2,6 @@ import { useState, useRef } from 'react';
 import { Modal, Spin } from 'antd';
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import BoxMessage from '~/components/Layouts/Components/BoxMessage';
-import { marked } from 'marked';
 import styles from './ModalChat.module.scss';
 
 // GeminiAI
@@ -10,13 +9,12 @@ import config from '~/config';
 
 const ModalChat = ({ isOpen, setIsOpen }) => {
     const inputChatRef = useRef(null);
-    const [messages, setMessages] = useState([{ role: 'assistant', message: 'Welcome to Chat AI' }]);
+    const [messages, setMessages] = useState(() => {
+        const savedMessages = JSON.parse(sessionStorage.getItem('chatMessages'));
+        return savedMessages || [{ role: 'assistant', message: 'Welcome to Chat AI' }];
+    });
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-
-    const convertMarkdownToHtml = (markdown) => {
-        return marked(markdown);
-    };
 
     const typeWords = (words) => {
         let currentMessage = '';
@@ -47,17 +45,17 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
             setIsTyping(true);
 
             setMessages((prevMessages) => [{ role: 'user', message }, ...prevMessages]);
-
             setMessage('');
             inputChatRef.current?.focus();
 
             try {
                 const res = await config.runGemini(message);
-                const htmlResponse = convertMarkdownToHtml(res);
-                const newResponse = htmlResponse.split(' ');
-
+                const newResponse = res.split(' ');
+                sessionStorage.setItem(
+                    'chatMessages',
+                    JSON.stringify([{ role: 'assistant', message: res }, { role: 'user', message }, ...messages]),
+                );
                 setMessages((prevMessages) => [{ role: 'assistant', message: '' }, ...prevMessages]);
-
                 typeWords(newResponse);
             } catch (error) {
                 console.error('Error Gemini:', error);
@@ -72,16 +70,16 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
             setIsTyping(true);
             setMessages((prevMessages) => [{ role: 'user', message }, ...prevMessages]);
             setMessage('');
-
             inputChatRef.current?.focus();
 
             try {
                 const res = await config.runGemini(message);
-                const htmlResponse = convertMarkdownToHtml(res);
-                const newResponse = htmlResponse.split(' ');
-
+                const newResponse = res.split(' ');
+                sessionStorage.setItem(
+                    'chatMessages',
+                    JSON.stringify([{ role: 'assistant', message: res }, { role: 'user', message }, ...messages]),
+                );
                 setMessages((prevMessages) => [{ role: 'assistant', message: '' }, ...prevMessages]);
-
                 typeWords(newResponse);
             } catch (error) {
                 console.error('Error Gemini:', error);

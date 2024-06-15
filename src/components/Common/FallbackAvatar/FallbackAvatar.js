@@ -21,8 +21,8 @@ function FallbackAvatar({ pro = false, linkImage, altImage, className }) {
 }
 
 FallbackAvatar.propTypes = {
-    linkImage: PropTypes.string.isRequired,
-    altImage: PropTypes.string.isRequired,
+    linkImage: PropTypes.string,
+    altImage: PropTypes.string,
     className: PropTypes.string,
     pro: PropTypes.bool,
 };

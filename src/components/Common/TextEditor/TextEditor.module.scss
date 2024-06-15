@@ -11,6 +11,7 @@ div.wrapperEdit {
         border-collapse: collapse;
         border-spacing: 0;
         width: 100%;
+        margin: 14px 0;
     }
     & table tr th {
         border: 1px solid #e6dfdd;
@@ -55,7 +56,7 @@ div.wrapperEdit {
     }
 
     & ul {
-        margin: 28px 0;
+        margin: 0 0 14px 0;
         padding-left: 24px;
         list-style-type: disc !important;
     }
@@ -83,6 +84,7 @@ div.wrapperEdit {
 
     & img {
         max-width: 100%;
+        margin: 14px 0;
     }
 
     & a[href] {

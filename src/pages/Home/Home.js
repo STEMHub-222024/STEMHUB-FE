@@ -45,23 +45,22 @@ function Home() {
         const fetchApi = async () => {
             try {
                 const result = await dispatch(getStemAsync()).unwrap();
-                if (result) {
-                    const defaultStem = result?.find((stem) => {
-                        const activeDefault = checkStemDefault(stem?.stemName, 'STEM10');
-                        return activeDefault?.stemDefault;
-                    });
-                    if (defaultStem) {
-                        await dispatch(
-                            getOutstanding({
-                                stemId: defaultStem?.stemId,
-                            }),
-                        ).unwrap();
-                        dispatch(
-                            handleOnClickStem({
-                                stemName: defaultStem?.stemName,
-                            }),
-                        );
-                    }
+
+                const defaultStem = result?.find((stem) => {
+                    const activeDefault = checkStemDefault(stem?.stemName, stem?.stemName);
+                    return activeDefault?.stemDefault;
+                });
+                if (defaultStem) {
+                    await dispatch(
+                        getOutstanding({
+                            stemId: defaultStem?.stemId,
+                        }),
+                    ).unwrap();
+                    dispatch(
+                        handleOnClickStem({
+                            stemName: defaultStem?.stemName,
+                        }),
+                    );
                 }
             } catch (rejectedValueOrSerializedError) {
                 console.error(rejectedValueOrSerializedError);
@@ -87,7 +86,7 @@ function Home() {
 
     const checkStemDefault = (stemName, defaultValue) => {
         const upperCaseName = stemName.toUpperCase();
-        const stemDefault = upperCaseName.includes(defaultValue);
+        const stemDefault = stemName.includes(defaultValue);
         if (stemDefault) {
             return {
                 upperCaseName,

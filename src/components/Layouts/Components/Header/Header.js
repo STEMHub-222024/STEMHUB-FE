@@ -1,10 +1,11 @@
 import 'tippy.js/dist/tippy.css';
 import Cookies from 'js-cookie';
-import { useLayoutEffect, useEffect, useState } from 'react';
+import { useLayoutEffect, useEffect, useState, useCallback } from 'react';
+
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import Tippy from '@tippyjs/react';
 import classNames from 'classnames/bind';
-import { useDispatch, useSelector } from 'react-redux';
 
 import Search from '~/features/search';
 import config from '~/config';
@@ -54,14 +55,14 @@ function Header() {
             }
         };
         fetchUser();
-    }, [dispatch, infoUserCurrent, resetToken]);
+    }, [dispatch, infoUserCurrent]);
 
-    const handleLogout = () => {
+    const handleLogout = useCallback(() => {
         Cookies.remove('accessToken');
         Cookies.remove('refreshToken');
         Cookies.remove('saveRefreshToken');
         dispatch(setAllow(false));
-    };
+    }, [dispatch]);
 
     const userMenu = [
         {

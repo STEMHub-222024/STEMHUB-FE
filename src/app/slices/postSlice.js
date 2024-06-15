@@ -61,7 +61,7 @@ export const postSlice = createSlice({
             })
             .addCase(getPostsAsync.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                state.data.posts = action.payload.slice(-8);
+                state.data.posts = action.payload.slice(0, 8);
             })
             .addCase(getPostsAsync.rejected, (state, action) => {
                 state.status = 'failed';

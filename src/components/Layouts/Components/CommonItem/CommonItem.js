@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { IconCircleCheckFilled } from '@tabler/icons-react';
 import { useDispatch } from 'react-redux';
 import styles from './CommonItem.module.scss';
-import images from '~/assets/images';
 import Heading from '~/components/Common/Heading';
 import Button from '~/components/Common/Button';
 import config from '~/config';
@@ -16,8 +15,6 @@ function CommonItem({ data }) {
     const dispatch = useDispatch();
     const { newspaperArticleId, title, userId, image } = data;
     const [userInfo, setUserInfo] = useState({});
-
-    console.log('data', data);
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -38,7 +35,7 @@ function CommonItem({ data }) {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('group-images')}>
-                <div className={cx('images')} style={{ backgroundImage: `url(${image ?? images.posts_1})` }}></div>
+                <div className={cx('images')} style={{ backgroundImage: `url(${image})` }}></div>
             </div>
             <div className={cx('content')}>
                 <Heading className={cx('name')} h4>
@@ -46,13 +43,9 @@ function CommonItem({ data }) {
                 </Heading>
                 <div className={cx('author')}>
                     <Button to={config.routes.home} className={cx('group-avatar')}>
-                        <FallbackAvatar
-                            className={cx('avatar')}
-                            linkImage={userInfo.image ?? images.avatar_1}
-                            altImage="avatar"
-                        />
+                        <FallbackAvatar className={cx('avatar')} linkImage={userInfo.image} altImage="avatar" />
                         <div className={cx('info')}>
-                            <span className={cx('user-name')}>{`${userInfo.firstName}`}</span>
+                            <span className={cx('user-name')}>{`${userInfo.firstName} ${userInfo.lastName}`}</span>
                             <IconCircleCheckFilled size={15} className={cx('icon-check')} />
                         </div>
                     </Button>

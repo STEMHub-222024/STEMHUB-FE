@@ -1,7 +1,7 @@
 import 'tippy.js/dist/tippy.css';
 import { useRef, useState, useLayoutEffect, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Tippy from '@tippyjs/react';
 import classNames from 'classnames/bind';
 import { message } from 'antd';
@@ -24,8 +24,6 @@ import Modal from '~/components/Common/Modal';
 import { selectAuth, selectPosts } from '~/app/selectors';
 import { postPostsAsync } from '~/app/slices/postSlice';
 import { getUserIdAsync } from '~/app/slices/userSlice';
-
-//Auth
 import { setAllow } from '~/app/slices/authSlice';
 import checkCookie from '~/utils/checkCookieExists';
 import { deleteImage, postImage } from '~/services/uploadImage';
@@ -35,12 +33,17 @@ const cx = classNames.bind(styles);
 function HeaderPost() {
     const fileInputRef = useRef(null);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { infoUserCurrent } = useSelector(selectAuth).data;
     const { title, markdown, htmlContent } = useSelector(selectPosts).data;
+    const [descriptionPosts, setDescriptionPosts] = useState('');
     const [backgroundImage, setBackgroundImage] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [resetToken, setResetToken] = useState(false);
     const [userInfo, setUserInfo] = useState({});
+    const [localTitle, setLocalTitle] = useState(title);
+    const [localMarkdown, setLocalMarkdown] = useState(markdown);
+    const [localHtmlContent, setLocalHtmlContent] = useState(htmlContent);
 
     useLayoutEffect(() => {
         checkCookie(dispatch)
@@ -55,7 +58,7 @@ function HeaderPost() {
     useEffect(() => {
         const fetchUser = async () => {
             if (!infoUserCurrent.userId) {
-                setResetToken(!resetToken);
+                setResetToken((prev) => !prev);
             } else {
                 try {
                     const res = await dispatch(getUserIdAsync({ userId: infoUserCurrent.userId })).unwrap();
@@ -67,6 +70,12 @@ function HeaderPost() {
         };
         fetchUser();
     }, [dispatch, infoUserCurrent, resetToken]);
+
+    useEffect(() => {
+        setLocalTitle(title);
+        setLocalMarkdown(markdown);
+        setLocalHtmlContent(htmlContent);
+    }, [title, markdown, htmlContent]);
 
     const handleLogout = () => {
         Cookies.remove('accessToken');
@@ -97,43 +106,45 @@ function HeaderPost() {
             logout: handleLogout,
         },
     ];
+
     const handleTitlePlaceholder = (e) => {
-        const newTitle = e.target.textContent;
-        console.log('New Title:', newTitle);
+        setDescriptionPosts(e.target.textContent);
     };
+
     const handlePost = async () => {
         if (!infoUserCurrent.userId) {
-            setResetToken(!resetToken);
+            setResetToken((prev) => !prev);
         } else {
             try {
                 const newData = {
-                    title,
+                    title: localTitle,
                     image: backgroundImage,
-                    markdown,
-                    htmlContent,
+                    description: descriptionPosts,
+                    markdown: localMarkdown,
+                    htmlContent: localHtmlContent,
                     userId: infoUserCurrent.userId,
                 };
-                console.log('newData', newData);
                 const res = await dispatch(postPostsAsync(newData)).unwrap();
                 if (res) {
-                    // Chuyen huong
-                    console.log('1');
-                    setIsModalOpen(!isModalOpen);
+                    message.success('Xuât bản thành công!');
+                    navigate(config.routes.home);
+                    setIsModalOpen(false);
                 }
             } catch (error) {
-                console.error('Failed to fetch user:', error);
+                message.error('Xuất bản thất bại!');
             }
         }
     };
 
     const handleModal = () => {
         setBackgroundImage('');
-        setIsModalOpen(!isModalOpen);
+        setIsModalOpen((prev) => !prev);
     };
 
     const handleFileClick = () => {
         fileInputRef.current.click();
     };
+
     const handleFileChange = async (event) => {
         const currentImageURL = backgroundImage;
 
@@ -154,6 +165,7 @@ function HeaderPost() {
             message.info('Không có file nào được chọn.');
         }
     };
+
     return (
         <>
             <header className={cx('wrapper')}>
@@ -176,8 +188,11 @@ function HeaderPost() {
                             <Button
                                 mainColor
                                 small
-                                className={title && markdown ? cx('btnSubmit') : cx('btnDisabled')}
-                                disabled={title && markdown ? false : true}
+                                className={
+                                    localTitle && localMarkdown && backgroundImage && descriptionPosts
+                                        ? cx('btnSubmit')
+                                        : cx('btnDisabled')
+                                }
                                 onClick={handleModal}
                             >
                                 Xuất bản
@@ -225,11 +240,9 @@ function HeaderPost() {
                                     </p>
                                     <span>Kéo thả ảnh vào đây, hoặc bấm để chọn ảnh</span>
                                 </>
-                            ) : (
-                                ''
-                            )}
+                            ) : null}
                         </div>
-                        <div className={cx('title-review')}>{title}</div>
+                        <div className={cx('title-review')}>{localTitle}</div>
                         <div
                             contentEditable={true}
                             className={cx('title-review', {
@@ -244,7 +257,12 @@ function HeaderPost() {
                             không ảnh hưởng tới nội dung bài viết của bạn.
                         </p>
                         <div className={cx('btn-destroy-posts')}>
-                            <Button mainColor medium onClick={handlePost}>
+                            <Button
+                                mainColor
+                                medium
+                                onClick={handlePost}
+                                disabled={!localTitle || !localMarkdown || !backgroundImage || !descriptionPosts}
+                            >
                                 Xuất bản ngay
                             </Button>
                         </div>

@@ -13,7 +13,12 @@ import { Wrapper as PopperWrapper } from '~/components/Common/Popper';
 
 //Services
 import { useDispatch, useSelector } from 'react-redux';
-import { searchTopicAsync, updateTopicSearch } from '~/app/slices/searchSlice';
+import {
+    searchTopicAsync,
+    updateTopicSearch,
+    searchNewspaperArticleAsync,
+    updatePostsSearch,
+} from '~/app/slices/searchSlice';
 import { selectSearch } from '~/app/selectors';
 
 //Clear fetch
@@ -23,40 +28,43 @@ const cx = classNames.bind(styles);
 
 function Search({ currentUser }) {
     const dispatch = useDispatch();
-    const { searchTopics, loading } = useSelector(selectSearch).data;
+    const { searchTopics, loading, searchLessons, searchPosts } = useSelector(selectSearch).data;
     const [searchValue, setSearchValue] = useState('');
     const [showResult, setShowResult] = useState(false);
     const debouncedValue = useDebounce(searchValue, 500);
     const inputRef = useRef();
 
+    // Trong phần useEffect của bạn
     useEffect(() => {
         if (!debouncedValue.trim()) {
             dispatch(updateTopicSearch([]));
+            dispatch(updatePostsSearch([]));
             return;
         }
+
         const fetchApi = async () => {
             try {
-                const result = await dispatch(
-                    searchTopicAsync({
-                        topicKey: debouncedValue,
-                    }),
-                ).unwrap();
+                const [topicsResult, newspaperArticleResult] = await Promise.allSettled([
+                    dispatch(searchTopicAsync({ topicKey: debouncedValue })).unwrap(),
+                    dispatch(searchNewspaperArticleAsync({ newspaperArticleKey: debouncedValue })).unwrap(),
+                ]);
 
-                // await Promise.all([searchTopic, searchLesson])
-                //     .then(function ([resultTopic, resultLesson]) {
-                //         console.log('result', resultTopic.concat(resultLesson));
-                //     })
-                //     .catch(function (err) {
-                //         console.log(err.response.data.message);
-                //     });
-
-                if (result === undefined) {
+                if (topicsResult.status === 'fulfilled') {
+                    dispatch(updateTopicSearch(topicsResult.value));
+                } else {
                     dispatch(updateTopicSearch([]));
                 }
-            } catch (rejectedValueOrSerializedError) {
-                console.error(rejectedValueOrSerializedError);
+
+                if (newspaperArticleResult.status === 'fulfilled') {
+                    dispatch(updatePostsSearch(newspaperArticleResult.value));
+                } else {
+                    dispatch(updatePostsSearch([]));
+                }
+            } catch (error) {
+                console.error('Unexpected error:', error);
             }
         };
+
         fetchApi();
 
         return () => {
@@ -71,7 +79,7 @@ function Search({ currentUser }) {
     };
 
     const handleHideResult = () => {
-        setShowResult(false);
+        setShowResult(true);
     };
 
     const handleChange = (e) => {
@@ -86,30 +94,37 @@ function Search({ currentUser }) {
         <div>
             <HeadlessTippy
                 interactive
-                visible={showResult && searchTopics.length > 0}
+                visible={showResult && (searchTopics.length > 0 || searchLessons.length > 0 || searchPosts.length > 0)}
                 render={(attrs) => (
                     <div className={cx('search-result')} tabIndex="-1" {...attrs}>
                         <PopperWrapper>
-                            <Heading h3 className={cx('search-title')}>
-                                Topic
-                            </Heading>
-                            {searchTopics.length > 0 ? (
-                                searchTopics.map((result) => (
-                                    <SearchCourseItem
-                                        key={result.topicId}
-                                        data={result}
-                                        setSearchValue={setSearchValue}
-                                    />
-                                ))
-                            ) : (
-                                <div className={cx('wrapper')}>
-                                    {/* {console.log('1')} suy nghĩ */}
-                                    <h2>Không tìm thấy kết quả!</h2>
-                                </div>
-                            )}
-                            {/* <Heading h3 className={cx('search-title')}>
-                                Posts
-                            </Heading> */}
+                            <>
+                                <Heading h3 className={cx('search-title')}>
+                                    Topic
+                                </Heading>
+
+                                {searchTopics.length > 0 &&
+                                    searchTopics.map((topicResult) => (
+                                        <SearchCourseItem
+                                            key={topicResult.topicId}
+                                            topicData={topicResult}
+                                            setSearchValue={setSearchValue}
+                                        />
+                                    ))}
+                                <hr />
+                                <Heading h3 className={cx('search-title')}>
+                                    Posts
+                                </Heading>
+
+                                {searchPosts.length > 0 &&
+                                    searchPosts.map((searchPostsResult) => (
+                                        <SearchCourseItem
+                                            key={searchPostsResult.newspaperArticleId}
+                                            newspaperArticleData={searchPostsResult}
+                                            setSearchValue={setSearchValue}
+                                        />
+                                    ))}
+                            </>
                         </PopperWrapper>
                     </div>
                 )}

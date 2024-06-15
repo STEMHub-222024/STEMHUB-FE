@@ -12,7 +12,7 @@ const cx = classNames.bind(styles);
 
 function SearchCourseItem({ ...props }) {
     const dispatch = useDispatch();
-    const { data, setSearchValue } = props;
+    const { topicData, newspaperArticleData, setSearchValue } = props;
 
     const handleHideResult = () => {
         setSearchValue('');
@@ -20,12 +20,21 @@ function SearchCourseItem({ ...props }) {
     };
     return (
         <Link
-            to={`topic/${data?.topicName}=${data?.topicId}`}
+            to={
+                (topicData && `/topic/${topicData?.topicName}=${topicData?.topicId}`) ||
+                (newspaperArticleData && `/posts/${newspaperArticleData?.newspaperArticleId}`)
+            }
             className={cx('wrapper')}
             onClick={() => handleHideResult()}
         >
-            <Image className={cx('avatar')} src={data?.topicImage} alt={data?.topicName} />
-            <span className={cx('name')}>{data?.topicName}</span>
+            <Image
+                className={cx('avatar')}
+                src={(topicData && topicData?.topicImage) || (newspaperArticleData && newspaperArticleData?.image)}
+                alt={(topicData && topicData?.topicName) || (newspaperArticleData && newspaperArticleData?.title)}
+            />
+            <span className={cx('name')}>
+                {(topicData && topicData?.topicName) || (newspaperArticleData && newspaperArticleData?.title)}
+            </span>
         </Link>
     );
 }

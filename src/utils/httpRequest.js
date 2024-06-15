@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const httpRequest = axios.create({
+    //baseURL: 'https://steamthpt.codefirst.id.vn/api/',
     baseURL: 'https://localhost:7204/api/',
 });
 

@@ -61,7 +61,6 @@ function Video() {
     }, [dispatch, lessonId]);
 
     const handleShowModal = () => setIsOpen(!isOpen);
-
     return (
         <>
             <div className={cx('wrapper')}>
@@ -80,7 +79,7 @@ function Video() {
                     </button>
                 </div>
                 {/* Fix */}
-                <p>Tham gia các cộng đồng để cùng học hỏi, chia sẻ và "thám thính"</p>
+                <p>{videoFilter?.description}</p>
 
                 <div className={cx('contentBottom')}>
                     <Comment />

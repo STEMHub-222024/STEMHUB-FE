@@ -1,17 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IconHeart, IconHeartFilled, IconMessageCircle2 } from '@tabler/icons-react';
-
 import classNames from 'classnames/bind';
 import styles from './Reaction.module.scss';
 
 const cx = classNames.bind(styles);
 
 function Reaction() {
-    const [love, setLove] = useState(false);
+    const [love, setLove] = useState(() => {
+        return JSON.parse(localStorage.getItem('love')) || false;
+    });
+    const [loveCount, setLoveCount] = useState(() => {
+        return JSON.parse(localStorage.getItem('loveCount')) || 30;
+    });
 
     const handleLove = () => {
-        setLove(!love);
+        const newLoveState = !love;
+        setLove(newLoveState);
+        setLoveCount((currentCount) => (newLoveState ? currentCount + 1 : currentCount - 1));
     };
+
+    useEffect(() => {
+        localStorage.setItem('love', JSON.stringify(love));
+        localStorage.setItem('loveCount', JSON.stringify(loveCount));
+    }, [love, loveCount]);
 
     return (
         <div className={cx('wrapper')}>
@@ -19,12 +30,12 @@ function Reaction() {
                 {love ? (
                     <>
                         <IconHeartFilled size={20} className={cx('active')} onClick={handleLove} />
-                        <span>30</span>
+                        <span>{loveCount}</span>
                     </>
                 ) : (
                     <>
                         <IconHeart size={20} onClick={handleLove} />
-                        <span>30</span>
+                        <span>{loveCount}</span>
                     </>
                 )}
             </div>
