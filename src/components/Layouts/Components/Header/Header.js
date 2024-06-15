@@ -4,7 +4,6 @@ import { useLayoutEffect, useEffect, useState, useCallback } from 'react';
 
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import Tippy from '@tippyjs/react';
 import classNames from 'classnames/bind';
 
 import Search from '~/features/search';
@@ -78,7 +77,7 @@ function Header() {
         {
             icon: <IconReport size={15} color="#333" stroke={2} />,
             title: 'Bài viết của tôi',
-            to: '/',
+            to: config.routes.myPosts,
         },
         {
             icon: <IconArrowBarRight size={15} color="#333" stroke={2} />,
@@ -109,11 +108,9 @@ function Header() {
                 <div className={cx('actions')}>
                     {allow ? (
                         <div className={cx('group-action')}>
-                            <Tippy content="Hihi">
-                                <button className={cx('action-btn')}>
-                                    <IconBellFilled size={25} color="#707070" stroke={2} />
-                                </button>
-                            </Tippy>
+                            <button className={cx('action-btn')}>
+                                <IconBellFilled size={25} color="#707070" stroke={2} />
+                            </button>
 
                             <MenuPopper items={userMenu} infoUserCurrent={infoUserCurrent}>
                                 <Image

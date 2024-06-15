@@ -1,0 +1,18 @@
+.iconRemoveComment {
+    cursor: pointer;
+    width: 18px;
+
+    &:hover {
+        color: red;
+    }
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    span {
+        color: #029e74;
+        font-size: 1.4rem;
+        padding: 6px 0px;
+    }
+}

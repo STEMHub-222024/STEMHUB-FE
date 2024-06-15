@@ -11,7 +11,6 @@ import Home from '~/pages/Home';
 import Stem10 from '~/pages/Stem10';
 import Stem11 from '~/pages/Stem11';
 import Stem12 from '~/pages/Stem12';
-import NewPost from '~/pages/NewPost';
 import Posts from '~/pages/Posts';
 import PostsDetail from '~/pages/PostsDetail';
 import TopicDetail from '~/pages/TopicDetail';
@@ -22,6 +21,8 @@ import ForgotPassword from '~/pages/ForgotPassword';
 import ResetPassword from '~/pages/ResetPassword';
 //private page
 import Profile from '~/pages/Profile';
+import NewPost from '~/pages/NewPost';
+import MyPosts from '~/pages/MyPosts';
 
 // Admin
 import Dashboard from '~/pages/Admin/Dashboard/Dashboard';
@@ -60,6 +61,7 @@ const privateRouter = [
     ...publicRouter,
     { path: config.routes.personal, component: Profile },
     { path: config.routes.newPost, component: NewPost, layout: PostsLayout },
+    { path: config.routes.myPosts, component: MyPosts },
 ];
 
 export { publicRouter, privateRouter };

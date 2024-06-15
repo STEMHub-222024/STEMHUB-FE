@@ -50,7 +50,7 @@
 .loading-update {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%) translateX(1154%);
     color: rgba(22, 24, 35, 0.34);
     cursor: pointer;
     background: none;

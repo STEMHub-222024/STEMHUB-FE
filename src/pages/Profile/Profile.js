@@ -31,7 +31,6 @@ function Profile() {
     const [previewImage, setPreviewImage] = useState('');
     const [fileList, setFileList] = useState([]);
     const [imageWaitRemove, setImageWaitRemove] = useState('');
-    console.log('infoUserCurrent', infoUserCurrent);
 
     useLayoutEffect(() => {
         checkCookie(dispatch)

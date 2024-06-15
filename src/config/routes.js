@@ -7,7 +7,6 @@ const routes = {
     stem10: '/stem10',
     stem11: '/stem11',
     stem12: '/stem12',
-    newPost: '/new-post',
     posts: '/posts',
     postsDetail: '/posts/:postsId',
     topic: '/topic/:topic',
@@ -19,6 +18,8 @@ const routes = {
 
     //private routes
     personal: '/personal',
+    newPost: '/new-post',
+    myPosts: '/my-posts',
 
     //admin
     admin: '/admin/',

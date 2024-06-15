@@ -140,16 +140,6 @@ function Comment() {
                                                           <MarkdownParser content_C={comment.content_C} />
                                                       </div>
                                                   </div>
-                                                  <div className={cx('commentTime')}>
-                                                      <div className={cx('createdAt')}>
-                                                          <div className={cx('createdAtLeft')}>
-                                                              <button className={cx('iconWrapper')}>
-                                                                  <span className={cx('likeComment')}>Thích</span>
-                                                              </button>
-                                                              <span className={cx('replyComment')}>Trả lời</span>
-                                                          </div>
-                                                      </div>
-                                                  </div>
                                               </div>
                                           </div>
                                       </div>

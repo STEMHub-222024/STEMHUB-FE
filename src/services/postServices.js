@@ -37,3 +37,8 @@ export const pagedPosts = async ({ page, pageSize }) => {
         return res.data;
     }
 };
+
+export const deletePosts = async (newspaperArticleId) => {
+    const res = await httpRequest.deleteRequest(`NewspaperArticle/${newspaperArticleId}`);
+    return res.data;
+};
