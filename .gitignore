@@ -7,10 +7,12 @@
 
 # testing
 /coverage
+/.env.development
 
 # production
 /build
 /.vscode
+/.env
 
 # misc
 .DS_Store

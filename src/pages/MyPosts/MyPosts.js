@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, Pagination } from 'antd';
 import { getPostsAsync } from '~/app/slices/postSlice';
@@ -29,7 +29,7 @@ function MyPosts() {
             });
     }, [dispatch, resetToken]);
 
-    const fetchPosts = async () => {
+    const fetchPosts = useCallback(async () => {
         if (!infoUserCurrent.userId) {
             setResetToken(!resetToken);
         } else {
@@ -43,11 +43,11 @@ function MyPosts() {
                 console.error('Failed to fetch posts:', error);
             }
         }
-    };
+    }, [dispatch, infoUserCurrent.userId, resetToken]);
 
     useEffect(() => {
         fetchPosts();
-    }, [dispatch, infoUserCurrent, resetToken]);
+    }, [fetchPosts]);
 
     useEffect(() => {
         localStorage.setItem('currentPage', currentPage);

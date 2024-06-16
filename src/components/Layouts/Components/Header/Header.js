@@ -43,7 +43,7 @@ function Header() {
     useEffect(() => {
         const fetchUser = async () => {
             if (!infoUserCurrent.userId) {
-                setResetToken(!resetToken);
+                setResetToken((prev) => !prev);
             } else {
                 try {
                     const res = await dispatch(getUserIdAsync({ userId: infoUserCurrent.userId })).unwrap();
@@ -54,7 +54,7 @@ function Header() {
             }
         };
         fetchUser();
-    }, [dispatch, infoUserCurrent]);
+    }, [dispatch, infoUserCurrent, resetToken]);
 
     const handleLogout = useCallback(() => {
         Cookies.remove('accessToken');

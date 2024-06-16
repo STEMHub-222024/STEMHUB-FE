@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const httpRequest = axios.create({
-    //baseURL: 'https://steamthpt.codefirst.id.vn/api/',
-    baseURL: 'https://localhost:7204/api/',
+    baseURL: process.env.REACT_APP_STEAM_BASE_URL,
 });
 
 export const get = async (path, options = {}) => {
