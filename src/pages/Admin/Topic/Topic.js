@@ -1,39 +1,50 @@
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Layout, Button, Modal, Form, Input, message, Upload } from 'antd';
+import { Space, Table, Layout, Button, Modal, Form, Input, message, Upload, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import * as bannerServices from '~/services/bannerServices';
 import { postImage, deleteImage } from '~/services/uploadImage';
+import * as topicServices from '~/services/topicServices';
+import * as stemServices from '~/services/stemServices';
 
-import styles from './Banner.module.scss';
+import styles from './Topic.module.scss';
 
 const cx = classNames.bind(styles);
 
 const { Content } = Layout;
+const { Option } = Select;
 
-function Banner() {
+function Topic() {
     const [filteredInfo, setFilteredInfo] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
-    const [bannerList, setBannerList] = useState([]);
+    const [topicList, setTopicList] = useState([]);
+    const [stemList, setStemList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [currentBanner, setCurrentBanner] = useState(null);
+    const [currentTopic, setCurrentTopic] = useState(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [fileList, setFileList] = useState([]);
     const [form] = Form.useForm();
 
     useEffect(() => {
-        fetchBanners();
+        fetchTopics();
+        fetchStems();
     }, []);
 
-    const fetchBanners = async () => {
-        const res = await bannerServices.getBanner();
+    const fetchTopics = async () => {
+        const res = await topicServices.getTopic();
         if (res) {
-            setBannerList(res);
+            setTopicList(res);
+        }
+    };
+
+    const fetchStems = async () => {
+        const res = await stemServices.getStem();
+        if (res) {
+            setStemList(res);
         }
     };
 
     const handleAdd = () => {
-        setCurrentBanner(null);
+        setCurrentTopic(null);
         form.resetFields();
         setBackgroundImage(null);
         setFileList([]);
@@ -41,39 +52,38 @@ function Banner() {
     };
 
     const handleEdit = (record) => {
-        setCurrentBanner(record);
+        setCurrentTopic(record);
         form.setFieldsValue(record);
-        setBackgroundImage(record.image);
+        setBackgroundImage(record.topicImage);
         setFileList([
             {
                 uid: '-1',
                 name: 'image.png',
                 status: 'done',
-                url: record.image,
+                url: record.topicImage,
             },
         ]);
         setIsModalVisible(true);
     };
 
     const handleDelete = async (id) => {
-        await bannerServices.deleteBanner(id);
-        message.success('Banner deleted successfully');
-        fetchBanners();
+        await topicServices.deleteTopic(id);
+        message.success('Topic deleted successfully');
+        fetchTopics();
     };
 
     const handleSave = async () => {
         const values = form.getFieldsValue();
-        values.image = backgroundImage;
-
-        if (currentBanner) {
-            await bannerServices.updateBanner(currentBanner.bannerId, values);
-            message.success('Banner updated successfully');
+        values.topicImage = backgroundImage;
+        if (currentTopic) {
+            await topicServices.updateTopic(currentTopic.topicId, values);
+            message.success('Topic updated successfully');
         } else {
-            await bannerServices.addBanner(values);
-            message.success('Banner added successfully');
+            await topicServices.addTopic(values);
+            message.success('Topic added successfully');
         }
         setIsModalVisible(false);
-        fetchBanners();
+        fetchTopics();
     };
 
     const handleFileChange = async (event) => {
@@ -110,25 +120,31 @@ function Banner() {
 
     const columns = [
         {
-            title: 'Title',
-            dataIndex: 'title',
-            key: 'title',
-            filteredValue: filteredInfo.title || null,
-            onFilter: (value, record) => record.title.includes(value),
-            sorter: (a, b) => a.title.length - b.title.length,
-            sortOrder: sortedInfo.columnKey === 'title' ? sortedInfo.order : null,
+            title: 'Name',
+            dataIndex: 'topicName',
+            key: 'topicName',
+            filteredValue: filteredInfo.topicName || null,
+            onFilter: (value, record) => record.topicName.includes(value),
+            sorter: (a, b) => (a.topicName || '').length - (b.topicName || '').length,
+            sortOrder: sortedInfo.columnKey === 'topicName' ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
-            title: 'Content',
-            dataIndex: 'content',
-            key: 'content',
+            title: 'Video Review',
+            dataIndex: 'videoReview',
+            key: 'videoReview',
             ellipsis: true,
         },
         {
             title: 'Image',
-            dataIndex: 'image',
-            key: 'image',
+            dataIndex: 'topicImage',
+            key: 'topicImage',
+            ellipsis: true,
+        },
+        {
+            title: 'Description',
+            dataIndex: 'description',
+            key: 'description',
             ellipsis: true,
         },
         {
@@ -139,7 +155,7 @@ function Banner() {
                     <Button type="link" onClick={() => handleEdit(record)}>
                         Edit
                     </Button>
-                    <Button type="link" onClick={() => handleDelete(record.bannerId)}>
+                    <Button type="link" onClick={() => handleDelete(record.topicId)}>
                         Delete
                     </Button>
                 </Space>
@@ -151,33 +167,33 @@ function Banner() {
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
             <Space className={cx('btn-add')}>
                 <Button type="primary" onClick={handleAdd}>
-                    Add Banner
+                    Add Topic
                 </Button>
             </Space>
-            <Table columns={columns} dataSource={bannerList} onChange={handleChange} rowKey="bannerId" />
+            <Table columns={columns} dataSource={topicList} onChange={handleChange} rowKey="topicId" />
             <Modal
-                title={currentBanner ? 'Edit Banner' : 'Add Banner'}
+                title={currentTopic ? 'Edit Topic' : 'Add Topic'}
                 open={isModalVisible}
                 onOk={handleSave}
                 onCancel={() => setIsModalVisible(false)}
             >
                 <Form form={form} layout="vertical">
                     <Form.Item
-                        name="title"
-                        label="Title"
-                        rules={[{ required: true, message: 'Please input the title!' }]}
+                        name="topicName"
+                        label="Name"
+                        rules={[{ required: true, message: 'Please input the topicName!' }]}
                     >
-                        <Input />
+                        <Input placeholder="Enter a topic name" />
                     </Form.Item>
                     <Form.Item
-                        name="content"
-                        label="Content"
-                        rules={[{ required: true, message: 'Please input the content!' }]}
+                        name="videoReview"
+                        label="Video Review"
+                        rules={[{ required: true, message: 'Please input the videoReview!' }]}
                     >
-                        <Input />
+                        <Input placeholder="Add video link review" />
                     </Form.Item>
                     <Form.Item
-                        name="image"
+                        name="topicImage"
                         label="Image"
                         rules={[{ required: true, message: 'Please upload an image!' }]}
                     >
@@ -195,10 +211,30 @@ function Banner() {
                             <Button icon={<UploadOutlined />}>Upload Image</Button>
                         </Upload>
                     </Form.Item>
+                    <Form.Item
+                        name="description"
+                        label="Description"
+                        rules={[{ required: true, message: 'Please input the description!' }]}
+                    >
+                        <Input placeholder="Enter a topic description" />
+                    </Form.Item>
+                    <Form.Item
+                        name="stemId"
+                        label="Stem"
+                        rules={[{ required: true, message: 'Please select a stem!' }]}
+                    >
+                        <Select placeholder="Select a stem">
+                            {stemList.map((stem) => (
+                                <Option key={stem.stemId} value={stem.stemId}>
+                                    {stem.stemName}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
                 </Form>
             </Modal>
         </Content>
     );
 }
 
-export default Banner;
+export default Topic;

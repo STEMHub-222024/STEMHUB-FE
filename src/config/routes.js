@@ -27,7 +27,7 @@ const routes = {
     stem: '/admin/stem',
     postsAdmin: '/admin/posts',
     banner: '/admin/banner',
-    steam10Admin: '/admin/stem10',
+    topicAdmin: '/admin/topic',
     steam11Admin: '/admin/stem11',
     steam12Admin: '/admin/stem12',
 };

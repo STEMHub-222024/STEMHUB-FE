@@ -28,8 +28,8 @@ function MenuAdmin() {
         {
             key: '3',
             icon: <IconBook stroke={1} fontSize={18} />,
-            label: 'Stem10',
-            to: config.routes.steam10Admin,
+            label: 'Topic',
+            to: config.routes.topicAdmin,
         },
         {
             key: '4',

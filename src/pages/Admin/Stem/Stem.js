@@ -69,6 +69,11 @@ function Stem() {
 
     const columns = [
         {
+            title: 'ID',
+            dataIndex: 'stemId',
+            key: 'stemId',
+        },
+        {
             title: 'Name',
             dataIndex: 'stemName',
             key: 'stemName',
