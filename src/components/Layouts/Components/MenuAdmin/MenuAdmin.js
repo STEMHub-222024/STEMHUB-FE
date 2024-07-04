@@ -49,6 +49,18 @@ function MenuAdmin() {
             label: 'Banner',
             to: config.routes.banner,
         },
+        {
+            key: '7',
+            icon: <IconSlideshow stroke={1} fontSize={18} />,
+            label: 'Banner',
+            to: config.routes.banner,
+        },
+        {
+            key: '8',
+            icon: <IconSlideshow stroke={1} fontSize={18} />,
+            label: 'Banner',
+            to: config.routes.banner,
+        },
     ];
 
     function handleRouter(e) {
