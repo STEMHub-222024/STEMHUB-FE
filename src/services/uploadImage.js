@@ -26,8 +26,12 @@ export const postImage = async (file) => {
 };
 
 export const deleteImage = async (nameImage) => {
-    const res = await httpRequest.deleteRequest(`UploadImage/${nameImage}`);
-    if (res) {
-        return res.data;
+    try {
+        const res = await httpRequest.deleteRequest(`UploadImage/${nameImage}`);
+        if (res) {
+            return res.data;
+        }
+    } catch (error) {
+        console.error('Error uploading image:', error.message);
     }
 };

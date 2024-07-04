@@ -79,7 +79,9 @@ function Banner() {
             const file = event.file;
             try {
                 if (currentImageURL) {
-                    await deleteImage(currentImageURL.split('uploadimage/')[1]);
+                    const nameImage = currentImageURL.split('uploadimage/')[1];
+                    await deleteImage(nameImage);
+                    return;
                 }
                 const imageURL = await postImage(file);
                 setBackgroundImage(imageURL.fileUrl);
