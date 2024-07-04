@@ -14,8 +14,9 @@ function Learner() {
         const fetchApi = async () => {
             const res = await userServices.getUseAll();
             if (res) {
-                const resNew = res.map((user) => {
+                const resNew = res.map((user, index) => {
                     return {
+                        key: index,
                         userName: user.userName,
                         email: user.email,
                         phoneNumber: user.phoneNumber,
@@ -28,7 +29,6 @@ function Learner() {
     }, []);
 
     const handleChange = (pagination, filters, sorter) => {
-        console.log('Various parameters', pagination, filters, sorter);
         setFilteredInfo(filters);
         setSortedInfo(sorter);
     };
@@ -48,6 +48,10 @@ function Learner() {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
+            filteredValue: filteredInfo.email || null,
+            onFilter: (value, record) => record.email.includes(value),
+            sorter: (a, b) => a.email.length - b.email.length,
+            sortOrder: sortedInfo.columnKey === 'email' ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
@@ -68,13 +72,14 @@ function Learner() {
                     value: '07',
                 },
             ],
-            // filteredValue: filteredInfo.phoneNumber || null,
-            // onFilter: (value, record) => record.phoneNumber.includes(value),
-            // sorter: (a, b) => a.phoneNumber.length - b.phoneNumber.length,
-            // sortOrder: sortedInfo.columnKey === 'phoneNumber' ? sortedInfo.order : null,
+            filteredValue: filteredInfo.phoneNumber || null,
+            onFilter: (value, record) => record.phoneNumber?.startsWith(value),
+            sorter: (a, b) => (a.phoneNumber || '').length - (b.phoneNumber || '').length,
+            sortOrder: sortedInfo.columnKey === 'phoneNumber' ? sortedInfo.order : null,
             ellipsis: true,
         },
     ];
+
     return (
         <Content
             style={{
@@ -89,7 +94,7 @@ function Learner() {
                         marginBottom: 16,
                     }}
                 ></Space>
-                <Table columns={columns} dataSource={userList} onChange={handleChange} />
+                <Table columns={columns} dataSource={userList} onChange={handleChange} rowKey="key" />
             </>
         </Content>
     );
