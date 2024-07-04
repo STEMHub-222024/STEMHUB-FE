@@ -1,8 +1,13 @@
+import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Layout, Button, Modal, Form, Input, message, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import * as bannerServices from '~/services/bannerServices';
 import { postImage, deleteImage } from '~/services/uploadImage';
+
+import styles from './Banner.module.scss';
+
+const cx = classNames.bind(styles);
 
 const { Content } = Layout;
 
@@ -145,12 +150,12 @@ function Banner() {
 
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
-            <Space style={{ marginBottom: 16 }}>
+            <Space className={cx('btn-add')}>
                 <Button type="primary" onClick={handleAdd}>
                     Add Banner
                 </Button>
             </Space>
-            <Table columns={columns} dataSource={bannerList} onChange={handleChange} rowKey="id" />
+            <Table columns={columns} dataSource={bannerList} onChange={handleChange} rowKey="bannerId" />
             <Modal
                 title={currentBanner ? 'Edit Banner' : 'Add Banner'}
                 open={isModalVisible}
