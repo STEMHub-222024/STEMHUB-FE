@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Layout, Button, Modal, Form, Input, message } from 'antd';
+import { Space, Table, Layout, Button, Modal, Form, Input, message, Tooltip } from 'antd';
 import * as stemServices from '~/services/stemServices';
 
 import styles from './Stem.module.scss';
@@ -72,6 +72,14 @@ function Stem() {
             title: 'ID',
             dataIndex: 'stemId',
             key: 'stemId',
+            ellipsis: {
+                showTitle: false,
+            },
+            render: (stemId) => (
+                <Tooltip placement="topLeft" title={stemId}>
+                    {stemId}
+                </Tooltip>
+            ),
         },
         {
             title: 'Name',

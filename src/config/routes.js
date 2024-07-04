@@ -28,7 +28,7 @@ const routes = {
     postsAdmin: '/admin/posts',
     banner: '/admin/banner',
     topicAdmin: '/admin/topic',
-    steam11Admin: '/admin/stem11',
+    lesson: '/admin/lesson',
     steam12Admin: '/admin/stem12',
 };
 

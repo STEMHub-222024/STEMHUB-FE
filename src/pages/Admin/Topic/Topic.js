@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Layout, Button, Modal, Form, Input, message, Upload, Select } from 'antd';
+import { Space, Table, Layout, Button, Modal, Form, Input, message, Upload, Select, Tooltip } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { postImage, deleteImage } from '~/services/uploadImage';
 import * as topicServices from '~/services/topicServices';
@@ -30,9 +30,14 @@ function Topic() {
     }, []);
 
     const fetchTopics = async () => {
-        const res = await topicServices.getTopic();
-        if (res) {
-            setTopicList(res);
+        const topicRes = await topicServices.getTopic();
+        const stemRes = await stemServices.getStem();
+        if (topicRes && stemRes) {
+            const mergedTopics = topicRes.map((topic) => {
+                const stem = stemRes.find((stem) => stem.stemId === topic.stemId);
+                return { ...topic, stemName: stem ? stem.stemName : '' };
+            });
+            setTopicList(mergedTopics);
         }
     };
 
@@ -120,6 +125,19 @@ function Topic() {
 
     const columns = [
         {
+            title: 'ID',
+            dataIndex: 'topicId',
+            key: 'topicId',
+            ellipsis: {
+                showTitle: false,
+            },
+            render: (topicId) => (
+                <Tooltip placement="topLeft" title={topicId}>
+                    {topicId}
+                </Tooltip>
+            ),
+        },
+        {
             title: 'Name',
             dataIndex: 'topicName',
             key: 'topicName',
@@ -142,9 +160,13 @@ function Topic() {
             ellipsis: true,
         },
         {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
+            title: 'Stem',
+            dataIndex: 'stemName',
+            key: 'stemName',
+            filteredValue: filteredInfo.stemName || null,
+            onFilter: (value, record) => record.stemName.includes(value),
+            sorter: (a, b) => (a.stemName || '').length - (b.stemName || '').length,
+            sortOrder: sortedInfo.columnKey === 'stemName' ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
@@ -170,7 +192,24 @@ function Topic() {
                     Add Topic
                 </Button>
             </Space>
-            <Table columns={columns} dataSource={topicList} onChange={handleChange} rowKey="topicId" />
+            <Table
+                columns={columns}
+                expandable={{
+                    expandedRowRender: (record) => (
+                        <p
+                            style={{
+                                margin: 0,
+                            }}
+                        >
+                            {record.description}
+                        </p>
+                    ),
+                    rowExpandable: (record) => record.name !== 'Not Expandable',
+                }}
+                dataSource={topicList}
+                onChange={handleChange}
+                rowKey="topicId"
+            />
             <Modal
                 title={currentTopic ? 'Edit Topic' : 'Add Topic'}
                 open={isModalVisible}

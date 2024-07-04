@@ -28,7 +28,7 @@ import MyPosts from '~/pages/MyPosts';
 import Dashboard from '~/pages/Admin/Dashboard/Dashboard';
 import Learner from '~/pages/Admin/Learner';
 import Topic from '~/pages/Admin/Topic';
-import AdminStem11 from '~/pages/Admin/Stem11';
+import Lesson from '~/pages/Admin/Lesson';
 import AdminStem12 from '~/pages/Admin/Stem12';
 import Banner from '~/pages/Admin/Banner';
 import Stem from '~/pages/Admin/Stem';
@@ -55,7 +55,7 @@ const publicRouter = [
     { path: config.routes.admin, component: Dashboard, layout: AdminLayout },
     { path: config.routes.learner, component: Learner, layout: AdminLayout },
     { path: config.routes.topicAdmin, component: Topic, layout: AdminLayout },
-    { path: config.routes.steam11Admin, component: AdminStem11, layout: AdminLayout },
+    { path: config.routes.lesson, component: Lesson, layout: AdminLayout },
     { path: config.routes.steam12Admin, component: AdminStem12, layout: AdminLayout },
     { path: config.routes.banner, component: Banner, layout: AdminLayout },
     { path: config.routes.stem, component: Stem, layout: AdminLayout },

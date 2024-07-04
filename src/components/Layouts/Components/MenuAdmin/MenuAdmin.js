@@ -34,8 +34,8 @@ function MenuAdmin() {
         {
             key: '4',
             icon: <IconBook2 stroke={1} fontSize={18} />,
-            label: 'Stem11',
-            to: config.routes.steam11Admin,
+            label: 'Lesson',
+            to: config.routes.lesson,
         },
         {
             key: '5',
