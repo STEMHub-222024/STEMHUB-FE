@@ -13,6 +13,7 @@ function Banner() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [currentBanner, setCurrentBanner] = useState(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
+    const [fileList, setFileList] = useState([]);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -30,6 +31,7 @@ function Banner() {
         setCurrentBanner(null);
         form.resetFields();
         setBackgroundImage(null);
+        setFileList([]);
         setIsModalVisible(true);
     };
 
@@ -37,6 +39,14 @@ function Banner() {
         setCurrentBanner(record);
         form.setFieldsValue(record);
         setBackgroundImage(record.image);
+        setFileList([
+            {
+                uid: '-1',
+                name: 'image.png',
+                status: 'done',
+                url: record.image,
+            },
+        ]);
         setIsModalVisible(true);
     };
 
@@ -49,9 +59,10 @@ function Banner() {
     const handleSave = async () => {
         const values = form.getFieldsValue();
         values.image = backgroundImage;
+        console.log('currentBanner', currentBanner);
 
         if (currentBanner) {
-            await bannerServices.updateBanner(currentBanner.id, values);
+            await bannerServices.updateBanner(currentBanner.bannerId, values);
             message.success('Banner updated successfully');
         } else {
             await bannerServices.addBanner(values);
@@ -63,18 +74,23 @@ function Banner() {
 
     const handleFileChange = async (event) => {
         const currentImageURL = backgroundImage;
-        console.log('1', event, currentImageURL);
+
         if (event.file) {
             const file = event.file;
             try {
                 if (currentImageURL) {
-                    console.log('currentImageURL', currentImageURL.split('uploadimage/')[1]);
                     await deleteImage(currentImageURL.split('uploadimage/')[1]);
                 }
-                console.log('file', file);
                 const imageURL = await postImage(file);
-                console.log('imageURL', imageURL);
                 setBackgroundImage(imageURL.fileUrl);
+                setFileList([
+                    {
+                        uid: '-1',
+                        name: file.name,
+                        status: 'done',
+                        url: imageURL.fileUrl,
+                    },
+                ]);
             } catch (error) {
                 message.error('Tải hình ảnh lên không thành công!');
             }
@@ -117,7 +133,7 @@ function Banner() {
                     <Button type="link" onClick={() => handleEdit(record)}>
                         Edit
                     </Button>
-                    <Button type="link" onClick={() => handleDelete(record.id)}>
+                    <Button type="link" onClick={() => handleDelete(record.bannerId)}>
                         Delete
                     </Button>
                 </Space>
@@ -157,14 +173,16 @@ function Banner() {
                     <Form.Item
                         name="image"
                         label="Image"
-                        valuePropName="fileList"
-                        getValueFromEvent={(e) => (Array.isArray(e) ? e : e && e.fileList)}
                         rules={[{ required: true, message: 'Please upload an image!' }]}
                     >
                         <Upload
                             listType="picture"
+                            fileList={fileList}
                             maxCount={1}
-                            onRemove={() => setBackgroundImage(null)}
+                            onRemove={() => {
+                                setBackgroundImage(null);
+                                setFileList([]);
+                            }}
                             beforeUpload={() => false}
                             onChange={handleFileChange}
                         >
