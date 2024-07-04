@@ -24,6 +24,7 @@ const routes = {
     //admin
     admin: '/admin/',
     learner: '/admin/learner',
+    stem: '/admin/stem',
     postsAdmin: '/admin/posts',
     banner: '/admin/banner',
     steam10Admin: '/admin/stem10',

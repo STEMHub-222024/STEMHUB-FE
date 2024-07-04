@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { IconUsers, IconBook, IconBooks, IconBook2, IconWriting, IconSlideshow } from '@tabler/icons-react';
+import { IconUsers, IconBook, IconBooks, IconBook2, IconWriting, IconSlideshow, IconSteam } from '@tabler/icons-react';
 import config from '~/config';
 
 function MenuAdmin() {
@@ -21,33 +21,33 @@ function MenuAdmin() {
         },
         {
             key: '2',
+            icon: <IconSteam stroke={1} fontSize={18} />,
+            label: 'STEM',
+            to: config.routes.stem,
+        },
+        {
+            key: '3',
             icon: <IconBook stroke={1} fontSize={18} />,
             label: 'Stem10',
             to: config.routes.steam10Admin,
         },
         {
-            key: '3',
+            key: '4',
             icon: <IconBook2 stroke={1} fontSize={18} />,
             label: 'Stem11',
             to: config.routes.steam11Admin,
         },
         {
-            key: '4',
+            key: '5',
             icon: <IconBooks stroke={1} fontSize={18} />,
             label: 'Stem12',
             to: config.routes.steam12Admin,
         },
         {
-            key: '5',
+            key: '6',
             icon: <IconWriting stroke={1} fontSize={18} />,
             label: 'Posts',
             to: config.routes.postsAdmin,
-        },
-        {
-            key: '6',
-            icon: <IconSlideshow stroke={1} fontSize={18} />,
-            label: 'Banner',
-            to: config.routes.banner,
         },
         {
             key: '7',
@@ -57,6 +57,12 @@ function MenuAdmin() {
         },
         {
             key: '8',
+            icon: <IconSlideshow stroke={1} fontSize={18} />,
+            label: 'Banner',
+            to: config.routes.banner,
+        },
+        {
+            key: '9',
             icon: <IconSlideshow stroke={1} fontSize={18} />,
             label: 'Banner',
             to: config.routes.banner,

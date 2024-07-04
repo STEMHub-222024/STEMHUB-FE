@@ -31,6 +31,7 @@ import AdminStem10 from '~/pages/Admin/Stem10';
 import AdminStem11 from '~/pages/Admin/Stem11';
 import AdminStem12 from '~/pages/Admin/Stem12';
 import Banner from '~/pages/Admin/Banner';
+import Stem from '~/pages/Admin/Stem';
 
 // Not Found
 // import Error from '~/pages/Error';
@@ -57,6 +58,7 @@ const publicRouter = [
     { path: config.routes.steam11Admin, component: AdminStem11, layout: AdminLayout },
     { path: config.routes.steam12Admin, component: AdminStem12, layout: AdminLayout },
     { path: config.routes.banner, component: Banner, layout: AdminLayout },
+    { path: config.routes.stem, component: Stem, layout: AdminLayout },
 ];
 
 const privateRouter = [
