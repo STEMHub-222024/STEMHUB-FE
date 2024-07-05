@@ -32,6 +32,7 @@ import Lesson from '~/pages/Admin/Lesson';
 import Banner from '~/pages/Admin/Banner';
 import Stem from '~/pages/Admin/Stem';
 import Images from '~/pages/Admin/Images/Images';
+import PostsAdmin from '~/pages/Admin/Posts';
 
 // Not Found
 // import Error from '~/pages/Error';
@@ -59,6 +60,7 @@ const publicRouter = [
     { path: config.routes.banner, component: Banner, layout: AdminLayout },
     { path: config.routes.stem, component: Stem, layout: AdminLayout },
     { path: config.routes.images, component: Images, layout: AdminLayout },
+    { path: config.routes.postsAdmin, component: PostsAdmin, layout: AdminLayout },
 ];
 
 const privateRouter = [
