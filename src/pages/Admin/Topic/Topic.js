@@ -5,11 +5,12 @@ import { UploadOutlined } from '@ant-design/icons';
 import { postImage, deleteImage } from '~/services/uploadImage';
 import * as topicServices from '~/services/topicServices';
 import * as stemServices from '~/services/stemServices';
+import * as ingredientServices from '~/services/ingredientServices';
 
 import styles from './Topic.module.scss';
+import Heading from '~/components/Common/Heading';
 
 const cx = classNames.bind(styles);
-
 const { Content } = Layout;
 const { Option } = Select;
 
@@ -19,10 +20,14 @@ function Topic() {
     const [topicList, setTopicList] = useState([]);
     const [stemList, setStemList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isIngredientModalVisible, setIsIngredientModalVisible] = useState(false);
     const [currentTopic, setCurrentTopic] = useState(null);
+    const [currentIngredient, setCurrentIngredient] = useState(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [fileList, setFileList] = useState([]);
+    const [ingredientList, setIngredientList] = useState([]);
     const [form] = Form.useForm();
+    const [ingredientForm] = Form.useForm();
 
     useEffect(() => {
         fetchTopics();
@@ -45,6 +50,13 @@ function Topic() {
         const res = await stemServices.getStem();
         if (res) {
             setStemList(res);
+        }
+    };
+
+    const fetchIngredients = async (topicId) => {
+        const ingredientRes = await ingredientServices.getIngredientsByTopic(topicId);
+        if (ingredientRes) {
+            setIngredientList(ingredientRes);
         }
     };
 
@@ -118,9 +130,98 @@ function Topic() {
         }
     };
 
+    const handleIngredientAdd = async (topicId) => {
+        await fetchIngredients(topicId);
+        setCurrentIngredient(null);
+        ingredientForm.resetFields();
+        setCurrentTopic({ topicId });
+        setIsIngredientModalVisible(true);
+    };
+
+    const handleIngredientEdit = (record) => {
+        setCurrentIngredient(record);
+        ingredientForm.setFieldsValue(record);
+        setIsIngredientModalVisible(true);
+    };
+
+    const handleIngredientDelete = async (id) => {
+        if (currentTopic && currentTopic.topicId) {
+            await ingredientServices.deleteIngredient(id);
+            message.success('Ingredient deleted successfully');
+            fetchIngredients(currentTopic.topicId);
+        }
+    };
+
+    const handleIngredientSave = async () => {
+        const values = ingredientForm.getFieldsValue();
+        if (currentTopic && currentTopic.topicId) {
+            values.topicId = currentTopic.topicId;
+            if (currentIngredient) {
+                await ingredientServices.updateIngredient(currentIngredient.ingredientsId, values);
+                message.success('Ingredient updated successfully');
+            } else {
+                await ingredientServices.addIngredient(values);
+                message.success('Ingredient added successfully');
+            }
+            setIsIngredientModalVisible(false);
+            fetchIngredients(currentTopic.topicId);
+        }
+    };
+
     const handleChange = (pagination, filters, sorter) => {
         setFilteredInfo(filters);
         setSortedInfo(sorter);
+    };
+
+    const handleExpand = async (expanded, record) => {
+        if (expanded) {
+            await fetchIngredients(record.topicId);
+            setCurrentTopic(record);
+        }
+    };
+
+    const expandedRowRender = (topic) => {
+        const columns = [
+            {
+                title: 'Name',
+                dataIndex: 'ingredientsName',
+                key: 'ingredientsName',
+                ellipsis: true,
+            },
+            {
+                title: 'Action',
+                key: 'operation',
+                render: (_, record) => (
+                    <Space size="middle">
+                        <Button type="link" onClick={() => handleIngredientEdit(record)}>
+                            Edit
+                        </Button>
+                        <Button type="link" onClick={() => handleIngredientDelete(record.ingredientsId)}>
+                            Delete
+                        </Button>
+                    </Space>
+                ),
+                ellipsis: true,
+            },
+        ];
+        return (
+            <>
+                <Space className={cx('btn-add')}>
+                    <Heading h2>Management Ingredient</Heading>
+                    <Button type="primary" onClick={() => handleIngredientAdd(topic.topicId)}>
+                        Add Ingredient
+                    </Button>
+                </Space>
+                <Table
+                    columns={columns}
+                    dataSource={ingredientList.filter((ingredient) => ingredient.topicId === topic.topicId)}
+                    pagination={false}
+                    bordered
+                    scroll={{ y: 400 }}
+                    rowKey="ingredientsId"
+                />
+            </>
+        );
     };
 
     const columns = [
@@ -170,6 +271,19 @@ function Topic() {
             ellipsis: true,
         },
         {
+            title: 'Description',
+            dataIndex: 'description',
+            key: 'description',
+            ellipsis: {
+                showTitle: false,
+            },
+            render: (description) => (
+                <Tooltip placement="topLeft" title={description}>
+                    {description}
+                </Tooltip>
+            ),
+        },
+        {
             title: 'Action',
             key: 'action',
             render: (_, record) => (
@@ -184,10 +298,10 @@ function Topic() {
             ),
         },
     ];
-
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
             <Space className={cx('btn-add')}>
+                <Heading h2>Management Topic</Heading>
                 <Button type="primary" onClick={handleAdd}>
                     Add Topic
                 </Button>
@@ -195,16 +309,9 @@ function Topic() {
             <Table
                 columns={columns}
                 expandable={{
-                    expandedRowRender: (record) => (
-                        <p
-                            style={{
-                                margin: 0,
-                            }}
-                        >
-                            {record.description}
-                        </p>
-                    ),
-                    rowExpandable: (record) => record.name !== 'Not Expandable',
+                    expandedRowRender,
+                    rowExpandable: (record) => record.topicId,
+                    onExpand: handleExpand,
                 }}
                 dataSource={topicList}
                 onChange={handleChange}
@@ -220,16 +327,16 @@ function Topic() {
                     <Form.Item
                         name="topicName"
                         label="Name"
-                        rules={[{ required: true, message: 'Please input the topicName!' }]}
+                        rules={[{ required: true, message: 'Please input the topic name!' }]}
                     >
                         <Input placeholder="Enter a topic name" />
                     </Form.Item>
                     <Form.Item
                         name="videoReview"
                         label="Video Review"
-                        rules={[{ required: true, message: 'Please input the videoReview!' }]}
+                        rules={[{ required: true, message: 'Please input the video review link!' }]}
                     >
-                        <Input placeholder="Add video link review" />
+                        <Input placeholder="Add video review link" />
                     </Form.Item>
                     <Form.Item
                         name="topicImage"
@@ -269,6 +376,22 @@ function Topic() {
                                 </Option>
                             ))}
                         </Select>
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <Modal
+                title={currentIngredient ? 'Edit Ingredient' : 'Add Ingredient'}
+                open={isIngredientModalVisible}
+                onOk={handleIngredientSave}
+                onCancel={() => setIsIngredientModalVisible(false)}
+            >
+                <Form form={ingredientForm} layout="vertical">
+                    <Form.Item
+                        name="ingredientsName"
+                        label="Ingredient Name"
+                        rules={[{ required: true, message: 'Please input the ingredient name!' }]}
+                    >
+                        <Input placeholder="Enter an ingredient name" />
                     </Form.Item>
                 </Form>
             </Modal>
