@@ -22,7 +22,7 @@ const routes = {
     myPosts: '/my-posts',
 
     //admin
-    admin: '/admin/',
+    admin: '/admin',
     learner: '/admin/learner',
     stem: '/admin/stem',
     postsAdmin: '/admin/posts',

@@ -25,7 +25,7 @@ import NewPost from '~/pages/NewPost';
 import MyPosts from '~/pages/MyPosts';
 
 // Admin
-import Dashboard from '~/pages/Admin/Dashboard/Dashboard';
+import Dashboard from '~/pages/Admin/Dashboard';
 import Learner from '~/pages/Admin/Learner';
 import Topic from '~/pages/Admin/Topic';
 import Lesson from '~/pages/Admin/Lesson';

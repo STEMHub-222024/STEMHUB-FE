@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import {
+    IconDashboard,
     IconUsers,
     IconBook,
     IconBook2,
@@ -23,42 +24,48 @@ function MenuAdmin() {
     const items = [
         {
             key: '1',
+            icon: <IconDashboard stroke={1} fontSize={18} />,
+            label: 'Dashboard',
+            to: config.routes.admin,
+        },
+        {
+            key: '2',
             icon: <IconUsers stroke={1} fontSize={18} />,
             label: 'Learner',
             to: config.routes.learner,
         },
         {
-            key: '2',
+            key: '3',
             icon: <IconSteam stroke={1} fontSize={18} />,
             label: 'STEM',
             to: config.routes.stem,
         },
         {
-            key: '3',
+            key: '4',
             icon: <IconBook stroke={1} fontSize={18} />,
             label: 'Topic',
             to: config.routes.topicAdmin,
         },
         {
-            key: '4',
+            key: '5',
             icon: <IconBook2 stroke={1} fontSize={18} />,
             label: 'Lesson',
             to: config.routes.lesson,
         },
         {
-            key: '5',
+            key: '6',
             icon: <IconWriting stroke={1} fontSize={18} />,
             label: 'Posts',
             to: config.routes.postsAdmin,
         },
         {
-            key: '6',
+            key: '7',
             icon: <IconPhotoScan stroke={1} fontSize={18} />,
             label: 'Banner',
             to: config.routes.banner,
         },
         {
-            key: '7',
+            key: '8',
             icon: <IconPhotoSearch stroke={1} fontSize={18} />,
             label: 'Images',
             to: config.routes.images,
