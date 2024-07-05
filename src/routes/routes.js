@@ -29,9 +29,9 @@ import Dashboard from '~/pages/Admin/Dashboard/Dashboard';
 import Learner from '~/pages/Admin/Learner';
 import Topic from '~/pages/Admin/Topic';
 import Lesson from '~/pages/Admin/Lesson';
-import AdminStem12 from '~/pages/Admin/Stem12';
 import Banner from '~/pages/Admin/Banner';
 import Stem from '~/pages/Admin/Stem';
+import Images from '~/pages/Admin/Images/Images';
 
 // Not Found
 // import Error from '~/pages/Error';
@@ -56,9 +56,9 @@ const publicRouter = [
     { path: config.routes.learner, component: Learner, layout: AdminLayout },
     { path: config.routes.topicAdmin, component: Topic, layout: AdminLayout },
     { path: config.routes.lesson, component: Lesson, layout: AdminLayout },
-    { path: config.routes.steam12Admin, component: AdminStem12, layout: AdminLayout },
     { path: config.routes.banner, component: Banner, layout: AdminLayout },
     { path: config.routes.stem, component: Stem, layout: AdminLayout },
+    { path: config.routes.images, component: Images, layout: AdminLayout },
 ];
 
 const privateRouter = [

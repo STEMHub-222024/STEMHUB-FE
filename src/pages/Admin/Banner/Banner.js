@@ -167,14 +167,14 @@ function Banner() {
                         label="Title"
                         rules={[{ required: true, message: 'Please input the title!' }]}
                     >
-                        <Input />
+                        <Input placeholder="Enter the Title" />
                     </Form.Item>
                     <Form.Item
                         name="content"
                         label="Content"
                         rules={[{ required: true, message: 'Please input the content!' }]}
                     >
-                        <Input />
+                        <Input placeholder="Enter the Content" />
                     </Form.Item>
                     <Form.Item
                         name="image"

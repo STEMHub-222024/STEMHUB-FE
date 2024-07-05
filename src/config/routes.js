@@ -29,7 +29,7 @@ const routes = {
     banner: '/admin/banner',
     topicAdmin: '/admin/topic',
     lesson: '/admin/lesson',
-    steam12Admin: '/admin/stem12',
+    images: '/admin/images',
 };
 
 export default routes;

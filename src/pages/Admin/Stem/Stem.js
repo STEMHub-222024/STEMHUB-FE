@@ -127,7 +127,7 @@ function Stem() {
                         label="Name"
                         rules={[{ required: true, message: 'Please input the Name!' }]}
                     >
-                        <Input />
+                        <Input placeholder="Enter the Name" />
                     </Form.Item>
                 </Form>
             </Modal>

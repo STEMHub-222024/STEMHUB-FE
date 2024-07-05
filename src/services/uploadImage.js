@@ -1,5 +1,17 @@
 import * as httpRequest from '~/utils/httpRequest';
 
+export const getImages = async () => {
+    try {
+        const res = await httpRequest.get('UploadImage');
+        if (res.status === 200) {
+            return res.data;
+        }
+    } catch (error) {
+        console.error('Failed to fetch UploadImage:', error);
+        throw error;
+    }
+};
+
 export const postImage = async (file) => {
     try {
         if (!file) {

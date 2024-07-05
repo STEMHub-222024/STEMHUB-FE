@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { IconUsers, IconBook, IconBooks, IconBook2, IconWriting, IconSlideshow, IconSteam } from '@tabler/icons-react';
+import {
+    IconUsers,
+    IconBook,
+    IconBook2,
+    IconWriting,
+    IconPhotoSearch,
+    IconSteam,
+    IconPhotoScan,
+} from '@tabler/icons-react';
 import config from '~/config';
 
 function MenuAdmin() {
@@ -39,33 +47,21 @@ function MenuAdmin() {
         },
         {
             key: '5',
-            icon: <IconBooks stroke={1} fontSize={18} />,
-            label: 'Stem12',
-            to: config.routes.steam12Admin,
-        },
-        {
-            key: '6',
             icon: <IconWriting stroke={1} fontSize={18} />,
             label: 'Posts',
             to: config.routes.postsAdmin,
         },
         {
+            key: '6',
+            icon: <IconPhotoScan stroke={1} fontSize={18} />,
+            label: 'Banner',
+            to: config.routes.banner,
+        },
+        {
             key: '7',
-            icon: <IconSlideshow stroke={1} fontSize={18} />,
-            label: 'Banner',
-            to: config.routes.banner,
-        },
-        {
-            key: '8',
-            icon: <IconSlideshow stroke={1} fontSize={18} />,
-            label: 'Banner',
-            to: config.routes.banner,
-        },
-        {
-            key: '9',
-            icon: <IconSlideshow stroke={1} fontSize={18} />,
-            label: 'Banner',
-            to: config.routes.banner,
+            icon: <IconPhotoSearch stroke={1} fontSize={18} />,
+            label: 'Images',
+            to: config.routes.images,
         },
     ];
 

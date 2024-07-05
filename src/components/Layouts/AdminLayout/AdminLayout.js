@@ -1,10 +1,13 @@
 import classNames from 'classnames/bind';
 import { useState } from 'react';
 import { Layout } from 'antd';
+import { Link } from 'react-router-dom';
 import MenuAdmin from '~/components/Layouts/Components/MenuAdmin';
 import HeaderAdmin from '~/components/Layouts/Components/HeaderAdmin';
 
 import styles from './AdminLayout.module.scss';
+import Heading from '~/components/Common/Heading';
+import routes from '~/config/routes';
 
 const cx = classNames.bind(styles);
 
@@ -16,9 +19,11 @@ function AdminLayout({ children }) {
     return (
         <Layout>
             <Sider trigger={null} collapsible collapsed={collapsed}>
-                <div className={cx('logo-admin')}>
-                    <h3>STEM</h3>
-                </div>
+                <Link to={routes.home} className={cx('logo-admin')}>
+                    <Heading h3 className={cx('heading')}>
+                        Stem
+                    </Heading>
+                </Link>
                 <MenuAdmin />
             </Sider>
             <Layout>

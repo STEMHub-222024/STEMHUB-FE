@@ -6,8 +6,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    h3 {
+    .heading {
         color: var(--white);
         font-size: 1.8rem;
+        text-transform: uppercase;
     }
 }
