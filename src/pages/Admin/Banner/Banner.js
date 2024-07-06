@@ -1,7 +1,8 @@
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Layout, Button, Modal, Form, Input, message, Upload } from 'antd';
+import { Space, Table, Layout, Button, Modal, Form, Input, message, Upload, Tooltip } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import Heading from '~/components/Common/Heading';
 import * as bannerServices from '~/services/bannerServices';
 import { postImage, deleteImage } from '~/services/uploadImage';
 
@@ -98,7 +99,7 @@ function Banner() {
                     },
                 ]);
             } catch (error) {
-                message.error('Tải hình ảnh lên không thành công!');
+                message.error('Image upload failed!');
             }
         }
     };
@@ -123,13 +124,27 @@ function Banner() {
             title: 'Content',
             dataIndex: 'content',
             key: 'content',
-            ellipsis: true,
+            ellipsis: {
+                showTitle: false,
+            },
+            render: (content) => (
+                <Tooltip placement="topLeft" title={content}>
+                    {content}
+                </Tooltip>
+            ),
         },
         {
             title: 'Image',
             dataIndex: 'image',
             key: 'image',
-            ellipsis: true,
+            ellipsis: {
+                showTitle: false,
+            },
+            render: (image) => (
+                <Tooltip placement="topLeft" title={image}>
+                    {image}
+                </Tooltip>
+            ),
         },
         {
             title: 'Action',
@@ -150,6 +165,7 @@ function Banner() {
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
             <Space className={cx('btn-add')}>
+                <Heading h2>Management Banner</Heading>
                 <Button type="primary" onClick={handleAdd}>
                     Add Banner
                 </Button>

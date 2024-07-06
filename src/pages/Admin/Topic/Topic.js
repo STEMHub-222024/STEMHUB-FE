@@ -187,6 +187,8 @@ function Topic() {
                 dataIndex: 'ingredientsName',
                 key: 'ingredientsName',
                 ellipsis: true,
+                onFilter: (value, record) => record.ingredientsName.includes(value),
+                sorter: (a, b) => (a.ingredientsName || '').length - (b.ingredientsName || '').length,
             },
             {
                 title: 'Action',

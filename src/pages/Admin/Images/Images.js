@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import Highlighter from 'react-highlight-words';
 import { Space, Table, Layout, Button, message, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import Heading from '~/components/Common/Heading';
 import * as uploadImageServices from '~/services/uploadImage';
 
 const { Content } = Layout;
@@ -145,6 +146,13 @@ function Images() {
 
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
+            <Space
+                style={{
+                    marginBottom: 16,
+                }}
+            >
+                <Heading h2>Management Images</Heading>
+            </Space>
             <Table columns={columns} dataSource={imageList} rowKey="key" />
         </Content>
     );

@@ -1,9 +1,13 @@
+import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Layout } from 'antd';
-
+import Heading from '~/components/Common/Heading';
 import * as userServices from '~/services/userServices';
+import styles from './Learner.module.scss';
 
 const { Content } = Layout;
+
+const cx = classNames.bind(styles);
 
 function Learner() {
     const [filteredInfo, setFilteredInfo] = useState({});
@@ -93,7 +97,10 @@ function Learner() {
                     style={{
                         marginBottom: 16,
                     }}
-                ></Space>
+                    className={cx('btn-add')}
+                >
+                    <Heading h2>Management Learner</Heading>
+                </Space>
                 <Table columns={columns} dataSource={userList} onChange={handleChange} rowKey="key" />
             </>
         </Content>

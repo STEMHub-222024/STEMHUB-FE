@@ -1,6 +1,7 @@
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Layout, Button, Modal, Form, Input, message, Tooltip } from 'antd';
+import Heading from '~/components/Common/Heading';
 import * as stemServices from '~/services/stemServices';
 
 import styles from './Stem.module.scss';
@@ -110,6 +111,7 @@ function Stem() {
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
             <Space className={cx('btn-add')}>
+                <Heading h2>Management Stem</Heading>
                 <Button type="primary" onClick={handleAdd}>
                     Add Stem
                 </Button>

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import classNames from 'classnames/bind';
-import { Layout, Card, Row, Col, Spin, message } from 'antd';
+import { Layout, Card, Row, Col, Spin, message, Space } from 'antd';
 import { Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, LineChart, Line } from 'recharts';
+import Heading from '~/components/Common/Heading';
 import * as userServices from '~/services/userServices';
 import * as topicServices from '~/services/topicServices';
 import * as lessonServices from '~/services/lessonServices';
@@ -102,8 +103,17 @@ const Dashboard = () => {
                 minHeight: 500,
             }}
         >
+            <Space
+                style={{
+                    marginBottom: 16,
+                }}
+            >
+                <Heading h2>Dashboard</Heading>
+            </Space>
             {loading ? (
-                <Spin size="large" />
+                <div className={cx('wrapper-loading')}>
+                    <Spin size="large" />
+                </div>
             ) : (
                 <>
                     <Row gutter={16}>
