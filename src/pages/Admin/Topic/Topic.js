@@ -53,8 +53,8 @@ function Topic() {
         }
     };
 
-    const fetchIngredients = async (topicId) => {
-        const ingredientRes = await ingredientServices.getIngredientsByTopic(topicId);
+    const fetchIngredients = async () => {
+        const ingredientRes = await ingredientServices.getIngredientsByTopic();
         if (ingredientRes) {
             setIngredientList(ingredientRes);
         }
@@ -125,13 +125,13 @@ function Topic() {
                     },
                 ]);
             } catch (error) {
-                message.error('Tải hình ảnh lên không thành công!');
+                message.error('Image upload failed!');
             }
         }
     };
 
     const handleIngredientAdd = async (topicId) => {
-        await fetchIngredients(topicId);
+        await fetchIngredients();
         setCurrentIngredient(null);
         ingredientForm.resetFields();
         setCurrentTopic({ topicId });
@@ -148,7 +148,7 @@ function Topic() {
         if (currentTopic && currentTopic.topicId) {
             await ingredientServices.deleteIngredient(id);
             message.success('Ingredient deleted successfully');
-            fetchIngredients(currentTopic.topicId);
+            fetchIngredients();
         }
     };
 
@@ -164,18 +164,18 @@ function Topic() {
                 message.success('Ingredient added successfully');
             }
             setIsIngredientModalVisible(false);
-            fetchIngredients(currentTopic.topicId);
+            fetchIngredients();
         }
     };
 
-    const handleChange = (pagination, filters, sorter) => {
+    const handleChange = (_, filters, sorter) => {
         setFilteredInfo(filters);
         setSortedInfo(sorter);
     };
 
     const handleExpand = async (expanded, record) => {
         if (expanded) {
-            await fetchIngredients(record.topicId);
+            await fetchIngredients();
             setCurrentTopic(record);
         }
     };

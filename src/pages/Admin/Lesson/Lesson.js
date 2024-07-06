@@ -3,8 +3,9 @@ import { Space, Table, Layout, Button, Modal, Form, Input, message, Tooltip, Sel
 import classNames from 'classnames/bind';
 import * as lessonServices from '~/services/lessonServices';
 import * as topicServices from '~/services/topicServices';
-// import * as videoServices from '~/services/videoServices';
+import * as videoServices from '~/services/videoServices';
 import styles from './Lesson.module.scss';
+import Heading from '~/components/Common/Heading';
 
 const cx = classNames.bind(styles);
 const { Content } = Layout;
@@ -26,6 +27,7 @@ function Lesson() {
 
     useEffect(() => {
         fetchLessonsAndTopics();
+        fetchVideos();
     }, []);
 
     const fetchLessonsAndTopics = async () => {
@@ -40,6 +42,17 @@ function Lesson() {
             }
         } catch (error) {
             console.error('Failed to fetch lessons and topics:', error);
+        }
+    };
+
+    const fetchVideos = async () => {
+        try {
+            const videoRes = await videoServices.getVideo();
+            if (videoRes) {
+                setState((prevState) => ({ ...prevState, videoList: videoRes }));
+            }
+        } catch (error) {
+            console.error('Failed to fetch videos:', error);
         }
     };
 
@@ -98,35 +111,35 @@ function Lesson() {
     };
 
     const handleDeleteVideo = async (videoId) => {
-        // try {
-        //     await videoServices.deleteVideo(videoId);
-        //     message.success('Video deleted successfully');
-        //     fetchVideos(state.currentLesson);
-        // } catch (error) {
-        //     console.error('Failed to delete video:', error);
-        //     message.error('Failed to delete video');
-        // }
+        try {
+            await videoServices.deleteVideo(videoId);
+            message.success('Video deleted successfully');
+            fetchVideos();
+        } catch (error) {
+            console.error('Failed to delete video:', error);
+            message.error('Failed to delete video');
+        }
     };
 
     const handleSaveVideo = async () => {
-        // try {
-        //     const values = videoForm.getFieldsValue();
-        //     if (state.currentVideo) {
-        //         await videoServices.updateVideo(state.currentVideo.videoId, values);
-        //         message.success('Video updated successfully');
-        //     } else {
-        //         await videoServices.addVideo({ ...values, lessonId: state.currentLesson });
-        //         message.success('Video added successfully');
-        //     }
-        //     setState((prevState) => ({ ...prevState, isVideoModalVisible: false }));
-        //     fetchVideos(state.currentLesson);
-        // } catch (error) {
-        //     console.error('Failed to save video:', error);
-        //     message.error('Failed to save video');
-        // }
+        try {
+            const values = videoForm.getFieldsValue();
+            if (state.currentVideo) {
+                await videoServices.updateVideo(state.currentVideo.videoId, values);
+                message.success('Video updated successfully');
+            } else {
+                await videoServices.addVideo({ ...values, lessonId: state.currentLesson });
+                message.success('Video added successfully');
+            }
+            setState((prevState) => ({ ...prevState, isVideoModalVisible: false }));
+            fetchVideos();
+        } catch (error) {
+            console.error('Failed to save video:', error);
+            message.error('Failed to save video');
+        }
     };
 
-    const handleChange = (pagination, filters, sorter) => {
+    const handleChange = (_, filters, sorter) => {
         setState((prevState) => ({
             ...prevState,
             filteredInfo: filters,
@@ -134,22 +147,24 @@ function Lesson() {
         }));
     };
 
-    const fetchVideos = async (lessonId) => {
-        // try {
-        //     const videoRes = await videoServices.getVideosByLessonId(lessonId);
-        //     if (videoRes) {
-        //         setState((prevState) => ({ ...prevState, videoList: videoRes }));
-        //     }
-        // } catch (error) {
-        //     console.error('Failed to fetch videos:', error);
-        // }
-    };
-
     const expandedRowRender = (lesson) => {
         const columns = [
-            { title: 'Title', dataIndex: 'videoTitle', key: 'videoTitle', ellipsis: true },
+            {
+                title: 'Title',
+                dataIndex: 'videoTitle',
+                key: 'videoTitle',
+                ellipsis: true,
+                onFilter: (value, record) => record.videoTitle.includes(value),
+                sorter: (a, b) => (a.videoTitle || '').length - (b.videoTitle || '').length,
+                sortOrder: state.sortedInfo.columnKey === 'videoTitle' ? state.sortedInfo.order : null,
+            },
             { title: 'Link Video', dataIndex: 'path', key: 'path', ellipsis: true },
-            { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true },
+            {
+                title: 'Description',
+                dataIndex: 'description_V',
+                key: 'description_V',
+                ellipsis: true,
+            },
             {
                 title: 'Action',
                 key: 'operation',
@@ -169,6 +184,7 @@ function Lesson() {
         return (
             <>
                 <Space className={cx('btn-add')}>
+                    <Heading h2>Management Video</Heading>
                     <Button type="primary" onClick={() => handleAddVideo(lesson.lessonId)}>
                         Add Video
                     </Button>
@@ -176,7 +192,9 @@ function Lesson() {
                 <Table
                     columns={columns}
                     dataSource={state.videoList.filter((video) => video.lessonId === lesson.lessonId)}
-                    pagination={true}
+                    pagination={false}
+                    bordered
+                    scroll={{ y: 400 }}
                     rowKey="videoId"
                 />
             </>
@@ -232,6 +250,7 @@ function Lesson() {
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
             <Space className={cx('btn-add')}>
+                <Heading h2>Management Lesson</Heading>
                 <Button type="primary" onClick={handleAddLesson}>
                     Add Lesson
                 </Button>
@@ -294,7 +313,7 @@ function Lesson() {
                         <Input placeholder="Enter the video link" />
                     </Form.Item>
                     <Form.Item
-                        name="description"
+                        name="description_V"
                         label="Description"
                         rules={[{ required: true, message: 'Please input the description!' }]}
                     >

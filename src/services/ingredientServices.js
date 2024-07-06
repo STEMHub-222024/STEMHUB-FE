@@ -1,6 +1,6 @@
 import * as httpRequest from '~/utils/httpRequest';
 
-export const getIngredient = async (topicId) => {
+export const getIngredient = async () => {
     try {
         const res = await httpRequest.get('Ingredients');
         if (res.status === 200) {
