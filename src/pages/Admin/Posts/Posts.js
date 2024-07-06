@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind';
 import React, { useRef, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 import Highlighter from 'react-highlight-words';
 import { Space, Table, Layout, Button, message, Input, Tooltip, Form, Modal, Select, Upload } from 'antd';
@@ -9,6 +10,8 @@ import * as postServices from '~/services/postServices';
 import * as userServices from '~/services/userServices';
 import { postImage, deleteImage } from '~/services/uploadImage';
 import styles from './Posts.module.scss';
+import TextEditor from '~/components/Common/TextEditor';
+import { selectPosts } from '~/app/selectors';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -16,6 +19,7 @@ const { Option } = Select;
 const cx = classNames.bind(styles);
 
 function Posts() {
+    const { title, markdown, htmlContent } = useSelector(selectPosts).data;
     const [imageList, setImageList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingPost, setEditingPost] = useState(null);
@@ -279,10 +283,12 @@ function Posts() {
         },
     ];
 
+    console.log(' title, markdown, htmlContent', title, markdown, htmlContent);
+
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
             <Space className={cx('btn-add')}>
-                <Heading h2>Management Lesson</Heading>
+                <Heading h2>Management Post</Heading>
                 <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
                     Add Post
                 </Button>
@@ -302,6 +308,7 @@ function Posts() {
                 open={isModalVisible}
                 onCancel={() => setIsModalVisible(false)}
                 footer={null}
+                width={1000}
             >
                 <Form
                     initialValues={editingPost || { title: '', description_NA: '', image: '', userId: '' }}
@@ -356,11 +363,16 @@ function Posts() {
                         </Select>
                     </Form.Item>
                     <Form.Item>
-                        <Space>
+                        <div className={cx('text-editor')}>
+                            <TextEditor className={cx('text-content')} showHtml placeholder="Nội dung viết ở đây" />
+                        </div>
+                    </Form.Item>
+                    <Form.Item>
+                        <Space style={{ display: 'flex', justifyContent: 'end' }}>
+                            <Button onClick={() => setIsModalVisible(false)}>Cancel</Button>
                             <Button type="primary" htmlType="submit">
                                 {editingPost ? 'Update' : 'Create'}
                             </Button>
-                            <Button onClick={() => setIsModalVisible(false)}>Cancel</Button>
                         </Space>
                     </Form.Item>
                 </Form>

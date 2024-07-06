@@ -4,3 +4,14 @@
     justify-content: space-between;
     margin-bottom: 8px;
 }
+
+.text-editor {
+    margin-top: 16px;
+
+    .text-content {
+        margin-bottom: 31px;
+        height: calc(-100px + 100vh);
+        border: none;
+        scrollbar-width: thin;
+    }
+}
