@@ -38,6 +38,26 @@ export const pagedPosts = async ({ page, pageSize }) => {
     }
 };
 
+export const addPost = async (postData) => {
+    try {
+        const res = await httpRequest.post('NewspaperArticle', postData);
+        return res.data;
+    } catch (error) {
+        console.error('Failed to add post:', error);
+        throw error;
+    }
+};
+
+export const updatePost = async (id, postData) => {
+    try {
+        const res = await httpRequest.put(`NewspaperArticle/${id}`, postData);
+        return res.data;
+    } catch (error) {
+        console.error(`Failed to update post with id ${id}:`, error);
+        throw error;
+    }
+};
+
 export const deletePosts = async (newspaperArticleId) => {
     const res = await httpRequest.deleteRequest(`NewspaperArticle/${newspaperArticleId}`);
     return res.data;

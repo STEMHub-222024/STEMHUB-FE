@@ -1,5 +1,17 @@
 import * as httpRequest from '~/utils/httpRequest';
 
+export const getImages = async () => {
+    try {
+        const res = await httpRequest.get('UploadImage');
+        if (res.status === 200) {
+            return res.data;
+        }
+    } catch (error) {
+        console.error('Failed to fetch UploadImage:', error);
+        throw error;
+    }
+};
+
 export const postImage = async (file) => {
     try {
         if (!file) {
@@ -26,8 +38,12 @@ export const postImage = async (file) => {
 };
 
 export const deleteImage = async (nameImage) => {
-    const res = await httpRequest.deleteRequest(`UploadImage/${nameImage}`);
-    if (res) {
-        return res.data;
+    try {
+        const res = await httpRequest.deleteRequest(`UploadImage/${nameImage}`);
+        if (res) {
+            return res.data;
+        }
+    } catch (error) {
+        console.error('Error uploading image:', error.message);
     }
 };

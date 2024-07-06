@@ -25,11 +25,14 @@ import NewPost from '~/pages/NewPost';
 import MyPosts from '~/pages/MyPosts';
 
 // Admin
-import Dashboard from '~/pages/Admin/Dashboard/Dashboard';
+import Dashboard from '~/pages/Admin/Dashboard';
 import Learner from '~/pages/Admin/Learner';
-import AdminStem10 from '~/pages/Admin/Stem10';
-import AdminStem11 from '~/pages/Admin/Stem11';
-import AdminStem12 from '~/pages/Admin/Stem12';
+import Topic from '~/pages/Admin/Topic';
+import Lesson from '~/pages/Admin/Lesson';
+import Banner from '~/pages/Admin/Banner';
+import Stem from '~/pages/Admin/Stem';
+import Images from '~/pages/Admin/Images/Images';
+import PostsAdmin from '~/pages/Admin/Posts';
 
 // Not Found
 // import Error from '~/pages/Error';
@@ -52,9 +55,12 @@ const publicRouter = [
     //Admin
     { path: config.routes.admin, component: Dashboard, layout: AdminLayout },
     { path: config.routes.learner, component: Learner, layout: AdminLayout },
-    { path: config.routes.steam10Admin, component: AdminStem10, layout: AdminLayout },
-    { path: config.routes.steam11Admin, component: AdminStem11, layout: AdminLayout },
-    { path: config.routes.steam12Admin, component: AdminStem12, layout: AdminLayout },
+    { path: config.routes.topicAdmin, component: Topic, layout: AdminLayout },
+    { path: config.routes.lesson, component: Lesson, layout: AdminLayout },
+    { path: config.routes.banner, component: Banner, layout: AdminLayout },
+    { path: config.routes.stem, component: Stem, layout: AdminLayout },
+    { path: config.routes.images, component: Images, layout: AdminLayout },
+    { path: config.routes.postsAdmin, component: PostsAdmin, layout: AdminLayout },
 ];
 
 const privateRouter = [
