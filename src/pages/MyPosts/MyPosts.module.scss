@@ -1,5 +1,16 @@
 .wrapper {
     padding: 18px 32px;
+    .btn-next-posts {
+        width: 200px;
+    }
+    .wrapper-btn {
+        display: flex;
+        justify-content: center;
+
+        .btn-next-posts {
+            width: 200px;
+        }
+    }
     .pagination {
         padding: 12px;
         display: flex;

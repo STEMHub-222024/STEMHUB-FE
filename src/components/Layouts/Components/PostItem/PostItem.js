@@ -61,7 +61,7 @@ function PostItem({ data }) {
                             {data.title}
                         </Heading>
                     </Link>
-                    <p className={cx('desc')}>{data.description}</p>
+                    <p className={cx('desc')}>{data.description_NA}</p>
                 </div>
                 <div className={cx('thumb')}>
                     <Link to={`/posts/${data.newspaperArticleId}`}>

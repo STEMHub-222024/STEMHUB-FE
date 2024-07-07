@@ -14,6 +14,7 @@ const cx = classNames.bind(styles);
 
 function NavbarTopic({ checkStemDefault }) {
     const dispatch = useDispatch();
+    const stemNameRegex = /^stem\s*10$/i;
     const { navbarTopicData } = useSelector(selectNavbarTopic);
 
     const fetchApi = async (stemId) => {
@@ -57,12 +58,7 @@ function NavbarTopic({ checkStemDefault }) {
         <Menu className={cx('menu-topic')}>
             <div className={cx('group-menu')}>
                 {navbarTopicData?.map((stem) => {
-                    const activeDefault = checkStemDefault(
-                        stem?.stemName.toLowerCase(),
-                        'stem 10' || stem?.stemName.toLowerCase(),
-                        'stem10',
-                    );
-
+                    const activeDefault = checkStemDefault(stem?.stemName, stemNameRegex);
                     return (
                         <div key={stem?.stemId}>
                             <Button

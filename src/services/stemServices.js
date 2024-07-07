@@ -14,6 +14,18 @@ export const getStem = async () => {
     }
 };
 
+export const getStemById = async (id) => {
+    try {
+        const res = await httpRequest.get(`STEM/${id}`);
+        if (res.status === 200) {
+            return res.data;
+        }
+    } catch (error) {
+        console.error('Failed to fetch stems:', error);
+        throw error;
+    }
+};
+
 export const addStem = async (stemData) => {
     try {
         const res = await httpRequest.post('STEM', stemData);

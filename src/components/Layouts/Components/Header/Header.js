@@ -14,7 +14,7 @@ import Button from '~/components/Common/Button';
 import Image from '~/components/Common/Image';
 import { Menu, MenuItem } from '~/components/Layouts/Components/Menu';
 import { MenuPopper } from '~/components/Common/Popper/MenuPopper';
-import { IconBellFilled, IconUser, IconReport, IconArrowBarRight, IconPencil } from '@tabler/icons-react';
+import { IconUser, IconReport, IconArrowBarRight, IconPencil } from '@tabler/icons-react';
 
 // Check Auth
 import { selectAuth } from '~/app/selectors';
@@ -108,10 +108,6 @@ function Header() {
                 <div className={cx('actions')}>
                     {allow ? (
                         <div className={cx('group-action')}>
-                            <button className={cx('action-btn')}>
-                                <IconBellFilled size={25} color="#707070" stroke={2} />
-                            </button>
-
                             <MenuPopper items={userMenu} infoUserCurrent={infoUserCurrent}>
                                 <Image
                                     className={cx('user-avatar')}

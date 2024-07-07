@@ -185,9 +185,13 @@ function Lesson() {
             <>
                 <Space className={cx('btn-add')}>
                     <Heading h2>Management Video</Heading>
-                    <Button type="primary" onClick={() => handleAddVideo(lesson.lessonId)}>
-                        Add Video
-                    </Button>
+                    {state.videoList.filter((video) => video.lessonId === lesson.lessonId).length >= 1 ? (
+                        ''
+                    ) : (
+                        <Button type="primary" onClick={() => handleAddVideo(lesson.lessonId)}>
+                            Add Video
+                        </Button>
+                    )}
                 </Space>
                 <Table
                     columns={columns}

@@ -13,27 +13,37 @@ const cx = classNames.bind(styles);
 function Posts() {
     const dispatch = useDispatch();
     const { posts } = useSelector(selectPosts).data;
+
     const currentPageNew = localStorage.getItem('currentPage');
-    const [currentPage, setCurrentPage] = useState(parseInt(currentPageNew) ?? 1);
+    let initialPage = currentPageNew ? parseInt(currentPageNew, 10) : 1;
+
+    if (isNaN(initialPage) || initialPage <= 0) {
+        initialPage = 1;
+    }
+
+    const [currentPage, setCurrentPage] = useState(initialPage);
     const [recordsPerPage] = useState(6);
-
-    const indexOfLastRecord = currentPage * recordsPerPage;
-    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentRecords = posts.slice(indexOfFirstRecord, indexOfLastRecord);
-    const nPages = Math.ceil(posts.length / recordsPerPage);
-
-    localStorage.setItem('currentPage', currentPage);
 
     useEffect(() => {
         const fetchApi = async () => {
             try {
-                await dispatch(getPostsAsync());
+                await dispatch(getPostsAsync()).unwrap();
             } catch (rejectedValueOrSerializedError) {
                 console.error(rejectedValueOrSerializedError);
             }
         };
         fetchApi();
     }, [dispatch]);
+
+    useEffect(() => {
+        localStorage.setItem('currentPage', currentPage);
+    }, [currentPage]);
+
+    const indexOfLastRecord = currentPage * recordsPerPage;
+    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+    const currentRecords = posts.slice(indexOfFirstRecord, indexOfLastRecord);
+    const nPages = Math.ceil(posts.length / recordsPerPage);
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('grid')}>
@@ -52,7 +62,6 @@ function Posts() {
                             {currentRecords.map((data, index) => (
                                 <PostItem key={index} data={data} />
                             ))}
-
                             <Pagination nPages={nPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
                         </div>
                     </div>
