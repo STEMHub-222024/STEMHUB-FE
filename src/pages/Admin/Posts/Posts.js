@@ -9,9 +9,9 @@ import Heading from '~/components/Common/Heading';
 import * as postServices from '~/services/postServices';
 import * as userServices from '~/services/userServices';
 import { postImage, deleteImage } from '~/services/uploadImage';
-import styles from './Posts.module.scss';
 import TextEditor from '~/components/Common/TextEditor';
 import { selectPosts } from '~/app/selectors';
+import styles from './Posts.module.scss';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -19,13 +19,14 @@ const { Option } = Select;
 const cx = classNames.bind(styles);
 
 function Posts() {
-    const { title, markdown, htmlContent } = useSelector(selectPosts).data;
-    const [imageList, setImageList] = useState([]);
+    const { markdown, htmlContent } = useSelector(selectPosts).data;
+    const [postList, setPostList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingPost, setEditingPost] = useState(null);
     const [users, setUsers] = useState([]);
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [fileList, setFileList] = useState([]);
+    const [form] = Form.useForm();
 
     useEffect(() => {
         fetchPosts();
@@ -47,7 +48,7 @@ function Posts() {
                 create_at: moment(post.create_at).format('YYYY-MM-DD HH:mm:ss'),
             }));
 
-            setImageList(mergedData);
+            setPostList(mergedData);
         }
     };
 
@@ -66,15 +67,23 @@ function Posts() {
 
     const handleSave = async (values) => {
         try {
+            values.image = backgroundImage;
+            const postData = {
+                ...values,
+                markdown,
+                htmlContent,
+            };
+
             if (editingPost) {
-                await postServices.updatePost(editingPost.newspaperArticleId, values);
+                await postServices.updatePost(editingPost.newspaperArticleId, postData);
                 message.success('Post updated successfully');
             } else {
-                await postServices.addPost(values);
+                await postServices.addPost(postData);
                 message.success('Post created successfully');
             }
             fetchPosts();
             setIsModalVisible(false);
+            window.location.reload();
         } catch (error) {
             message.error('Error saving post');
         }
@@ -82,11 +91,24 @@ function Posts() {
 
     const handleAdd = () => {
         setEditingPost(null);
+        form.resetFields();
+        setBackgroundImage(null);
+        setFileList([]);
         setIsModalVisible(true);
     };
 
     const handleEdit = (record) => {
         setEditingPost(record);
+        form.setFieldsValue(record);
+        setBackgroundImage(record.image);
+        setFileList([
+            {
+                uid: '-1',
+                name: 'image.png',
+                status: 'done',
+                url: record.image,
+            },
+        ]);
         setIsModalVisible(true);
     };
 
@@ -116,7 +138,6 @@ function Posts() {
             }
         }
     };
-
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
@@ -283,8 +304,6 @@ function Posts() {
         },
     ];
 
-    console.log(' title, markdown, htmlContent', title, markdown, htmlContent);
-
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
             <Space className={cx('btn-add')}>
@@ -300,9 +319,10 @@ function Posts() {
                         <p dangerouslySetInnerHTML={{ __html: record.htmlContent ?? '' }}></p>
                     ),
                 }}
-                dataSource={imageList}
+                dataSource={postList}
                 rowKey="newspaperArticleId"
             />
+
             <Modal
                 title={editingPost ? 'Edit Post' : 'Add Post'}
                 open={isModalVisible}
@@ -311,23 +331,43 @@ function Posts() {
                 width={1000}
             >
                 <Form
-                    initialValues={editingPost || { title: '', description_NA: '', image: '', userId: '' }}
+                    layout="vertical"
+                    initialValues={editingPost || { title: '', description_NA: '', userId: '' }}
                     onFinish={handleSave}
+                    form={form}
                 >
                     <Form.Item
                         name="title"
                         label="Title"
-                        rules={[{ required: true, message: 'Please input the title!' }]}
+                        rules={[{ required: true, message: 'Please enter the title' }]}
                     >
                         <Input placeholder="Enter a title" />
                     </Form.Item>
+
                     <Form.Item
                         name="description_NA"
                         label="Description"
-                        rules={[{ required: true, message: 'Please input the description!' }]}
+                        rules={[{ required: true, message: 'Please enter the description' }]}
                     >
-                        <Input placeholder="Enter a description" />
+                        <Input.TextArea rows={4} placeholder="Enter a description" />
                     </Form.Item>
+
+                    <Form.Item name="userId" label="User" rules={[{ required: true, message: 'Please select a user' }]}>
+                        <Select placeholder="Select a user">
+                            {users.map((user) => (
+                                <Option key={user.id} value={user.id}>
+                                    {user.userName}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item label="Content">
+                        <div className={cx('text-editor')}>
+                            <TextEditor className={cx('text-content')} showHtml placeholder="Nội dung viết ở đây" />
+                        </div>
+                    </Form.Item>
+
                     <Form.Item
                         name="image"
                         label="Image"
@@ -347,31 +387,12 @@ function Posts() {
                             <Button icon={<UploadOutlined />}>Upload Image</Button>
                         </Upload>
                     </Form.Item>
-                    <Form.Item
-                        name="userId"
-                        label="User"
-                        rules={[{ required: true, message: 'Please select the user!' }]}
-                    >
-                        <Select placeholder="Select a user">
-                            {users.map((user) => {
-                                return (
-                                    <Option key={user.id} value={user.id}>
-                                        {user.userName}
-                                    </Option>
-                                );
-                            })}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item>
-                        <div className={cx('text-editor')}>
-                            <TextEditor className={cx('text-content')} showHtml placeholder="Nội dung viết ở đây" />
-                        </div>
-                    </Form.Item>
+
                     <Form.Item>
                         <Space style={{ display: 'flex', justifyContent: 'end' }}>
                             <Button onClick={() => setIsModalVisible(false)}>Cancel</Button>
                             <Button type="primary" htmlType="submit">
-                                {editingPost ? 'Update' : 'Create'}
+                                OK
                             </Button>
                         </Space>
                     </Form.Item>

@@ -16,7 +16,7 @@ export const postPosts = async ({ title, image, description, markdown, htmlConte
     const res = await httpRequest.post('NewspaperArticle', {
         title,
         image,
-        description,
+        description_NA: description,
         markdown,
         htmlContent,
         userId,

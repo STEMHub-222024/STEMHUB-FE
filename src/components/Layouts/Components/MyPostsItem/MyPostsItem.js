@@ -8,7 +8,7 @@ import styles from './MyPostsItem.module.scss';
 
 const cx = classNames.bind(styles);
 
-function MyPostsItemMyPostsItem({ data, onPostDeleted }) {
+function MyPostsItem({ data, onPostDeleted }) {
     const confirm = async (newspaperArticleId, removeImage, htmlContent) => {
         if (newspaperArticleId) {
             try {
@@ -57,11 +57,11 @@ function MyPostsItemMyPostsItem({ data, onPostDeleted }) {
             }
         >
             <div className={cx('content')}>
-                {data?.description}
+                {data?.description_NA}
                 <span>{formatDateToNow(data.create_at ?? '')}</span>
             </div>
         </Card>
     );
 }
 
-export default MyPostsItemMyPostsItem;
+export default MyPostsItem;

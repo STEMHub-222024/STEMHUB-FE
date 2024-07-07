@@ -18,6 +18,7 @@ const images = {
     posts_3: require('~/assets/images/depot/posts_3.png'),
     posts_4: require('~/assets/images/depot/posts_4.png'),
     crown: require('~/assets/images/depot/crown.svg').default,
+    empty: require('~/assets/images/depot/empty.svg').default,
 };
 
 export default images;

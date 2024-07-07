@@ -1,3 +1,4 @@
+import { memo, useState } from 'react';
 import tinycolor from 'tinycolor2';
 import classNames from 'classnames/bind';
 import styles from './Stem12.module.scss';
@@ -5,9 +6,9 @@ import Topic from '~/components/Layouts/Components/Topic';
 
 // Services
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getTopicAsync } from '~/app/slices/topicSlice';
-import { selectTopic } from '~/app/selectors';
+import * as stemServices from '~/services/stemServices';
 
 //Clear fetch
 const controller = new AbortController();
@@ -16,12 +17,36 @@ const cx = classNames.bind(styles);
 
 function Stem12() {
     const dispatch = useDispatch();
-    const { data } = useSelector(selectTopic);
+    const [listStem12, setListStem12] = useState([]);
 
     useEffect(() => {
         const fetchApi = async () => {
             try {
-                await dispatch(getTopicAsync()).unwrap();
+                const res = await dispatch(getTopicAsync()).unwrap();
+                if (res) {
+                    const stemNamePromises = res.map(async (topic) => {
+                        const stem = await stemServices.getStemById(topic.stemId);
+                        if (!stem) return;
+                        return {
+                            stemId: stem.stemId,
+                            stemName: stem?.stemName,
+                            ...topic,
+                        };
+                    });
+
+                    const stemNameResults = await Promise.all(stemNamePromises);
+                    if (stemNameResults) {
+                        const stem12Regex = /^stem\s*12$/i;
+
+                        const stem12s = stemNameResults.filter((stem) => {
+                            return stem12Regex.test(stem.stemName);
+                        });
+
+                        if (stem12s) {
+                            setListStem12(stem12s);
+                        }
+                    }
+                }
             } catch (rejectedValueOrSerializedError) {
                 console.error(rejectedValueOrSerializedError);
             }
@@ -32,11 +57,12 @@ function Stem12() {
             controller.abort();
         };
     }, [dispatch]);
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('grid')}>
                 <div className={cx('grid-row', { content: 'content' })}>
-                    {data?.map((shine) => {
+                    {listStem12?.map((shine) => {
                         const randomColor = tinycolor.random().toString();
                         return (
                             <div key={shine.topicId} className={cx('grid-column-3')}>
@@ -50,6 +76,4 @@ function Stem12() {
     );
 }
 
-Stem12.propTypes = {};
-
-export default Stem12;
+export default memo(Stem12);

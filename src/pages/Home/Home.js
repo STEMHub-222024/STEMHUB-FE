@@ -76,7 +76,7 @@ function Home() {
     useEffect(() => {
         const fetchApi = async () => {
             try {
-                await dispatch(getPostsAsync());
+                dispatch(getPostsAsync());
             } catch (rejectedValueOrSerializedError) {
                 console.error(rejectedValueOrSerializedError);
             }
@@ -86,17 +86,12 @@ function Home() {
 
     const checkStemDefault = (stemName, defaultValue) => {
         const upperCaseName = stemName.toUpperCase();
-        const stemDefault = stemName.includes(defaultValue);
-        if (stemDefault) {
-            return {
-                upperCaseName,
-                stemDefault,
-            };
-        } else {
-            return {
-                upperCaseName,
-            };
+        if (!(defaultValue instanceof RegExp)) {
+            const stemDefault = stemName.includes(defaultValue);
+            return stemDefault ? { upperCaseName, stemDefault } : { upperCaseName };
         }
+        const stemDefault = defaultValue.test(stemName);
+        return stemDefault ? { upperCaseName, stemDefault } : { upperCaseName };
     };
 
     return (

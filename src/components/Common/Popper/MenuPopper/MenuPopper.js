@@ -7,7 +7,6 @@ import styles from './MenuPopper.module.scss';
 import { Wrapper as PopperWrapper } from '~/components/Common/Popper';
 import MenuPopperItem from './MenuPopperItem';
 import Image from '~/components/Common/Image';
-import images from '~/assets/images';
 import Heading from '~/components/Common/Heading';
 import { useDispatch } from 'react-redux';
 
@@ -64,11 +63,7 @@ function MenuPopper({ children, items = [], infoUserCurrent }) {
                 <div className={cx('menu-list')} tabIndex="-1" {...attrs}>
                     <PopperWrapper className={cx('menu-popper')}>
                         <div className={cx('info')}>
-                            <Image
-                                className={cx('user-avatar')}
-                                src={image ?? images.avatar_1}
-                                alt={firstName ?? 'Avatar'}
-                            />
+                            <Image className={cx('user-avatar')} src={image ?? ''} alt={firstName ?? 'Avatar'} />
                             <div className={cx('user-name')}>
                                 <Heading h5 className={cx('heading')}>
                                     {`${lastName ?? infoUserCurrent.lastName} ${firstName}`}

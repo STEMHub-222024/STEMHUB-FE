@@ -30,8 +30,8 @@ function TopicDetail() {
     const { topicIds } = useSelector(selectTopic);
     const { lessonFilter } = useSelector(selectLesson).data;
     const { ingredientFilter } = useSelector(selectIngredient).data;
-    const [open, setOpen] = useState(false);
-    const [setPlayedTime] = useState('0:00');
+    const [openTopic, setOpenTopic] = useState(false);
+    const [isPlayed, setIsPlayed] = useState(true);
 
     useEffect(() => {
         const fetchApi = async () => {
@@ -85,6 +85,11 @@ function TopicDetail() {
         };
     }, [dispatch, topic]);
 
+    const handleShowModal = () => {
+        setOpenTopic(!openTopic);
+        setIsPlayed(!openTopic);
+    };
+
     return (
         <>
             <div className={cx('wrapper')}>
@@ -127,7 +132,7 @@ function TopicDetail() {
                                             backgroundImage: `url("${topicIds?.topicImage}")`,
                                         }}
                                     ></div>
-                                    <div className={cx('overlay')} onClick={() => setOpen(true)}>
+                                    <div className={cx('overlay')} onClick={handleShowModal}>
                                         <IconPlayerPlay size={35} stroke={3} style={{ color: '#7f56d9' }} />
                                     </div>
                                     <p>Xem giới thiệu chủ đề</p>
@@ -179,21 +184,20 @@ function TopicDetail() {
             <Modal
                 title="Giới thiệu chủ đề"
                 centered
-                open={open}
-                onCancel={() => setOpen(false)}
+                open={openTopic}
+                onCancel={handleShowModal}
                 width={1000}
                 footer={null}
+                key={openTopic ? 'open' : 'closed'}
             >
-                <div style={{ textAlign: 'center' }}>
-                    {topicIds.videoReview ? (
-                        <VideoPlayer pathVideo={topicIds.videoReview} setPlayedTime={setPlayedTime} />
-                    ) : (
-                        <div style={{ padding: '20px' }}>
-                            <h3>Thông báo</h3>
-                            <p>Hiện tại không có video nào để xem.</p>
-                        </div>
-                    )}
-                </div>
+                {topicIds ? (
+                    <VideoPlayer pathVideo={topicIds.videoReview} isPlayed={isPlayed} isPlayTime />
+                ) : (
+                    <div style={{ padding: '20px' }}>
+                        <h3>Thông báo</h3>
+                        <p>Hiện tại không có video nào để xem.</p>
+                    </div>
+                )}
             </Modal>
         </>
     );
