@@ -115,7 +115,7 @@ function Header() {
                             <MenuPopper items={userMenu} infoUserCurrent={infoUserCurrent}>
                                 <Image
                                     className={cx('user-avatar')}
-                                    src={userInfo.image ?? images.avatar_1}
+                                    src={userInfo.image ?? ''}
                                     alt={userInfo.firstName ?? 'Avatar'}
                                 />
                             </MenuPopper>

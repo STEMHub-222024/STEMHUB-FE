@@ -76,7 +76,7 @@ function Home() {
     useEffect(() => {
         const fetchApi = async () => {
             try {
-                await dispatch(getPostsAsync());
+                dispatch(getPostsAsync());
             } catch (rejectedValueOrSerializedError) {
                 console.error(rejectedValueOrSerializedError);
             }

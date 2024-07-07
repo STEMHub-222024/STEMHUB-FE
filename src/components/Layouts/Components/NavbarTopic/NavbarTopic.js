@@ -57,7 +57,12 @@ function NavbarTopic({ checkStemDefault }) {
         <Menu className={cx('menu-topic')}>
             <div className={cx('group-menu')}>
                 {navbarTopicData?.map((stem) => {
-                    const activeDefault = checkStemDefault(stem?.stemName, 'STEM 10' || stem?.stemName, 'STEM10');
+                    const activeDefault = checkStemDefault(
+                        stem?.stemName.toLowerCase(),
+                        'stem 10' || stem?.stemName.toLowerCase(),
+                        'stem10',
+                    );
+
                     return (
                         <div key={stem?.stemId}>
                             <Button

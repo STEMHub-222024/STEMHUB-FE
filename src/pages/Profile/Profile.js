@@ -13,7 +13,6 @@ import { setAllow } from '~/app/slices/authSlice';
 import checkCookie from '~/utils/checkCookieExists';
 import getBase64 from '~/utils/getBase64';
 import { postImage, deleteImage } from '~/services/uploadImage';
-import images from '~/assets/images';
 
 const cx = classNames.bind(styles);
 
@@ -68,7 +67,7 @@ function Profile() {
                 {
                     name: 'Avatar',
                     status: 'done',
-                    url: userInfo.image ?? images.avatar_1,
+                    url: userInfo.image ?? '',
                 },
             ] || [],
         );
@@ -143,7 +142,7 @@ function Profile() {
                 ]);
             } else {
                 setFileList(newFileList);
-                message.error('Tải hình ảnh lên không thành công!');
+                message.error('Image upload failed!');
             }
         } else {
             setFileList(newFileList);
