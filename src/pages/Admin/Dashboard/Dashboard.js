@@ -23,12 +23,6 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userResponse = await userServices.getUseAll();
-                setUsers(userResponse);
-
-                const topicResponse = await topicServices.getTopic();
-                setTopics(topicResponse);
-
                 const lessonResponse = await lessonServices.getLesson();
                 setLessons(lessonResponse);
 
@@ -39,11 +33,29 @@ const Dashboard = () => {
             }
         };
 
-        fetchData();
+        if (lessons.length === 0) {
+            fetchData();
+        }
+    }, [lessons]);
+
+    useEffect(() => {
+        const fetchUsersAndTopics = async () => {
+            try {
+                const userResponse = await userServices.getUseAll();
+                setUsers(userResponse);
+
+                const topicResponse = await topicServices.getTopic();
+                setTopics(topicResponse);
+            } catch (error) {
+                message.error('Failed to fetch users and topics');
+            }
+        };
+
+        fetchUsersAndTopics();
     }, []);
 
     useEffect(() => {
-        if (lessons.length > 0) {
+        if (lessons.length > 0 && lessons.some((lesson) => lesson.comments === undefined)) {
             fetchLessonInteractions();
         }
     }, [lessons]);
@@ -51,22 +63,29 @@ const Dashboard = () => {
     const fetchLessonInteractions = async () => {
         try {
             const lessonIds = lessons.map((lesson) => lesson.lessonId);
-            const commentCounts = await Promise.all(
-                lessonIds.map((lessonId) => {
-                    return commentServices.getCommentIdLesson({ newLessonId: lessonId });
-                }),
-            );
 
+            const commentCounts = await Promise.allSettled(
+                lessonIds.map((lessonId) =>
+                    commentServices
+                        .getCommentIdLesson({ newLessonId: lessonId })
+                        .then((response) => {
+                            return response.length;
+                        })
+                        .catch((error) => {
+                            if (error?.response?.status === 404) {
+                                return 0;
+                            }
+                            throw error;
+                        }),
+                ),
+            );
             const updatedLessons = lessons.map((lesson, index) => ({
                 ...lesson,
-                comments: commentCounts[index],
+                comments: commentCounts[index].status === 'fulfilled' ? commentCounts[index].value : 0,
             }));
 
             setLessons(updatedLessons);
         } catch (error) {
-            if (error?.response?.status === 404) {
-                return;
-            }
             message.error('Failed to fetch lesson interactions');
         }
     };
@@ -90,10 +109,12 @@ const Dashboard = () => {
         views: topic.view,
     }));
 
-    const lessonInteractionChartData = lessons.map((lesson) => ({
-        name: lesson.lessonName,
-        comments: lesson.comments || 0,
-    }));
+    const lessonInteractionChartData = lessons.map((lesson) => {
+        return {
+            name: lesson.lessonName,
+            comments: typeof lesson.comments === 'number' ? lesson.comments : 0,
+        };
+    });
 
     return (
         <Content
