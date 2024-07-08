@@ -23,7 +23,7 @@ const routes = {
 
     //admin
     admin: '/admin',
-    learner: '/admin/learner',
+    account: '/admin/account',
     stem: '/admin/stem',
     postsAdmin: '/admin/posts',
     banner: '/admin/banner',

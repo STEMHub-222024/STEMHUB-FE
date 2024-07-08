@@ -26,7 +26,7 @@ import MyPosts from '~/pages/MyPosts';
 
 // Admin
 import Dashboard from '~/pages/Admin/Dashboard';
-import Learner from '~/pages/Admin/Learner';
+import Account from '~/pages/Admin/Account';
 import Topic from '~/pages/Admin/Topic';
 import Lesson from '~/pages/Admin/Lesson';
 import Banner from '~/pages/Admin/Banner';
@@ -62,7 +62,7 @@ const privateRouterAdmin = [
     ...publicRouter,
     ...privateRouter,
     { path: config.routes.admin, component: Dashboard, layout: AdminLayout },
-    { path: config.routes.learner, component: Learner, layout: AdminLayout },
+    { path: config.routes.account, component: Account, layout: AdminLayout },
     { path: config.routes.topicAdmin, component: Topic, layout: AdminLayout },
     { path: config.routes.lesson, component: Lesson, layout: AdminLayout },
     { path: config.routes.banner, component: Banner, layout: AdminLayout },
