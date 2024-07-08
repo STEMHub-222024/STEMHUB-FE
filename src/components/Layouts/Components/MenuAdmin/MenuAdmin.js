@@ -31,8 +31,8 @@ function MenuAdmin() {
         {
             key: '2',
             icon: <IconUsers stroke={1} fontSize={18} />,
-            label: 'Learner',
-            to: config.routes.learner,
+            label: 'Account',
+            to: config.routes.account,
         },
         {
             key: '3',

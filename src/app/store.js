@@ -1,5 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
 import bannerReducer from '~/app/slices/slideShowSlice';
 import topicReducer from '~/app/slices/topicSlice';
 import navbarTopicReducer from '~/app/slices/navbarTopicSlice';
@@ -14,7 +13,6 @@ import postsReducer from '~/app/slices/postSlice';
 
 export const store = configureStore({
     reducer: {
-        counter: counterReducer,
         banner: bannerReducer,
         topic: topicReducer,
         navbarTopic: navbarTopicReducer,

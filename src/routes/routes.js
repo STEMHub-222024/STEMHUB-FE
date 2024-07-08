@@ -26,16 +26,13 @@ import MyPosts from '~/pages/MyPosts';
 
 // Admin
 import Dashboard from '~/pages/Admin/Dashboard';
-import Learner from '~/pages/Admin/Learner';
+import Account from '~/pages/Admin/Account';
 import Topic from '~/pages/Admin/Topic';
 import Lesson from '~/pages/Admin/Lesson';
 import Banner from '~/pages/Admin/Banner';
 import Stem from '~/pages/Admin/Stem';
 import Images from '~/pages/Admin/Images/Images';
 import PostsAdmin from '~/pages/Admin/Posts';
-
-// Not Found
-// import Error from '~/pages/Error';
 
 //Route
 const publicRouter = [
@@ -52,15 +49,6 @@ const publicRouter = [
     { path: config.routes.register, component: Register, layout: null },
     { path: config.routes.forgotPassword, component: ForgotPassword, layout: null },
     { path: config.routes.resetPassword, component: ResetPassword, layout: null },
-    //Admin
-    { path: config.routes.admin, component: Dashboard, layout: AdminLayout },
-    { path: config.routes.learner, component: Learner, layout: AdminLayout },
-    { path: config.routes.topicAdmin, component: Topic, layout: AdminLayout },
-    { path: config.routes.lesson, component: Lesson, layout: AdminLayout },
-    { path: config.routes.banner, component: Banner, layout: AdminLayout },
-    { path: config.routes.stem, component: Stem, layout: AdminLayout },
-    { path: config.routes.images, component: Images, layout: AdminLayout },
-    { path: config.routes.postsAdmin, component: PostsAdmin, layout: AdminLayout },
 ];
 
 const privateRouter = [
@@ -70,4 +58,17 @@ const privateRouter = [
     { path: config.routes.myPosts, component: MyPosts },
 ];
 
-export { publicRouter, privateRouter };
+const privateRouterAdmin = [
+    ...publicRouter,
+    ...privateRouter,
+    { path: config.routes.admin, component: Dashboard, layout: AdminLayout },
+    { path: config.routes.account, component: Account, layout: AdminLayout },
+    { path: config.routes.topicAdmin, component: Topic, layout: AdminLayout },
+    { path: config.routes.lesson, component: Lesson, layout: AdminLayout },
+    { path: config.routes.banner, component: Banner, layout: AdminLayout },
+    { path: config.routes.stem, component: Stem, layout: AdminLayout },
+    { path: config.routes.images, component: Images, layout: AdminLayout },
+    { path: config.routes.postsAdmin, component: PostsAdmin, layout: AdminLayout },
+];
+
+export { publicRouter, privateRouter, privateRouterAdmin };
