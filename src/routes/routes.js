@@ -34,9 +34,6 @@ import Stem from '~/pages/Admin/Stem';
 import Images from '~/pages/Admin/Images/Images';
 import PostsAdmin from '~/pages/Admin/Posts';
 
-// Not Found
-// import Error from '~/pages/Error';
-
 //Route
 const publicRouter = [
     { path: config.routes.error404, component: Login, layout: null },
@@ -52,7 +49,18 @@ const publicRouter = [
     { path: config.routes.register, component: Register, layout: null },
     { path: config.routes.forgotPassword, component: ForgotPassword, layout: null },
     { path: config.routes.resetPassword, component: ResetPassword, layout: null },
-    //Admin
+];
+
+const privateRouter = [
+    ...publicRouter,
+    { path: config.routes.personal, component: Profile },
+    { path: config.routes.newPost, component: NewPost, layout: PostsLayout },
+    { path: config.routes.myPosts, component: MyPosts },
+];
+
+const privateRouterAdmin = [
+    ...publicRouter,
+    ...privateRouter,
     { path: config.routes.admin, component: Dashboard, layout: AdminLayout },
     { path: config.routes.learner, component: Learner, layout: AdminLayout },
     { path: config.routes.topicAdmin, component: Topic, layout: AdminLayout },
@@ -63,11 +71,4 @@ const publicRouter = [
     { path: config.routes.postsAdmin, component: PostsAdmin, layout: AdminLayout },
 ];
 
-const privateRouter = [
-    ...publicRouter,
-    { path: config.routes.personal, component: Profile },
-    { path: config.routes.newPost, component: NewPost, layout: PostsLayout },
-    { path: config.routes.myPosts, component: MyPosts },
-];
-
-export { publicRouter, privateRouter };
+export { publicRouter, privateRouter, privateRouterAdmin };
