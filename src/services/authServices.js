@@ -1,13 +1,13 @@
 import * as httpRequest from '~/utils/httpRequest';
 
-export const postAuthUser = async ({ username, firstName, lastName, email, password, roles = ['User'] }) => {
+export const postAuthUser = async ({ username, firstName, lastName, email, password, roles = 'User' }) => {
     const res = await httpRequest.post('Auth/register', {
         username,
         firstName,
         lastName,
         email,
         password,
-        roles,
+        roles: [roles],
     });
 
     if (res.status === 200) {
