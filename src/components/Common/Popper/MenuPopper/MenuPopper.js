@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
-import { useLayoutEffect, useEffect, useState } from 'react';
 import Tippy from '@tippyjs/react/headless';
 import styles from './MenuPopper.module.scss';
 
@@ -8,47 +7,14 @@ import { Wrapper as PopperWrapper } from '~/components/Common/Popper';
 import MenuPopperItem from './MenuPopperItem';
 import Image from '~/components/Common/Image';
 import Heading from '~/components/Common/Heading';
-import { useDispatch } from 'react-redux';
-
-// Check Auth
-import { setAllow } from '~/app/slices/authSlice';
-import checkCookie from '~/utils/checkCookieExists';
-import { getUserIdAsync } from '~/app/slices/userSlice';
+import useUserInfo from '~/hooks/useUserInfo';
 
 const cx = classNames.bind(styles);
 
 function MenuPopper({ children, items = [], infoUserCurrent }) {
-    const dispatch = useDispatch();
-    const { username, userId } = infoUserCurrent;
-    const [resetToken, setResetToken] = useState(false);
-    const [userInfo, setUserInfo] = useState({});
-    const { lastName, firstName, image } = userInfo;
+    const { username, userId, lastName: currentLastName } = infoUserCurrent;
+    const { data: userInfo } = useUserInfo(userId);
 
-    useLayoutEffect(() => {
-        checkCookie(dispatch)
-            .then((isUser) => {
-                dispatch(setAllow(isUser));
-            })
-            .catch((isUser) => {
-                dispatch(setAllow(isUser));
-            });
-    }, [dispatch, resetToken]);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            if (!userId) {
-                setResetToken(!resetToken);
-            } else {
-                try {
-                    const res = await dispatch(getUserIdAsync({ userId: userId })).unwrap();
-                    if (res) setUserInfo(res);
-                } catch (error) {
-                    console.error('Failed to fetch user:', error);
-                }
-            }
-        };
-        fetchUser();
-    }, [dispatch, userId, resetToken]);
     const renderItems = () => {
         return items.map((item, index) => <MenuPopperItem key={index} data={item} />);
     };
@@ -63,10 +29,14 @@ function MenuPopper({ children, items = [], infoUserCurrent }) {
                 <div className={cx('menu-list')} tabIndex="-1" {...attrs}>
                     <PopperWrapper className={cx('menu-popper')}>
                         <div className={cx('info')}>
-                            <Image className={cx('user-avatar')} src={image ?? ''} alt={firstName ?? 'Avatar'} />
+                            <Image
+                                className={cx('user-avatar')}
+                                src={userInfo?.image ?? ''}
+                                alt={userInfo?.firstName ?? 'Avatar'}
+                            />
                             <div className={cx('user-name')}>
                                 <Heading h5 className={cx('heading')}>
-                                    {`${lastName ?? infoUserCurrent.lastName} ${firstName}`}
+                                    {`${userInfo?.lastName ?? currentLastName} ${userInfo?.firstName ?? ''}`}
                                 </Heading>
                                 <span>@{username}</span>
                             </div>
@@ -80,9 +50,16 @@ function MenuPopper({ children, items = [], infoUserCurrent }) {
         </Tippy>
     );
 }
+
 MenuPopper.propTypes = {
     children: PropTypes.node.isRequired,
     items: PropTypes.array,
+    infoUserCurrent: PropTypes.shape({
+        username: PropTypes.string.isRequired,
+        userId: PropTypes.string.isRequired,
+        lastName: PropTypes.string,
+        firstName: PropTypes.string,
+    }).isRequired,
 };
 
 export default MenuPopper;

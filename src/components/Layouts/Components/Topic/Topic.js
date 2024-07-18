@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
+import { memo } from 'react';
 import { IconPlayerPlayFilled } from '@tabler/icons-react';
 import styles from './Topic.module.scss';
 import Heading from '~/components/Common/Heading';
@@ -47,4 +48,4 @@ Topic.propTypes = {
     shine: PropTypes.object,
 };
 
-export default Topic;
+export default memo(Topic);

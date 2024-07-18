@@ -10,7 +10,7 @@ import Introduce from '~/components/Layouts/Components/Introduce';
 import PostItem from '~/components/Layouts/Components/CommonItem';
 
 // Services
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOutstanding } from '~/app/slices/topicSlice';
 import { getPostsAsync } from '~/app/slices/postSlice';
@@ -84,7 +84,7 @@ function Home() {
         fetchApi();
     }, [dispatch]);
 
-    const checkStemDefault = (stemName, defaultValue) => {
+    const checkStemDefault = useCallback((stemName, defaultValue) => {
         const upperCaseName = stemName.toUpperCase();
         if (!(defaultValue instanceof RegExp)) {
             const stemDefault = stemName.includes(defaultValue);
@@ -92,7 +92,7 @@ function Home() {
         }
         const stemDefault = defaultValue.test(stemName);
         return stemDefault ? { upperCaseName, stemDefault } : { upperCaseName };
-    };
+    }, []);
 
     return (
         <div className={cx('wrapper')}>
