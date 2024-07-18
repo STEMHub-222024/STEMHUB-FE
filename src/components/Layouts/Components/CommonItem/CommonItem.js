@@ -32,10 +32,12 @@ function CommonItem({ data }) {
         fetchUsers();
     }, [dispatch, userId]);
 
+    const encodedImageUrl = image ? (image.includes(' ') ? image.replace(/ /g, '%20') : image) : '';
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('group-images')}>
-                <div className={cx('images')} style={{ backgroundImage: `url(${image})` }}></div>
+                <div className={cx('images')} style={{ backgroundImage: `url(${encodedImageUrl})` }}></div>
             </div>
             <div className={cx('content')}>
                 <Heading className={cx('name')} h4>

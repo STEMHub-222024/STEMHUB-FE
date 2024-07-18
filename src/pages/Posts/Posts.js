@@ -5,7 +5,7 @@ import styles from './Posts.module.scss';
 import PostItem from '~/components/Layouts/Components/PostItem';
 import Heading from '~/components/Common/Heading';
 import Pagination from '~/components/Common/Pagination';
-import { getPostsAsync } from '~/app/slices/postSlice';
+import { getPostsAllAsync } from '~/app/slices/postSlice';
 import { selectPosts } from '~/app/selectors';
 
 const cx = classNames.bind(styles);
@@ -27,7 +27,7 @@ function Posts() {
     useEffect(() => {
         const fetchApi = async () => {
             try {
-                await dispatch(getPostsAsync()).unwrap();
+                await dispatch(getPostsAllAsync()).unwrap();
             } catch (rejectedValueOrSerializedError) {
                 console.error(rejectedValueOrSerializedError);
             }

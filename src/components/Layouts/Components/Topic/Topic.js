@@ -8,9 +8,15 @@ import Button from '~/components/Common/Button';
 const cx = classNames.bind(styles);
 
 function Topic({ colorCode, shine }) {
+    const encodedImageUrl = shine.topicImage
+        ? shine.topicImage.includes(' ')
+            ? shine.topicImage.replace(/ /g, '%20')
+            : shine.topicImage
+        : '';
+
     return (
         <div className={cx('wrapper')}>
-            <div className={cx('images')} style={{ backgroundImage: `url(${shine.topicImage})` }} />
+            <div className={cx('images')} style={{ backgroundImage: `url(${encodedImageUrl})` }} />
             <div className={cx('content')}>
                 <Heading className={cx('name')} h4>
                     {shine?.topicName}

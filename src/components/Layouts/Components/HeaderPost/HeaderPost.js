@@ -2,7 +2,6 @@ import 'tippy.js/dist/tippy.css';
 import { useRef, useState, useLayoutEffect, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { Link, useNavigate } from 'react-router-dom';
-import Tippy from '@tippyjs/react';
 import classNames from 'classnames/bind';
 import { message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,14 +11,7 @@ import images from '~/assets/images';
 import Button from '~/components/Common/Button';
 import Image from '~/components/Common/Image';
 import { MenuPopper } from '~/components/Common/Popper/MenuPopper';
-import {
-    IconChevronLeft,
-    IconBellFilled,
-    IconUser,
-    IconReport,
-    IconArrowBarRight,
-    IconPencil,
-} from '@tabler/icons-react';
+import { IconChevronLeft, IconUser, IconReport, IconArrowBarRight, IconPencil } from '@tabler/icons-react';
 import Modal from '~/components/Common/Modal';
 import { selectAuth, selectPosts } from '~/app/selectors';
 import { postPostsAsync } from '~/app/slices/postSlice';
@@ -44,6 +36,8 @@ function HeaderPost() {
     const [localTitle, setLocalTitle] = useState(title);
     const [localMarkdown, setLocalMarkdown] = useState(markdown);
     const [localHtmlContent, setLocalHtmlContent] = useState(htmlContent);
+    const [descriptionError, setDescriptionError] = useState('');
+    // const [messageApi, contextHolder] = message.useMessage();
 
     useLayoutEffect(() => {
         checkCookie(dispatch)
@@ -107,14 +101,37 @@ function HeaderPost() {
         },
     ];
 
+    // const success = () => {
+    //     messageApi.open({
+    //         type: 'loading',
+    //         content: 'Action in progress..',
+    //         duration: 0,
+    //     });
+    //     // Dismiss manually and asynchronously
+    //     setTimeout(messageApi.destroy, 2500);
+    // };
+
     const handleTitlePlaceholder = (e) => {
-        setDescriptionPosts(e.target.textContent);
+        const content = e.target.textContent.trim();
+        setDescriptionPosts(content);
+        if (content) {
+            setDescriptionError('');
+        }
+    };
+
+    const validateDescription = () => {
+        if (!descriptionPosts.trim()) {
+            setDescriptionError('Vui lòng nhập mô tả');
+            return false;
+        }
+        setDescriptionError('');
+        return true;
     };
 
     const handlePost = async () => {
         if (!infoUserCurrent.userId) {
             setResetToken((prev) => !prev);
-        } else {
+        } else if (validateDescription()) {
             try {
                 const newData = {
                     title: localTitle,
@@ -124,9 +141,15 @@ function HeaderPost() {
                     htmlContent: localHtmlContent,
                     userId: infoUserCurrent.userId,
                 };
+
+                const hide = message.loading('Đang xuất bản...', 0);
+
                 const res = await dispatch(postPostsAsync(newData)).unwrap();
+
+                hide();
+
                 if (res) {
-                    message.success('Xuât bản thành công!');
+                    message.success('Xuất bản thành công!');
                     navigate(config.routes.home);
                     setIsModalOpen(false);
                 }
@@ -188,20 +211,12 @@ function HeaderPost() {
                             <Button
                                 mainColor
                                 small
-                                className={
-                                    localTitle && localMarkdown && backgroundImage && descriptionPosts
-                                        ? cx('btnSubmit')
-                                        : cx('btnDisabled')
-                                }
+                                className={localTitle && localMarkdown ? cx('btnSubmit') : cx('btnDisabled')}
                                 onClick={handleModal}
+                                disabled={!localTitle || !localMarkdown}
                             >
                                 Xuất bản
                             </Button>
-                            <Tippy content="Hihi">
-                                <button className={cx('action-btn')}>
-                                    <IconBellFilled size={25} color="#707070" stroke={2} />
-                                </button>
-                            </Tippy>
 
                             <MenuPopper items={userMenu} infoUserCurrent={infoUserCurrent}>
                                 <Image
@@ -246,11 +261,14 @@ function HeaderPost() {
                         <div
                             contentEditable={true}
                             className={cx('title-review', {
-                                'title-placeholder': true,
+                                'title-placeholder': !descriptionPosts,
+                                error: descriptionError,
                             })}
                             data-empty-text="Nhập mô tả khi tin được hiển thị"
                             onInput={handleTitlePlaceholder}
+                            onBlur={validateDescription}
                         ></div>
+                        {descriptionError && <span className={cx('error-message')}>{descriptionError}</span>}
                         <p>
                             <strong>Lưu ý: </strong>
                             Chỉnh sửa tại đây sẽ thay đổi cách bài viết được hiển thị tại trang chủ, tin nổi bật - Chứ
@@ -261,7 +279,7 @@ function HeaderPost() {
                                 mainColor
                                 medium
                                 onClick={handlePost}
-                                disabled={!localTitle || !localMarkdown || !backgroundImage || !descriptionPosts}
+                                disabled={!localTitle || !localMarkdown || !backgroundImage || !descriptionPosts.trim()}
                             >
                                 Xuất bản ngay
                             </Button>

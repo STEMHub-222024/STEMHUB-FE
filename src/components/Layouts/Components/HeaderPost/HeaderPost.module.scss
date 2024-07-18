@@ -125,6 +125,8 @@
             padding: 2.4rem;
             position: relative;
             text-align: center;
+            border: 1px solid #e0e0e0;
+
             &::before {
                 background-color: hsla(0, 0%, 100%, 0.9);
                 bottom: 0;
@@ -169,6 +171,11 @@
             display: flex;
             justify-content: flex-end;
             margin: 12px 4px;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.8em;
+            margin-top: 5px;
         }
     }
 }
