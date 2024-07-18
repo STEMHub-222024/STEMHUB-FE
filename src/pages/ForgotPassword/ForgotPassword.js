@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import { IconLoader2 } from '@tabler/icons-react';
-
+import { message } from 'antd';
 import Button from '~/components/Common/Button';
 import Image from '~/components/Common/Image';
 import FormControl from '~/components/Common/FormControl';
@@ -20,6 +20,7 @@ const cx = classNames.bind(styles);
 function ForgotPassword() {
     const dispatch = useDispatch();
     const { email, loading } = useSelector(selectUser).data;
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         Validator({
@@ -29,12 +30,18 @@ function ForgotPassword() {
             rules: [isRequired('#email'), isEmail('#email'), isRequired('input[name="gender"]')],
             onSubmit(data) {
                 const fetchApi = async () => {
+                    const hide = message.loading('Vui lòng chờ...', 0);
                     try {
+                        setIsLoading(false);
                         const result = await dispatch(optEmailAsync(data)).unwrap();
                         if (result) {
+                            hide();
+                            setIsLoading(true);
                             toast.success(result);
                         }
                     } catch (rejectedValueOrSerializedError) {
+                        hide();
+                        setIsLoading(true);
                         toast.error(rejectedValueOrSerializedError);
                     }
                 };
@@ -71,8 +78,8 @@ function ForgotPassword() {
                             />
 
                             <Button
-                                className={email ? cx('btnSubmit') : cx('btnDisabled')}
-                                disabled={email ? false : true}
+                                className={isLoading && email ? cx('btnSubmit') : cx('btnDisabled')}
+                                disabled={isLoading && email ? false : true}
                             >
                                 {loading && <IconLoader2 className={cx('loading')} size={20} />}
                                 &nbsp;Tiếp theo

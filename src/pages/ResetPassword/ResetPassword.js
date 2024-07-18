@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { IconEyeClosed, IconEye, IconLoader2 } from '@tabler/icons-react';
-
+import { message } from 'antd';
 import Button from '~/components/Common/Button';
 import Image from '~/components/Common/Image';
 import FormControl from '~/components/Common/FormControl';
@@ -25,6 +25,7 @@ function ResetPassword() {
     const navigate = useNavigate();
     const { email, password, confirmPassword, loading } = useSelector(selectUser).data;
     const [isShowPassword, setIsShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     let IconPassword = IconEyeClosed;
     let inputType = 'password';
@@ -56,8 +57,10 @@ function ResetPassword() {
                 ),
             ],
             onSubmit(data) {
+                const hide = message.loading('Vui lòng chờ...', 0);
                 const fetchApi = async () => {
                     try {
+                        setIsLoading(false);
                         const result = await dispatch(
                             resetPasswordAsync({
                                 ...data,
@@ -65,10 +68,14 @@ function ResetPassword() {
                             }),
                         ).unwrap();
                         if (result) {
+                            hide();
+                            setIsLoading(true);
                             navigate(config.routes.login);
                             toast.success(result);
                         }
                     } catch (rejectedValueOrSerializedError) {
+                        hide();
+                        setIsLoading(true);
                         toast.error(rejectedValueOrSerializedError);
                     }
                 };
@@ -129,8 +136,12 @@ function ResetPassword() {
                             </div>
 
                             <Button
-                                className={email && password && confirmPassword ? cx('btnSubmit') : cx('btnDisabled')}
-                                disabled={email && password && confirmPassword ? false : true}
+                                className={
+                                    isLoading && email && password && confirmPassword
+                                        ? cx('btnSubmit')
+                                        : cx('btnDisabled')
+                                }
+                                disabled={isLoading && email && password && confirmPassword ? false : true}
                             >
                                 {loading && <IconLoader2 className={cx('loading')} size={20} />}
                                 &nbsp;Xác nhận

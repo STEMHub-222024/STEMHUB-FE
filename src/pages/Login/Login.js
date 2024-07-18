@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { IconEyeClosed, IconEye, IconLoader2 } from '@tabler/icons-react';
-
+import { message } from 'antd';
 import { toast } from 'react-toastify';
 import Button from '~/components/Common/Button';
 import Image from '~/components/Common/Image';
@@ -27,6 +27,7 @@ function Login() {
     const { userName, password, loading } = useSelector(selectAuth).data;
     const [currentLogin, setCurrentLogin] = useState(true);
     const [isShowPassword, setIsShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     let IconPassword = IconEyeClosed;
     let inputType = 'password';
@@ -49,7 +50,9 @@ function Login() {
                 ],
                 onSubmit(data) {
                     const fetchApi = async () => {
+                        const hide = message.loading('Đang đang nhập...', 0);
                         try {
+                            setIsLoading(false);
                             const result = await dispatch(loginUserAsync(data)).unwrap();
                             if (result.isSuccess === true) {
                                 const { refreshToken, accessToken } = result.response;
@@ -60,9 +63,13 @@ function Login() {
                                 Cookies.set('saveRefreshToken', JSON.stringify(result.response), {
                                     expires: 7,
                                 });
+                                hide();
+                                setIsLoading(true);
                                 navigate(config.routes.home);
                             }
                         } catch (rejectedValueOrSerializedError) {
+                            hide();
+                            setIsLoading(true);
                             toast.error(rejectedValueOrSerializedError);
                         }
                     };
@@ -124,8 +131,10 @@ function Login() {
                                     </div>
 
                                     <Button
-                                        className={userName && password ? cx('btnSubmit') : cx('btnDisabled')}
-                                        disabled={userName && password ? false : true}
+                                        className={
+                                            isLoading && userName && password ? cx('btnSubmit') : cx('btnDisabled')
+                                        }
+                                        disabled={isLoading && userName && password ? false : true}
                                     >
                                         {loading && <IconLoader2 className={cx('loading')} size={20} />}
                                         &nbsp;Đăng nhập

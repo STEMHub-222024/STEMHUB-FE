@@ -190,6 +190,8 @@
 
 .loading {
     animation: spinner 0.8s linear infinite;
+    position: relative;
+    top: 4px;
 }
 
 @keyframes spinner {

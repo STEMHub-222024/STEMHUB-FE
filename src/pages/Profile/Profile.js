@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect } from 'react';
+import React, { useState, useLayoutEffect, useEffect, useMemo, useCallback } from 'react';
 import classNames from 'classnames/bind';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './Profile.module.scss';
@@ -7,8 +7,8 @@ import Button from '~/components/Common/Button';
 import { selectAuth } from '~/app/selectors';
 import { getUserIdAsync, putUserIdAsync } from '~/app/slices/userSlice';
 import Validator, { isRequired, isEmail } from '~/utils/validation';
-import { PlusOutlined } from '@ant-design/icons';
-import { Image as ImageNew, Upload, message } from 'antd';
+import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Image as ImageNew, Upload, message, Spin } from 'antd';
 import { setAllow } from '~/app/slices/authSlice';
 import checkCookie from '~/utils/checkCookieExists';
 import getBase64 from '~/utils/getBase64';
@@ -28,8 +28,23 @@ function Profile() {
 
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
-    const [fileList, setFileList] = useState([]);
     const [imageWaitRemove, setImageWaitRemove] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [isImageLoading, setIsImageLoading] = useState(true);
+
+    const fileList = useMemo(() => {
+        if (userInfo.image) {
+            return [
+                {
+                    uid: '-1',
+                    name: 'Avatar',
+                    status: 'done',
+                    url: userInfo.image,
+                },
+            ];
+        }
+        return [];
+    }, [userInfo.image]);
 
     useLayoutEffect(() => {
         checkCookie(dispatch)
@@ -51,6 +66,8 @@ function Profile() {
                     if (res) setUserInfo(res);
                 } catch (error) {
                     console.error('Failed to fetch user:', error);
+                } finally {
+                    setIsImageLoading(false);
                 }
             }
         };
@@ -62,43 +79,21 @@ function Profile() {
         setLastName(userInfo.lastName || '');
         setPhone(userInfo.phoneNumber || '');
         setEmail(userInfo.email || '');
-        setFileList(
-            [
-                {
-                    name: 'Avatar',
-                    status: 'done',
-                    url: userInfo.image ?? '',
-                },
-            ] || [],
-        );
     }, [userInfo]);
 
-    const handleChange = (setter) => (e) => setter(e.target.value);
+    const handleChange = useCallback((setter) => (e) => setter(e.target.value), []);
 
-    Validator({
-        form: '#form-1',
-        formGroupSelector: '.form-group',
-        errorSelector: '.form-message',
-        rules: [
-            isRequired('#lastName'),
-            isRequired('#firstName'),
-            isRequired('#phone'),
-            isRequired('#email'),
-            isEmail('#email'),
-            isRequired('input[name="gender"]'),
-        ],
-        async onSubmit(data) {
+    const handleSubmit = useCallback(
+        async (data) => {
             if (!infoUserCurrent.userId) {
                 setResetToken(!resetToken);
             } else {
-                if (imageWaitRemove) {
-                    try {
-                        await deleteImage(imageWaitRemove.split('uploadimage/')[1]);
-                    } catch (error) {
-                        console.error('Failed to fetch user:', error);
-                    }
-                }
+                setIsLoading(true);
+                const hide = message.loading('Saving changes...', 0);
                 try {
+                    if (imageWaitRemove) {
+                        await deleteImage(imageWaitRemove.split('uploadimage/')[1]);
+                    }
                     const { lastName, firstName, email, phone } = data;
                     const newData = {
                         lastName,
@@ -113,51 +108,80 @@ function Profile() {
                         message.success(res.message);
                     }
                 } catch (error) {
-                    console.error('Failed to fetch user:', error);
+                    console.error('Failed to update user:', error);
+                    message.error('Failed to save changes');
+                } finally {
+                    hide();
+                    setIsLoading(false);
                 }
             }
         },
-    });
+        [infoUserCurrent.userId, resetToken, imageWaitRemove, fileList, dispatch],
+    );
 
-    const handlePreview = async (file) => {
+    useEffect(() => {
+        Validator({
+            form: '#form-1',
+            formGroupSelector: '.form-group',
+            errorSelector: '.form-message',
+            rules: [
+                isRequired('#lastName'),
+                isRequired('#firstName'),
+                isRequired('#phone'),
+                isRequired('#email'),
+                isEmail('#email'),
+                isRequired('input[name="gender"]'),
+            ],
+            onSubmit: handleSubmit,
+        });
+    }, [handleSubmit]);
+
+    const handlePreview = useCallback(async (file) => {
         if (!file.url && !file.preview) {
             file.preview = await getBase64(file.originFileObj);
         }
         setPreviewImage(file.url || file.preview);
         setPreviewOpen(true);
-    };
+    }, []);
 
-    const handleFileChange = async ({ fileList: newFileList }) => {
+    const handleFileChange = useCallback(async ({ fileList: newFileList }) => {
+        setIsImageLoading(true);
         if (newFileList.length > 0 && newFileList[0].status !== 'uploading') {
-            const response = await postImage(newFileList[0].originFileObj);
-            if (response) {
-                setFileList((prev) => [
-                    ...prev,
-                    {
-                        uid: newFileList[0].uid,
-                        name: newFileList[0].name,
-                        status: 'done',
-                        url: response.fileUrl,
-                    },
-                ]);
-            } else {
-                setFileList(newFileList);
+            try {
+                const response = await postImage(newFileList[0].originFileObj);
+                if (response) {
+                    setUserInfo((prev) => ({
+                        ...prev,
+                        image: response.fileUrl,
+                    }));
+                } else {
+                    message.error('Image upload failed!');
+                }
+            } catch (error) {
+                console.error('Failed to upload image:', error);
                 message.error('Image upload failed!');
+            } finally {
+                setIsImageLoading(false);
             }
         } else {
-            setFileList(newFileList);
+            setIsImageLoading(false);
         }
-    };
-    const handleFileRemove = async (file) => {
+    }, []);
+
+    const handleFileRemove = useCallback(async (file) => {
         if (!file.url || file.url === undefined) return;
         setImageWaitRemove(file.url);
-    };
+        setUserInfo((prev) => ({ ...prev, image: '' }));
+    }, []);
 
-    const uploadButton = (
-        <button style={{ border: 0, background: 'none' }} type="button">
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Image</div>
-        </button>
+    const uploadButton = useMemo(
+        () => (
+            <button style={{ border: 0, background: 'none' }} type="button">
+                {isImageLoading ? <LoadingOutlined /> : <PlusOutlined />}
+                <div style={{ marginTop: 8 }}>Image</div>
+            </button>
+        ),
+        [isImageLoading],
     );
 
     return (
@@ -230,8 +254,9 @@ function Profile() {
                         <span className={cx('error-message', 'form-message')}></span>
                     </div>
                 </div>
-                <Button type="submit" className={cx('btn-save')} mainColor medium borderMedium>
-                    Save
+
+                <Button type="submit" className={cx('btn-save')} mainColor medium borderMedium disabled={isLoading}>
+                    {isLoading ? <Spin /> : 'Save'}
                 </Button>
             </form>
         </div>

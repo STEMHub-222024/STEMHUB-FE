@@ -37,7 +37,6 @@ function HeaderPost() {
     const [localMarkdown, setLocalMarkdown] = useState(markdown);
     const [localHtmlContent, setLocalHtmlContent] = useState(htmlContent);
     const [descriptionError, setDescriptionError] = useState('');
-    // const [messageApi, contextHolder] = message.useMessage();
 
     useLayoutEffect(() => {
         checkCookie(dispatch)
@@ -101,16 +100,6 @@ function HeaderPost() {
         },
     ];
 
-    // const success = () => {
-    //     messageApi.open({
-    //         type: 'loading',
-    //         content: 'Action in progress..',
-    //         duration: 0,
-    //     });
-    //     // Dismiss manually and asynchronously
-    //     setTimeout(messageApi.destroy, 2500);
-    // };
-
     const handleTitlePlaceholder = (e) => {
         const content = e.target.textContent.trim();
         setDescriptionPosts(content);
@@ -132,6 +121,7 @@ function HeaderPost() {
         if (!infoUserCurrent.userId) {
             setResetToken((prev) => !prev);
         } else if (validateDescription()) {
+            const hide = message.loading('Đang xuất bản...', 0);
             try {
                 const newData = {
                     title: localTitle,
@@ -141,8 +131,6 @@ function HeaderPost() {
                     htmlContent: localHtmlContent,
                     userId: infoUserCurrent.userId,
                 };
-
-                const hide = message.loading('Đang xuất bản...', 0);
 
                 const res = await dispatch(postPostsAsync(newData)).unwrap();
 
@@ -154,6 +142,7 @@ function HeaderPost() {
                     setIsModalOpen(false);
                 }
             } catch (error) {
+                hide();
                 message.error('Xuất bản thất bại!');
             }
         }
