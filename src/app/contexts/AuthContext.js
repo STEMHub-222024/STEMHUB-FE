@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         verifyUser();
-    }, [verifyUser]);
+    }, [verifyUser, isLoading]);
 
     const contextValue = useMemo(() => ({ isLoading }), [isLoading]);
 
