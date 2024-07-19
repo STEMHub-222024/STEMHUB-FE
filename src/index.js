@@ -6,6 +6,7 @@ import { store } from './app/store';
 import App from '~/App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles from './components/Common/GlobalStyles';
+import { AuthProvider } from '~/app/contexts/AuthContext';
 
 const queryClient = new QueryClient();
 
@@ -16,9 +17,11 @@ root.render(
     <React.StrictMode>
         <Provider store={store}>
             <QueryClientProvider client={queryClient}>
-                <GlobalStyles>
-                    <App />
-                </GlobalStyles>
+                <AuthProvider>
+                    <GlobalStyles>
+                        <App />
+                    </GlobalStyles>
+                </AuthProvider>
             </QueryClientProvider>
         </Provider>
     </React.StrictMode>,

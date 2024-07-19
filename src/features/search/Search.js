@@ -34,7 +34,6 @@ function Search({ currentUser }) {
     const debouncedValue = useDebounce(searchValue, 500);
     const inputRef = useRef();
 
-    // Trong phần useEffect của bạn
     useEffect(() => {
         if (!debouncedValue.trim()) {
             dispatch(updateTopicSearch([]));
@@ -140,7 +139,7 @@ function Search({ currentUser }) {
                         onChange={handleChange}
                         onFocus={() => setShowResult(true)}
                     />
-                    {currentUser ? (
+                    {currentUser && currentUser.isUser ? (
                         <>
                             {!!searchValue && !loading && (
                                 <button className={cx('clear')} onClick={handleClear}>
@@ -170,7 +169,7 @@ function Search({ currentUser }) {
 }
 
 Search.propTypes = {
-    currentUser: PropTypes.bool,
+    currentUser: PropTypes.object,
 };
 
 export default Search;

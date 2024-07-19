@@ -1,9 +1,11 @@
+import classNames from 'classnames/bind';
 import { useEffect, useMemo, memo } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Spin, Layout } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconDots } from '@tabler/icons-react';
-import classNames from 'classnames/bind';
+import { getPostsByIdAsync } from '~/app/slices/postSlice';
+import { selectPosts } from '~/app/selectors';
+import useUserInfo from '~/hooks/useUserInfo';
 import styles from './PostsDetail.module.scss';
 import Button from '~/components/Common/Button';
 import config from '~/config';
@@ -11,12 +13,8 @@ import Heading from '~/components/Common/Heading';
 import Reaction from '~/components/Layouts/Components/Reaction';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';
 import MarkdownParser from '~/components/Layouts/Components/MarkdownParser';
+import Loading from '~/components/Common/Loading';
 import formatDateToNow from '~/utils/formatDateToNow';
-import { getPostsByIdAsync } from '~/app/slices/postSlice';
-import { selectPosts } from '~/app/selectors';
-import useUserInfo from '~/hooks/useUserInfo';
-
-const { Content } = Layout;
 
 const cx = classNames.bind(styles);
 
@@ -42,15 +40,7 @@ function PostsDetail() {
         [userInfo],
     );
 
-    if (isLoading)
-        return (
-            <Layout>
-                <Content className={cx('wrapper-loading')}>
-                    <Spin size="large" className={cx('custom-spin')} />
-                    <div className={cx('loading-text')}>Loading...</div>
-                </Content>
-            </Layout>
-        );
+    if (isLoading) return <Loading />;
 
     return (
         <div className={cx('wrapper')}>

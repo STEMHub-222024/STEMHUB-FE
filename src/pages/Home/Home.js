@@ -10,14 +10,12 @@ import Introduce from '~/components/Layouts/Components/Introduce';
 import PostItem from '~/components/Layouts/Components/CommonItem';
 
 // Services
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOutstanding } from '~/app/slices/topicSlice';
 import { getPostsAsync } from '~/app/slices/postSlice';
 import { getStemAsync, handleOnClickStem } from '~/app/slices/navbarTopicSlice';
 import { selectTopic, selectNavbarTopic, selectPosts } from '~/app/selectors';
-import { setAllow } from '~/app/slices/authSlice';
-import checkCookie from '~/utils/checkCookieExists';
 import config from '~/config';
 
 //Clear fetch
@@ -31,15 +29,15 @@ function Home() {
     const { isOnClickStem } = useSelector(selectNavbarTopic);
     const { posts } = useSelector(selectPosts).data;
 
-    useEffect(() => {
-        checkCookie(dispatch)
-            .then((isUser) => {
-                dispatch(setAllow(isUser));
-            })
-            .catch((isUser) => {
-                dispatch(setAllow(isUser));
-            });
-    }, [dispatch]);
+    const checkStemDefault = useCallback((stemName, defaultValue) => {
+        const upperCaseName = stemName.toUpperCase();
+        if (!(defaultValue instanceof RegExp)) {
+            const stemDefault = stemName.includes(defaultValue);
+            return stemDefault ? { upperCaseName, stemDefault } : { upperCaseName };
+        }
+        const stemDefault = defaultValue.test(stemName);
+        return stemDefault ? { upperCaseName, stemDefault } : { upperCaseName };
+    }, []);
 
     useEffect(() => {
         const fetchApi = async () => {
@@ -71,7 +69,7 @@ function Home() {
         return () => {
             controller.abort();
         };
-    }, [dispatch]);
+    }, [dispatch, checkStemDefault]);
 
     useEffect(() => {
         const fetchApi = async () => {
@@ -84,15 +82,9 @@ function Home() {
         fetchApi();
     }, [dispatch]);
 
-    const checkStemDefault = useCallback((stemName, defaultValue) => {
-        const upperCaseName = stemName.toUpperCase();
-        if (!(defaultValue instanceof RegExp)) {
-            const stemDefault = stemName.includes(defaultValue);
-            return stemDefault ? { upperCaseName, stemDefault } : { upperCaseName };
-        }
-        const stemDefault = defaultValue.test(stemName);
-        return stemDefault ? { upperCaseName, stemDefault } : { upperCaseName };
-    }, []);
+    const topicColors = useMemo(() => {
+        return showOutstanding?.map(() => tinycolor.random().toString());
+    }, [showOutstanding]);
 
     return (
         <div className={cx('wrapper')}>
@@ -114,14 +106,11 @@ function Home() {
                         {/* Topic */}
                         <div className={cx('topic-content')}>
                             <div className={cx('grid-row')}>
-                                {showOutstanding?.map((shine) => {
-                                    const randomColor = tinycolor.random().toString();
-                                    return (
-                                        <div key={shine.topicId} className={cx('grid-column-3')}>
-                                            <Topic colorCode={randomColor} shine={shine} />
-                                        </div>
-                                    );
-                                })}
+                                {showOutstanding?.map((shine, index) => (
+                                    <div key={shine.topicId} className={cx('grid-column-3')}>
+                                        <Topic colorCode={topicColors[index]} shine={shine} />
+                                    </div>
+                                ))}
                             </div>
                             <div className={cx('grid-row')}>
                                 <div className={cx('grid-column-12')}>

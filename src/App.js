@@ -1,31 +1,22 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes } from 'react-router-dom';
 import { publicRouter, privateRouter, privateRouterAdmin } from '~/routes';
 import ScrollOnTop from './components/Common/ScrollOnTop';
-import { useDispatch, useSelector } from 'react-redux';
-
+import Loading from '~/components/Common/Loading';
+import { useSelector } from 'react-redux';
+import { useAuth } from '~/app/contexts/AuthContext';
 // Constants
 import { ADMIN, USER } from '~/utils/constant';
 import routerPoint from '~/routes/routerPoint';
 
 // Check Auth
 import { selectAuth } from './app/selectors';
-import { setAllow } from '~/app/slices/authSlice';
-import checkCookie from '~/utils/checkCookieExists';
 
 function App() {
-    const dispatch = useDispatch();
+    const { isLoading } = useAuth();
     const { allow, infoUserCurrent } = useSelector(selectAuth).data;
 
-    useEffect(() => {
-        checkCookie(dispatch)
-            .then((isUser) => {
-                dispatch(setAllow(isUser));
-            })
-            .catch((isUser) => {
-                dispatch(setAllow(isUser));
-            });
-    }, [dispatch]);
+    if (isLoading) return <Loading />;
 
     const renderRoutes = () => {
         if (allow && infoUserCurrent) {

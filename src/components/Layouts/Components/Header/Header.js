@@ -1,36 +1,30 @@
 import 'tippy.js/dist/tippy.css';
-import Cookies from 'js-cookie';
+import classNames from 'classnames/bind';
 import React, { useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import classNames from 'classnames/bind';
-
+import useUserInfo from '~/hooks/useUserInfo';
 import Search from '~/features/search';
 import config from '~/config';
 import styles from './Header.module.scss';
 import images from '~/assets/images';
 import Button from '~/components/Common/Button';
 import Image from '~/components/Common/Image';
+import Loading from '~/components/Common/Loading';
 import { Menu, MenuItem } from '~/components/Layouts/Components/Menu';
 import { MenuPopper } from '~/components/Common/Popper/MenuPopper';
 import { IconUser, IconReport, IconArrowBarRight, IconPencil } from '@tabler/icons-react';
-
 import { selectAuth } from '~/app/selectors';
-import { setAllow } from '~/app/slices/authSlice';
-import useUserInfo from '~/hooks/useUserInfo';
+import { logout } from '~/app/slices/authSlice';
 
 const cx = classNames.bind(styles);
 
 function Header() {
     const dispatch = useDispatch();
     const { infoUserCurrent, allow } = useSelector(selectAuth).data;
-    const { data: userInfo } = useUserInfo(infoUserCurrent.userId);
-
+    const { data: userInfo, isLoading: isUserLoading } = useUserInfo(infoUserCurrent?.userId);
     const handleLogout = useCallback(() => {
-        Cookies.remove('accessToken');
-        Cookies.remove('refreshToken');
-        Cookies.remove('saveRefreshToken');
-        dispatch(setAllow(false));
+        dispatch(logout());
     }, [dispatch]);
 
     const userMenu = useMemo(
@@ -58,6 +52,8 @@ function Header() {
         ],
         [handleLogout],
     );
+
+    if (isUserLoading) return <Loading />;
 
     return (
         <header className={cx('wrapper')}>

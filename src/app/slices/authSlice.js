@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import * as AuthServices from '~/services/authServices';
+import Cookies from 'js-cookie';
 
 const initialState = {
     data: {
@@ -59,7 +60,6 @@ export const authSlice = createSlice({
         setUserName(state, action) {
             state.data.userName = action.payload;
         },
-
         setPassword(state, action) {
             state.data.password = action.payload;
         },
@@ -68,6 +68,13 @@ export const authSlice = createSlice({
         },
         setAllow(state, action) {
             state.data.allow = action.payload;
+        },
+        logout: (state) => {
+            state.data.allow = false;
+            state.data.infoUserCurrent = {};
+            Cookies.remove('accessToken');
+            Cookies.remove('refreshToken');
+            Cookies.remove('saveRefreshToken');
         },
     },
     extraReducers: (builder) => {
@@ -107,10 +114,12 @@ export const authSlice = createSlice({
             .addCase(getUserCurrentAsync.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.data.infoUserCurrent = action.payload;
+                state.data.allow = true;
             })
             .addCase(getUserCurrentAsync.rejected, (state, action) => {
                 state.status = 'failed';
                 state.errorMessage = action.payload;
+                state.data.allow = false;
             });
         builder
             .addCase(refreshTokenAsync.pending, (state) => {
@@ -127,6 +136,6 @@ export const authSlice = createSlice({
     },
 });
 
-export const { setUserName, setPassword, setEmail, setAllow } = authSlice.actions;
+export const { setUserName, setPassword, setEmail, setAllow, logout } = authSlice.actions;
 
 export default authSlice.reducer;
