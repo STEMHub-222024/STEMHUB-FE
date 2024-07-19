@@ -1,13 +1,17 @@
-.wrapper-loading {
-    height: 500px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .custom-spin {
-        margin-right: 8px;
-    }
+.wrapper {
+    background: var(--white);
+    .content {
+        height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-    .loading-text {
-        font-size: 16px;
+        .custom-spin {
+            margin-right: 8px;
+        }
+
+        .loading-text {
+            font-size: 16px;
+        }
     }
 }

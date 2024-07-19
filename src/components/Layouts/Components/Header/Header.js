@@ -52,8 +52,7 @@ function Header() {
         ],
         [handleLogout],
     );
-
-    if (isUserLoading) return <Loading />;
+    if (isUserLoading) return <Loading title="Welcome to STEM...." />;
 
     return (
         <header className={cx('wrapper')}>
