@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import HeadlessTippy from '@tippyjs/react/headless';
 import { IconSquareRoundedXFilled, IconLoader, IconSearch } from '@tabler/icons-react';
@@ -167,9 +166,5 @@ function Search({ currentUser }) {
         </div>
     );
 }
-
-Search.propTypes = {
-    currentUser: PropTypes.object,
-};
 
 export default Search;
