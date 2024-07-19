@@ -55,7 +55,7 @@ MenuPopper.propTypes = {
     children: PropTypes.node.isRequired,
     items: PropTypes.array,
     infoUserCurrent: PropTypes.shape({
-        username: PropTypes.string.isRequired,
+        username: PropTypes.string,
         userId: PropTypes.string.isRequired,
         lastName: PropTypes.string,
         firstName: PropTypes.string,
