@@ -5,7 +5,7 @@ import { IconPlayerPlayFilled } from '@tabler/icons-react';
 import styles from './Topic.module.scss';
 import Heading from '~/components/Common/Heading';
 import Button from '~/components/Common/Button';
-import { encodeImageUrl, removeWhitespaceAndDiacritics } from '~/utils/stringHelpers';
+import { encodeImageUrl } from '~/utils/stringHelpers';
 
 const cx = classNames.bind(styles);
 
@@ -32,7 +32,7 @@ function Topic({ colorCode, shine }) {
                         mainColor
                         small
                         style={{ backgroundColor: colorCode, borderColor: colorCode }}
-                        to={`/topic/${removeWhitespaceAndDiacritics(topicName)}=${topicId}`}
+                        to={`/topic/${topicId}`}
                     >
                         Join
                     </Button>

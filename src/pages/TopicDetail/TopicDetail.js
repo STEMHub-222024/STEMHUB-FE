@@ -82,7 +82,6 @@ function TopicDetail() {
             )),
         [ingredientFilter],
     );
-
     return (
         <>
             <div className={cx('wrapper')}>
@@ -127,7 +126,11 @@ function TopicDetail() {
                                     mainColor
                                     medium
                                     borderMedium
-                                    to={lessonFilter[0]?.lessonId ? `${lessonFilter[0]?.lessonId}` : ''}
+                                    to={
+                                        lessonFilter[0]?.lessonId
+                                            ? `${lessonFilter[0]?.lessonName}=${lessonFilter[0]?.lessonId}`
+                                            : ''
+                                    }
                                 >
                                     {lessonFilter[0]?.lessonId ? 'Tham Gia học' : 'Sắp ra mắt'}
                                 </Button>
