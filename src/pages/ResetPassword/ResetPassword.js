@@ -157,7 +157,7 @@ function ResetPassword() {
                     </div>
                     <div className={cx('footer')}>
                         Việc bạn tiếp tục sử dụng trang web này đồng nghĩa bạn đồng ý với
-                        <a href="http://localhost:3003/terms">Điều khoản sử dụng</a>
+                        <a href={config.routes.home}>Điều khoản sử dụng</a>
                         của chúng tôi.
                     </div>
                 </div>
