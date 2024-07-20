@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useMemo, useEffect, forwardRef, useImperativeHandle } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames/bind';
@@ -21,35 +21,49 @@ import { postImage, deleteImage } from '~/services/uploadImage';
 
 const cx = classNames.bind(styles);
 
-const mdParser = new MarkdownIt({
-    html: true,
-    linkify: true,
-    typographer: true,
-    highlight: function (str, lang) {
-        if (lang && hljs.getLanguage(lang)) {
-            try {
-                return hljs.highlight(lang, str).value;
-            } catch (__) {}
-        }
-        return '';
-    },
-})
-    .use(emoji)
-    .use(subscript)
-    .use(superscript)
-    .use(footnote)
-    .use(deflist)
-    .use(abbreviation)
-    .use(insert)
-    .use(mark)
-    .use(tasklists);
-
-function TextEditor({ placeholder, height = '500px', showHtml = false, className = '' }) {
+const TextEditor = forwardRef(({ placeholder, height = '500px', showHtml = false, className = '' }, ref) => {
     const dispatch = useDispatch();
+    const urlRef = useRef(null);
+    const mdEditorRef = useRef(null);
     const uploadedImages = useRef([]);
     const currentImages = useRef([]);
     const uploadingImages = useRef([]);
     const debounceTimeout = useRef(null);
+
+    const mdParser = useMemo(() => {
+        const parser = new MarkdownIt({
+            html: true,
+            linkify: true,
+            typographer: true,
+            highlight: function (str, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    try {
+                        return hljs.highlight(lang, str).value;
+                    } catch (__) {}
+                }
+                return '';
+            },
+        })
+            .use(emoji)
+            .use(subscript)
+            .use(superscript)
+            .use(footnote)
+            .use(deflist)
+            .use(abbreviation)
+            .use(insert)
+            .use(mark)
+            .use(tasklists);
+
+        return parser;
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (debounceTimeout.current) {
+                clearTimeout(debounceTimeout.current);
+            }
+        };
+    }, []);
 
     const debounce = (func, delay) => {
         return (...args) => {
@@ -59,44 +73,44 @@ function TextEditor({ placeholder, height = '500px', showHtml = false, className
     };
 
     const updateCurrentImages = useCallback((html) => {
-        const newImages = Array.from(html.matchAll(/<img src="(.*?)"/g)).map((match) => match[1]);
+        const newImages = new Set(Array.from(html.matchAll(/<img src="(.*?)"/g)).map((match) => match[1]));
+        const uploadingSet = new Set(uploadingImages.current);
 
-        const deletedImages = currentImages.current.filter(
-            (url) => !newImages.includes(url) && !uploadingImages.current.includes(url),
-        );
+        const deletedImages = currentImages.current.filter((url) => !newImages.has(url) && !uploadingSet.has(url));
 
         deletedImages.forEach(async (url) => {
             try {
                 await deleteImage(url.split('uploadimage/')[1]);
                 uploadedImages.current = uploadedImages.current.filter((imgUrl) => imgUrl !== url);
-                currentImages.current = currentImages.current.filter((imgUrl) => imgUrl !== url);
             } catch (error) {
                 console.error('Error deleting image:', error);
             }
         });
 
-        currentImages.current = newImages;
+        currentImages.current = Array.from(newImages);
     }, []);
 
-    const handleEditorChange = ({ html, text }) => {
-        if (showHtml) {
-            dispatch(setMarkdown(text));
-            dispatch(setHtmlContent(html));
-        } else {
-            dispatch(setContent_C(html));
-        }
+    const handleEditorChange = useCallback(
+        ({ html, text }) => {
+            if (showHtml) {
+                dispatch(setMarkdown(text));
+                dispatch(setHtmlContent(html));
+            } else {
+                dispatch(setContent_C(html));
+            }
 
-        debounce(updateCurrentImages, 1000)(html);
-    };
+            debounce(updateCurrentImages, 1000)(html);
+        },
+        [dispatch, showHtml, updateCurrentImages],
+    );
 
-    const onImageUpload = async (file) => {
-        let url;
+    const onImageUpload = useCallback(async (file) => {
         try {
-            url = await postImage(file);
-            if (url) {
-                uploadedImages.current.push(url.fileUrl);
-                uploadingImages.current.push(url.fileUrl);
-                return url.fileUrl;
+            urlRef.current = await postImage(file);
+            if (urlRef.current) {
+                uploadedImages.current.push(urlRef.current.fileUrl);
+                uploadingImages.current.push(urlRef.current.fileUrl);
+                return urlRef.current.fileUrl;
             } else {
                 throw new Error('Image upload failed');
             }
@@ -104,26 +118,63 @@ function TextEditor({ placeholder, height = '500px', showHtml = false, className
             console.error('Error uploading image:', error);
             return '';
         } finally {
-            if (url) {
+            if (urlRef.current) {
                 setTimeout(() => {
-                    uploadingImages.current = uploadingImages.current.filter((imgUrl) => imgUrl !== url.fileUrl);
+                    uploadingImages.current = uploadingImages.current.filter(
+                        (imgUrl) => imgUrl !== urlRef.current.fileUrl,
+                    );
                 }, 1000);
             }
         }
-    };
+    }, []);
+
+    const renderHTML = useCallback(
+        (text) => {
+            return (
+                <div className={cx('wrapperEdit')} dangerouslySetInnerHTML={{ __html: mdParser.render(text) }}></div>
+            );
+        },
+        [mdParser],
+    );
+
+    const editorConfig = useMemo(
+        () => ({
+            view: {
+                menu: true,
+                md: true,
+                html: true,
+            },
+            shortcuts: {
+                toggleUnorderedList: 'Shift-U',
+            },
+        }),
+        [],
+    );
 
     const classes = cx('mdEdit', {
         [className]: className,
     });
 
-    const renderHTML = (text) => {
-        return <div className={cx('wrapperEdit')} dangerouslySetInnerHTML={{ __html: mdParser.render(text) }}></div>;
+    const clearEditorContent = () => {
+        if (mdEditorRef.current) {
+            mdEditorRef.current.setState({
+                text: '',
+                html: '',
+            });
+            dispatch(setMarkdown(''));
+            dispatch(setHtmlContent(''));
+        }
     };
+
+    useImperativeHandle(ref, () => ({
+        clearEditorContent,
+    }));
 
     return (
         <div className={cx('wrapper')}>
             <div className={cx('text-editor')}>
                 <MdEditor
+                    ref={mdEditorRef}
                     placeholder={placeholder}
                     onImageUpload={onImageUpload}
                     view={{ menu: true, md: true, html: showHtml }}
@@ -131,21 +182,12 @@ function TextEditor({ placeholder, height = '500px', showHtml = false, className
                     className={classes}
                     renderHTML={renderHTML}
                     onChange={handleEditorChange}
-                    config={{
-                        view: {
-                            menu: true,
-                            md: true,
-                            html: true,
-                        },
-                        shortcuts: {
-                            toggleUnorderedList: 'Shift-U',
-                        },
-                    }}
+                    config={editorConfig}
                 />
             </div>
         </div>
     );
-}
+});
 
 TextEditor.propTypes = {
     placeholder: PropTypes.string.isRequired,
