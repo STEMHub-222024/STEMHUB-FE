@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import React, { useRef, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import Highlighter from 'react-highlight-words';
 import Heading from '~/components/Common/Heading';
@@ -9,6 +9,7 @@ import * as userServices from '~/services/userServices';
 import { postImage, deleteImage } from '~/services/uploadImage';
 import TextEditor from '~/components/Common/TextEditor';
 import { selectPosts } from '~/app/selectors';
+import { setMarkdown, setHtmlContent } from '~/app/slices/postSlice';
 import { SearchOutlined, UploadOutlined } from '@ant-design/icons';
 import { Space, Table, Layout, Button, message, Input, Tooltip, Form, Modal, Select, Upload } from 'antd';
 import styles from './Posts.module.scss';
@@ -20,6 +21,7 @@ const cx = classNames.bind(styles);
 
 function Posts() {
     const textEditorRef = useRef();
+    const dispatch = useDispatch();
     const { markdown, htmlContent } = useSelector(selectPosts).data;
     const [postList, setPostList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -108,11 +110,19 @@ function Posts() {
         form.resetFields();
         setBackgroundImage(null);
         setFileList([]);
+        dispatch(setMarkdown(''));
+        dispatch(setHtmlContent(''));
+        form.setFieldsValue({
+            title: '',
+            description_NA: '',
+            userId: undefined,
+            image: undefined,
+        });
+
         setIsModalVisible(true);
     };
 
     const handleEdit = (record) => {
-        console.log('record', record);
         setEditingPost(record);
         form.setFieldsValue(record);
         setBackgroundImage(record.image);
@@ -124,6 +134,8 @@ function Posts() {
                 url: record.image,
             },
         ]);
+        dispatch(setMarkdown(record.markdown));
+        dispatch(setHtmlContent(record.htmlContent));
         setIsModalVisible(true);
     };
 
@@ -382,6 +394,7 @@ function Posts() {
                                 className={cx('text-content')}
                                 showHtml
                                 placeholder="Nội dung viết ở đây"
+                                initialContent={{ markdown, htmlContent }}
                             />
                         </div>
                     </Form.Item>
