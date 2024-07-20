@@ -1,8 +1,9 @@
 import classNames from 'classnames/bind';
-import { useState } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { Badge, Space } from 'antd';
 import ModalChat from '~/components/Layouts/Components/ModalChat';
 import { IconCircleChevronsUp, IconCircleChevronsDown, IconRobot, IconMessageChatbot } from '@tabler/icons-react';
+import scrollToPosition from '~/utils/scrollToPosition';
 import styles from './OptionPublic.module.scss';
 
 const cx = classNames.bind(styles);
@@ -11,7 +12,15 @@ function OptionPublic() {
     const [show, setShow] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
 
-    const handleShowModal = () => setIsOpen(!isOpen);
+    const handleShowModal = useCallback(() => setIsOpen((prev) => !prev), []);
+
+    const handleScrollOn = useCallback(() => {
+        setShow((prev) => {
+            const newShow = !prev;
+            scrollToPosition(newShow ? 0 : document.documentElement.scrollHeight);
+            return newShow;
+        });
+    }, []);
 
     return (
         <div className={cx('wrapper')}>
@@ -27,13 +36,13 @@ function OptionPublic() {
                     </Badge>
                 </div>
                 {show ? (
-                    <IconCircleChevronsDown className={cx('icon')} onClick={() => setShow(!show)} />
+                    <IconCircleChevronsDown className={cx('icon')} onClick={handleScrollOn} />
                 ) : (
-                    <IconCircleChevronsUp className={cx('icon')} onClick={() => setShow(!show)} />
+                    <IconCircleChevronsUp className={cx('icon')} onClick={handleScrollOn} />
                 )}
             </Space>
         </div>
     );
 }
 
-export default OptionPublic;
+export default memo(OptionPublic);
