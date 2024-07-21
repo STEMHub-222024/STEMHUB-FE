@@ -9,7 +9,7 @@ import FormControl from '~/components/Common/FormControl';
 import images from '~/assets/images';
 import styles from './ResetPassword.module.scss';
 import config from '~/config';
-import Validator, { isRequired, minLength, isValidPassword, isEmail, isConfirmed } from '~/utils/validation';
+import Validator, { isRequired, minLength, isValidPassword, isConfirmed } from '~/utils/validation';
 import { toast } from 'react-toastify';
 
 //Service
@@ -23,7 +23,7 @@ const cx = classNames.bind(styles);
 function ResetPassword() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { email, password, confirmPassword, loading } = useSelector(selectUser).data;
+    const { password, confirmPassword, loading } = useSelector(selectUser).data;
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -35,6 +35,7 @@ function ResetPassword() {
     }
 
     const token = useQuery().get('token');
+    const emailUser = useQuery().get('email');
 
     useEffect(() => {
         Validator({
@@ -42,8 +43,6 @@ function ResetPassword() {
             formGroupSelector: '.form-group',
             errorSelector: '.form-message',
             rules: [
-                isRequired('#email'),
-                isEmail('#email'),
                 minLength('#password', 8),
                 isValidPassword('#password'),
                 isRequired('input[name="gender"]'),
@@ -64,6 +63,7 @@ function ResetPassword() {
                         const result = await dispatch(
                             resetPasswordAsync({
                                 ...data,
+                                emailUser,
                                 token,
                             }),
                         ).unwrap();
@@ -82,7 +82,7 @@ function ResetPassword() {
                 fetchApi();
             },
         });
-    }, [dispatch, navigate, token]);
+    }, [dispatch, navigate, emailUser, token]);
 
     return (
         <div className={cx('wrapper', 'hasBg')}>
@@ -102,14 +102,6 @@ function ResetPassword() {
                             })}
                             id="form-2"
                         >
-                            <FormControl
-                                id="email"
-                                labelTitle="Email"
-                                placeholder="Địa chỉ email"
-                                name="emailUser"
-                                type="text"
-                                showBack
-                            />
                             <div className={cx('inputPassword')}>
                                 <FormControl
                                     id="password"
@@ -137,11 +129,11 @@ function ResetPassword() {
 
                             <Button
                                 className={
-                                    isLoading && email && password && confirmPassword
+                                    isLoading && emailUser && password && confirmPassword
                                         ? cx('btnSubmit')
                                         : cx('btnDisabled')
                                 }
-                                disabled={isLoading && email && password && confirmPassword ? false : true}
+                                disabled={isLoading && emailUser && password && confirmPassword ? false : true}
                             >
                                 {loading && <IconLoader2 className={cx('loading')} size={20} />}
                                 &nbsp;Xác nhận

@@ -12,7 +12,7 @@ import Validator, { isRequired, isEmail } from '~/utils/validation';
 import { toast } from 'react-toastify';
 //Service
 import { useDispatch, useSelector } from 'react-redux';
-import { optEmailAsync } from '~/app/slices/userSlice';
+import { optEmailAsync, setEmailUser } from '~/app/slices/userSlice';
 import { selectUser } from '~/app/selectors';
 
 const cx = classNames.bind(styles);
@@ -37,6 +37,7 @@ function ForgotPassword() {
                         if (result) {
                             hide();
                             setIsLoading(true);
+                            dispatch(setEmailUser(''));
                             toast.success(result);
                         }
                     } catch (rejectedValueOrSerializedError) {
