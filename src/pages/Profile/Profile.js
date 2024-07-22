@@ -157,7 +157,7 @@ function Profile() {
     return (
         <div className={cx('wrapper')}>
             <Heading className={cx('heading')} h2>
-                My Account
+                Tài khoản của tôi
             </Heading>
             <form className={cx('formBody', { form: true })} id="form-1">
                 <div id="file" className={cx('group-avatar')}>
@@ -188,7 +188,7 @@ function Profile() {
 
                 <div className={cx('info')}>
                     <div className={cx('group-input', 'form-group')}>
-                        <span className={cx('title')}>First Name</span>
+                        <span className={cx('title')}>Tên</span>
                         <input
                             type="text"
                             id="firstName"
@@ -199,7 +199,7 @@ function Profile() {
                         <span className={cx('error-message', 'form-message')}></span>
                     </div>
                     <div className={cx('group-input', 'form-group')}>
-                        <span className={cx('title')}>Last Name</span>
+                        <span className={cx('title')}>Họ & Tên đệm</span>
                         <input
                             type="text"
                             id="lastName"
@@ -210,11 +210,11 @@ function Profile() {
                         <span className={cx('error-message', 'form-message')}></span>
                     </div>
                     <div className={cx('group-input')}>
-                        <span className={cx('title')}>User Name</span>
+                        <span className={cx('title')}>Tên người dùng</span>
                         <input type="text" name="userName" value={infoUserCurrent?.username} disabled />
                     </div>
                     <div className={cx('group-input', 'form-group')}>
-                        <span className={cx('title')}>Phone</span>
+                        <span className={cx('title')}>Số điện thoại</span>
                         <input type="text" id="phone" name="phone" value={phone} onChange={handleChange(setPhone)} />
                         <span className={cx('error-message', 'form-message')}></span>
                     </div>

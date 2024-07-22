@@ -183,7 +183,7 @@ function MyPosts() {
                         </Form.Item>
                         <Form.Item
                             name="image"
-                            label="Image"
+                            label="Hình ảnh"
                             rules={[{ required: true, message: 'Please upload an image!' }]}
                         >
                             <Upload
@@ -202,7 +202,7 @@ function MyPosts() {
                         </Form.Item>
                         <Form.Item>
                             <Space style={{ display: 'flex', justifyContent: 'end' }}>
-                                <Button onClick={() => setIsEditModalVisible(false)}>Cancel</Button>
+                                <Button onClick={() => setIsEditModalVisible(false)}>Hủy bỏ</Button>
                                 <Button type="primary" htmlType="submit">
                                     Cập nhật
                                 </Button>

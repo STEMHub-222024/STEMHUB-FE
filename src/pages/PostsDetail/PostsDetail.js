@@ -40,7 +40,7 @@ function PostsDetail() {
         [userInfo],
     );
 
-    if (isLoading) return <Loading title="Loading...." />;
+    if (isLoading) return <Loading title="Đang tải...." />;
 
     return (
         <div className={cx('wrapper')}>

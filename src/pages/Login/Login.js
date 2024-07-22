@@ -66,7 +66,7 @@ function Login() {
                     } catch (error) {
                         hide();
                         setIsLoading(true);
-                        toast.error(error.message || 'Login failed');
+                        toast.error(error.message || 'Đăng nhập thất bại!');
                     }
                 },
             });

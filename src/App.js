@@ -16,7 +16,7 @@ function App() {
     const { isLoading } = useAuth();
     const { allow, infoUserCurrent } = useSelector(selectAuth).data;
 
-    if (isLoading) return <Loading title="Welcome to STEM...." />;
+    if (isLoading) return <Loading title="Chào mừng đến với STEM...." />;
 
     const renderRoutes = () => {
         if (allow && infoUserCurrent) {

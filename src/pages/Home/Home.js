@@ -89,7 +89,7 @@ function Home() {
                     <div className={cx('grid-column-12')}>
                         <header className={cx('topic-header')}>
                             <Heading h2 className={cx('title')}>
-                                Our Most <span>Popular Topic</span>
+                                Chủ Đề <span>Nổi Bật</span>
                             </Heading>
                             <NavbarTopic checkStemDefault={checkStemDefault} />
                         </header>
@@ -105,7 +105,7 @@ function Home() {
                                 <div className={cx('grid-column-12')}>
                                     <div className={cx('btn-explore-all')}>
                                         <Button mainColor borderMedium medium to={`/${convertedString}`}>
-                                            Explore all Topic
+                                            Khám phá chủ đề
                                         </Button>
                                     </div>
                                 </div>
@@ -128,7 +128,7 @@ function Home() {
                         <div className={cx('grid-column-12')}>
                             <div className={cx('btn-explore-all')}>
                                 <Button to={config.routes.posts} mainColor borderMedium medium>
-                                    Explore all Posts
+                                    Khám phá bài viết
                                 </Button>
                             </div>
                         </div>

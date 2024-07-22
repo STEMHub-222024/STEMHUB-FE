@@ -42,11 +42,11 @@ function CommonItem({ data }) {
                                 </div>
                             </>
                         ) : (
-                            <div>Loading...</div>
+                            <div>Đang tải...</div>
                         )}
                     </Button>
                     <Button to={`/posts/${newspaperArticleId}`} className={cx('btn-view-post')} mainColor small>
-                        View article
+                        Xem bài viết
                     </Button>
                 </div>
             </div>

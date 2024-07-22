@@ -26,7 +26,9 @@ function Topic({ colorCode, shine }) {
                         <div className={cx('wrapper-icon')} style={{ backgroundColor: colorCode }}>
                             <IconPlayerPlayFilled size={12} className={cx('play-icon')} />
                         </div>
-                        <span className={cx('title')}>{view} View</span>
+                        <span className={cx('title')}>
+                            <p>{view}</p> Lượt xem
+                        </span>
                     </div>
                     <Button
                         mainColor
@@ -34,7 +36,7 @@ function Topic({ colorCode, shine }) {
                         style={{ backgroundColor: colorCode, borderColor: colorCode }}
                         to={`/topic/${topicId}`}
                     >
-                        Join
+                        Tham gia
                     </Button>
                 </div>
             </div>

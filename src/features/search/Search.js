@@ -98,7 +98,7 @@ function Search({ currentUser }) {
                         <PopperWrapper>
                             <>
                                 <Heading h3 className={cx('search-title')}>
-                                    Topic
+                                    Chủ đề
                                 </Heading>
 
                                 {searchTopics.length > 0 &&
@@ -111,7 +111,7 @@ function Search({ currentUser }) {
                                     ))}
                                 <hr />
                                 <Heading h3 className={cx('search-title')}>
-                                    Posts
+                                    Bài viết
                                 </Heading>
 
                                 {searchPosts.length > 0 &&
@@ -133,7 +133,7 @@ function Search({ currentUser }) {
                     <input
                         ref={inputRef}
                         value={searchValue}
-                        placeholder="Want to learn?"
+                        placeholder="Tìm kiếm chủ đề, bài viết....."
                         spellCheck={false}
                         onChange={handleChange}
                         onFocus={() => setShowResult(true)}
@@ -159,7 +159,7 @@ function Search({ currentUser }) {
                     )}
 
                     <Button mainColor small className={cx('search-btn')}>
-                        Explore
+                        Tìm kiếm
                     </Button>
                 </div>
             </HeadlessTippy>

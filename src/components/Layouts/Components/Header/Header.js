@@ -52,7 +52,7 @@ function Header() {
         ],
         [handleLogout],
     );
-    if (isUserLoading) return <Loading title="Welcome to STEM...." />;
+    if (isUserLoading) return <Loading title="Chào mừng đến với STEM..." />;
 
     return (
         <header className={cx('wrapper')}>
@@ -65,11 +65,11 @@ function Header() {
                 </div>
                 <aside className={cx('group-menu')}>
                     <Menu>
-                        <MenuItem title="HOME" to={config.routes.home} icon={null} />
-                        <MenuItem title="STEM 10" to={config.routes.stem10} icon={null} />
-                        <MenuItem title="STEM 11" to={config.routes.stem11} icon={null} />
-                        <MenuItem title="STEM 12" to={config.routes.stem12} icon={null} />
-                        <MenuItem title="POSTS" to={config.routes.posts} icon={null} />
+                        <MenuItem title="Trang chủ" to={config.routes.home} icon={null} />
+                        <MenuItem title="Stem 10" to={config.routes.stem10} icon={null} />
+                        <MenuItem title="Stem 11" to={config.routes.stem11} icon={null} />
+                        <MenuItem title="Stem 12" to={config.routes.stem12} icon={null} />
+                        <MenuItem title="Bài viết" to={config.routes.posts} icon={null} />
                     </Menu>
                 </aside>
                 <Search currentUser={allow} />
@@ -87,10 +87,10 @@ function Header() {
                     ) : (
                         <>
                             <Button outline small rounded className={cx('custom-login')} to={config.routes.login}>
-                                Login
+                                Đăng nhập
                             </Button>
                             <Button mainColor small rounded to={config.routes.register}>
-                                Get Started
+                                Đăng ký
                             </Button>
                         </>
                     )}
