@@ -16,7 +16,7 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetPasswordAsync } from '~/app/slices/userSlice';
 import { selectUser } from '~/app/selectors';
-import useQuery from '~/utils/useQuery';
+import useQuery from '~/hooks/useQuery';
 
 const cx = classNames.bind(styles);
 
