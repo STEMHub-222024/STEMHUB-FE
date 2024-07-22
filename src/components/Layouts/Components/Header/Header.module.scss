@@ -126,3 +126,28 @@
 .search-btn {
     margin: 4px 4px 0 0;
 }
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .group-menu {
+        display: none;
+    }
+
+    .trademark {
+        display: none;
+    }
+}
+
+/* Small devices (large phones and small tablets, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .group-menu {
+        display: none;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .group-menu {
+        display: none;
+    }
+}

@@ -137,6 +137,7 @@ function Search({ currentUser }) {
                         spellCheck={false}
                         onChange={handleChange}
                         onFocus={() => setShowResult(true)}
+                        className={cx('input-search')}
                     />
                     {currentUser && currentUser.isUser ? (
                         <>

@@ -30,7 +30,7 @@ function CommonItem({ data }) {
                 <div className={cx('author')}>
                     <Button to={config.routes.home} className={cx('group-avatar')}>
                         {userInfo ? (
-                            <>
+                            <div className={cx('personal')}>
                                 <FallbackAvatar className={cx('avatar')} linkImage={userInfo.image} altImage="avatar" />
                                 <div className={cx('info')}>
                                     <span className={cx('user-name')}>
@@ -40,12 +40,14 @@ function CommonItem({ data }) {
                                     </span>
                                     <IconCircleCheckFilled size={15} className={cx('icon-check')} />
                                 </div>
-                            </>
+                            </div>
                         ) : (
                             <div>Đang tải...</div>
                         )}
                     </Button>
-                    <Button to={`/posts/${newspaperArticleId}`} className={cx('btn-view-post')} mainColor small>
+                </div>
+                <div>
+                    <Button to={`/posts/${newspaperArticleId}`} mainColor small>
                         Xem bài viết
                     </Button>
                 </div>

@@ -21,7 +21,11 @@ function Footer() {
         <div className={cx('wrapper')}>
             <div className={cx('grid', { container: 'container' })}>
                 <div className={cx('grid-row', { 'content-first': 'content-first' })}>
-                    <div className={cx('grid-column-4')}>
+                    <div
+                        className={cx('grid-column-4', {
+                            'grid-column-table': true,
+                        })}
+                    >
                         <div className={cx('trademark')}>
                             <Image src={images.logo} alt="logo" className={cx('logo')} />
                             <Heading className={cx('title')} h2>
@@ -38,7 +42,11 @@ function Footer() {
 
                     <div className={cx('grid-column-8')}>
                         <div className={cx('grid-row')}>
-                            <div className={cx('grid-column-4')}>
+                            <div
+                                className={cx('grid-column-4', {
+                                    'item-footer': true,
+                                })}
+                            >
                                 <Heading className={cx('title')} h4>
                                     Đường dẫn nhanh
                                 </Heading>
@@ -61,7 +69,11 @@ function Footer() {
                                 </div>
                             </div>
 
-                            <div className={cx('grid-column-4')}>
+                            <div
+                                className={cx('grid-column-4', {
+                                    'item-footer': true,
+                                })}
+                            >
                                 <Heading className={cx('title')} h4>
                                     Liên hệ chúng tôi
                                 </Heading>
@@ -75,7 +87,11 @@ function Footer() {
                                 </div>
                             </div>
 
-                            <div className={cx('grid-column-4')}>
+                            <div
+                                className={cx('grid-column-4', {
+                                    'item-footer': true,
+                                })}
+                            >
                                 <Heading className={cx('title')} h4>
                                     Địa chỉ
                                 </Heading>

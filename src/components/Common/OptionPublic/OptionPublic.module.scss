@@ -44,3 +44,19 @@
         }
     }
 }
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .wrapper {
+        bottom: 84px;
+        right: 10px;
+    }
+}
+
+/* Small devices (large phones and small tablets, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .wrapper {
+        bottom: 84px;
+        right: 10px;
+    }
+}

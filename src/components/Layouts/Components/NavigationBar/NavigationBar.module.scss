@@ -1,0 +1,35 @@
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+
+    .content {
+        width: 100%;
+
+        :global(.ant-segmented-group) {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .main {
+            padding: 4px;
+            min-width: 58px;
+
+            .icon-ant {
+                font-size: 36px;
+                margin: 4px 0 5px 0;
+            }
+
+            .icon {
+                width: 40px;
+                height: 40px;
+                padding-top: 4px;
+            }
+
+            .title {
+                font-size: 14px;
+                font-weight: 600;
+            }
+        }
+    }
+}

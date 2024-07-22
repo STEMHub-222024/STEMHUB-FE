@@ -16,15 +16,15 @@
         .images {
             padding-top: 100%;
             background-repeat: no-repeat;
-            background-size: 100% 200px;
+            background-size: cover;
+            background-position: center;
             border-radius: 30px;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
         }
     }
 
     .content {
-        padding: 14px 0 14px 8px;
+        padding: 14px 14px;
+
         .name {
             font-size: 1.6rem;
             font-weight: 600;
@@ -38,56 +38,57 @@
         }
 
         .author {
-            display: flex;
+            display: inline-block;
+            width: 100%;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 6px 0 4px;
+            flex-wrap: wrap;
+            padding-bottom: 8px;
+
             .group-avatar {
-                span {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    text-transform: capitalize;
-                    font-size: 1.5rem;
+                display: inline-block;
 
-                    .avatar {
-                        position: relative;
-                        margin-left: 9px;
+                .avatar {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    overflow: hidden;
+                    margin-right: 8px;
 
-                        img {
-                            position: absolute;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                        }
+                    img {
+                        width: 80%;
+                        height: 80%;
+                        object-fit: cover;
                     }
                 }
 
                 .info {
                     display: flex;
-                    justify-content: space-between;
                     align-items: center;
-                    margin-left: 24px;
+
+                    .user-name {
+                        font-size: 1.4rem;
+                        color: #292929;
+                        margin-right: 4px;
+                        max-width: 120px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
 
                     .icon-check {
-                        transform: translateY(1px) translateX(2px);
                         color: var(--color-icon-blue);
                     }
-                    .user-name {
-                        word-wrap: break-word;
-                        -webkit-box-orient: vertical;
-                        -webkit-line-clamp: 1;
-                        color: #292929;
-                        display: -webkit-box;
-                        line-height: 1.4;
-                        width: 94px;
-                        overflow: hidden;
-                    }
+                }
+                .personal {
+                    display: flex;
                 }
             }
 
             .btn-view-post {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
+                padding: 6px 12px;
+                white-space: nowrap;
             }
         }
     }

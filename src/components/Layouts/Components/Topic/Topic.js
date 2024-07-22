@@ -35,6 +35,17 @@ function Topic({ colorCode, shine }) {
                         small
                         style={{ backgroundColor: colorCode, borderColor: colorCode }}
                         to={`/topic/${topicId}`}
+                        className={cx('btn-jon')}
+                    >
+                        Tham gia
+                    </Button>
+                </div>
+                <div className={cx('wrapper-jon-table')}>
+                    <Button
+                        mainColor
+                        small
+                        style={{ backgroundColor: colorCode, borderColor: colorCode }}
+                        to={`/topic/${topicId}`}
                     >
                         Tham gia
                     </Button>
