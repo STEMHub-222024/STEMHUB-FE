@@ -160,6 +160,21 @@ function TopicDetail() {
                         </div>
                     </div>
                 </div>
+                <div className={cx('wrapper-btn-join')}>
+                    <Button
+                        className={cx('btn-join')}
+                        mainColor
+                        medium
+                        borderMedium
+                        to={
+                            lessonFilter[0]?.lessonId
+                                ? `${lessonFilter[0]?.lessonName}=${lessonFilter[0]?.lessonId}`
+                                : ''
+                        }
+                    >
+                        {lessonFilter[0]?.lessonId ? 'Tham Gia học' : 'Sắp ra mắt'}
+                    </Button>
+                </div>
             </div>
 
             <Modal

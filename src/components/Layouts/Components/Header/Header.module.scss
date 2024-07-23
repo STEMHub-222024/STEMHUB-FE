@@ -136,6 +136,21 @@
     .trademark {
         display: none;
     }
+    .actions {
+        .icon-link-login {
+            margin-left: 12px;
+            .icon {
+                color: var(--main-color);
+            }
+        }
+        .custom-login {
+            display: none;
+        }
+
+        .custom-register {
+            display: none;
+        }
+    }
 }
 
 /* Small devices (large phones and small tablets, 576px and up) */
@@ -143,11 +158,52 @@
     .group-menu {
         display: none;
     }
+
+    .actions {
+        .icon-link-login {
+            margin-left: 12px;
+
+            .icon {
+                &:hover {
+                    color: var(--main-color);
+                }
+            }
+        }
+
+        .custom-login {
+            display: none;
+        }
+
+        .custom-register {
+            display: none;
+        }
+    }
 }
 
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) and (max-width: 991.98px) {
     .group-menu {
+        display: none;
+    }
+    .icon-link-login {
+        display: none;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .custom-login {
+        display: none;
+    }
+
+    .custom-register {
+        display: none;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .icon-link-login {
         display: none;
     }
 }

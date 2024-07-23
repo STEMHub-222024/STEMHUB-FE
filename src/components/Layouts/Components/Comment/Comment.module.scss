@@ -53,10 +53,14 @@
 
                                 .commentAuthor {
                                     color: var(--black-color);
-                                    display: inline-block;
                                     font-size: 1.4rem;
                                     font-weight: 600;
                                     margin: 0;
+                                    overflow: hidden;
+                                    word-wrap: break-word;
+                                    display: -webkit-box;
+                                    -webkit-box-orient: vertical;
+                                    -webkit-line-clamp: 2;
                                 }
                             }
 
@@ -123,5 +127,21 @@
 
     &:hover {
         color: red;
+    }
+}
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .commentContent {
+        min-width: 266px !important;
+        max-width: 266px !important;
+    }
+}
+
+/* Small devices (large phones and small tablets, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .commentContent {
+        min-width: 266px !important;
+        max-width: 266px !important;
     }
 }

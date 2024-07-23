@@ -1,7 +1,6 @@
 import classNames from 'classnames/bind';
 import { Flex, Segmented } from 'antd';
-import { IconSteam, IconReportSearch } from '@tabler/icons-react';
-import { HomeFilled } from '@ant-design/icons';
+import { IconHome, IconSteam, IconReportSearch } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router-dom';
 import config from '~/config';
 
@@ -33,7 +32,7 @@ function NavigationBar() {
                     {
                         label: (
                             <Link className={cx('main')} to={config.routes.home}>
-                                <HomeFilled className={cx('icon-ant')} />
+                                <IconHome className={cx('icon')} />
                                 <div className={cx('title')}>Trang chủ</div>
                             </Link>
                         ),

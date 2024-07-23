@@ -1,15 +1,21 @@
 .wrapper {
-    background-color: #f7f8fa;
-    border-bottom: 1px solid #dedfe0;
     flex-direction: row;
     justify-content: space-between;
     display: flex;
     padding: 10px 0 10px 2px;
     position: relative;
     transition: all 0.3s ease-in-out;
+    border: 1px solid #3333;
+    background-color: #ffffff;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+    color: rgba(0, 0, 0, 0.88);
 
     &:hover {
-        opacity: 0.6;
+        color: var(--main-color);
+    }
+
+    &:hover .title {
+        color: var(--main-color);
     }
 }
 
@@ -27,6 +33,12 @@
         margin: 0;
         position: relative;
     }
+    p {
+        line-height: 24px;
+        .icon-play {
+            color: var(--main-color);
+        }
+    }
 }
 
 .icon-box {
@@ -35,4 +47,12 @@
     justify-content: center;
     margin-right: 12px;
     width: 36px;
+}
+
+.active {
+    background-color: #f7f8fa;
+    border-bottom: 1px solid #dedfe0;
+    &:hover {
+        opacity: 1;
+    }
 }

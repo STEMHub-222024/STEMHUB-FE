@@ -57,7 +57,7 @@ function PostsDetail() {
                         </div>
                     </div>
                     <div className={cx('grid-column-9', { repositoryWith: true })}>
-                        <div>
+                        <article>
                             <Heading className={cx('heading')}>{title}</Heading>
                             <div className={cx('header')}>
                                 <div className={cx('user')}>
@@ -83,7 +83,7 @@ function PostsDetail() {
                                 </div>
                             </div>
                             <MarkdownParser content_C={htmlContent} />
-                        </div>
+                        </article>
                     </div>
                 </div>
             </div>

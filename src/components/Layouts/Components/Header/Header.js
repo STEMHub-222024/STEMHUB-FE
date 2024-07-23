@@ -13,7 +13,7 @@ import Image from '~/components/Common/Image';
 import Loading from '~/components/Common/Loading';
 import { Menu, MenuItem } from '~/components/Layouts/Components/Menu';
 import { MenuPopper } from '~/components/Common/Popper/MenuPopper';
-import { IconUser, IconReport, IconArrowBarRight, IconPencil } from '@tabler/icons-react';
+import { IconUser, IconReport, IconArrowBarRight, IconPencil, IconLogin2 } from '@tabler/icons-react';
 import { selectAuth } from '~/app/selectors';
 import { logout } from '~/app/slices/authSlice';
 
@@ -89,9 +89,19 @@ function Header() {
                             <Button outline small rounded className={cx('custom-login')} to={config.routes.login}>
                                 Đăng nhập
                             </Button>
-                            <Button mainColor small rounded to={config.routes.register}>
+                            <Button
+                                className={cx('custom-register')}
+                                mainColor
+                                small
+                                rounded
+                                to={config.routes.register}
+                            >
                                 Đăng ký
                             </Button>
+
+                            <Link to={config.routes.login} className={cx('icon-link-login')}>
+                                <IconLogin2 size={30} className={cx('icon')} />
+                            </Link>
                         </>
                     )}
                 </div>

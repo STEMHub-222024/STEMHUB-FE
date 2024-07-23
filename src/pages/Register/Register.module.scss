@@ -38,7 +38,7 @@
     z-index: 2;
 
     .height-content {
-        height: 550px;
+        height: 600px;
     }
 }
 
@@ -183,12 +183,42 @@
         line-height: 1.6;
         padding: 12px 132px;
         right: 0;
+        position: relative;
 
         a {
             margin: 0 4px;
             color: var(--main-color);
             font-weight: 500;
             text-decoration: underline;
+        }
+    }
+}
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .content {
+        .footer {
+            padding: 12px 4px;
+        }
+
+        .body {
+            .formBody {
+                padding: 0 12px;
+            }
+        }
+    }
+}
+
+/* Small devices (large phones and small tablets, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .content {
+        .footer {
+            padding: 12px 4px;
+        }
+        .body {
+            .formBody {
+                padding: 0 12px;
+            }
         }
     }
 }

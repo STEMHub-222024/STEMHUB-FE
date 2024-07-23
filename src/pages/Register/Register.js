@@ -182,9 +182,11 @@ function Register() {
                         )}
                     </div>
                     <div className={cx('footer')}>
-                        Việc bạn tiếp tục sử dụng trang web này đồng nghĩa bạn đồng ý với
-                        <a href={config.routes.home}>Điều khoản sử dụng</a>
-                        của chúng tôi.
+                        <p>
+                            Việc bạn tiếp tục sử dụng trang web này đồng nghĩa bạn đồng ý với
+                            <a href={config.routes.home}>Điều khoản sử dụng</a>
+                            của chúng tôi.
+                        </p>
                     </div>
                 </div>
             </div>

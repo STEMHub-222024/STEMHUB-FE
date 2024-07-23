@@ -70,3 +70,23 @@
         margin-bottom: 44px;
     }
 }
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .content {
+        .contentTop {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+}
+
+/* Small devices (large phones and small tablets, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .content {
+        .contentTop {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+}
