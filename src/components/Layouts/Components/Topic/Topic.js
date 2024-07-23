@@ -30,15 +30,6 @@ function Topic({ colorCode, shine }) {
                             <p>{view}</p> Lượt xem
                         </span>
                     </div>
-                    <Button
-                        mainColor
-                        small
-                        style={{ backgroundColor: colorCode, borderColor: colorCode }}
-                        to={`/topic/${topicId}`}
-                        className={cx('btn-jon')}
-                    >
-                        Tham gia
-                    </Button>
                 </div>
                 <div className={cx('wrapper-jon-table')}>
                     <Button

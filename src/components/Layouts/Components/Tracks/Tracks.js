@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { useParams } from 'react-router-dom';
@@ -8,9 +9,9 @@ import { handleSplitParam } from '~/utils/splitParamUrl';
 const cx = classNames.bind(styles);
 
 function Tracks({ data, topicParameter, onClose }) {
-    const { lessonId: currentLessonId } = useParams();
+    const { lessonId } = useParams();
 
-    const currentLessonIdNew = handleSplitParam(currentLessonId);
+    const currentLessonId = useMemo(() => handleSplitParam(lessonId), [lessonId]);
 
     return (
         <div className={cx('wrapper')}>
@@ -19,18 +20,16 @@ function Tracks({ data, topicParameter, onClose }) {
                     <h2>Nội dung khóa học</h2>
                 </header>
                 <div className={cx('body')}>
-                    {data
-                        ? data?.map((lessonItem, index) => (
-                              <TrackItem
-                                  key={lessonItem?.lessonId}
-                                  data={lessonItem}
-                                  index={index}
-                                  topicParameter={topicParameter}
-                                  isActive={lessonItem.lessonId === currentLessonIdNew}
-                                  onClose={onClose}
-                              />
-                          ))
-                        : ''}
+                    {data?.map((lessonItem, index) => (
+                        <TrackItem
+                            key={lessonItem?.lessonId}
+                            data={lessonItem}
+                            index={index}
+                            topicParameter={topicParameter}
+                            isActive={lessonItem.lessonId === currentLessonId}
+                            onClose={onClose}
+                        />
+                    ))}
                 </div>
             </div>
         </div>
@@ -40,6 +39,7 @@ function Tracks({ data, topicParameter, onClose }) {
 Tracks.propTypes = {
     data: PropTypes.array,
     topicParameter: PropTypes.string,
+    onClose: PropTypes.func,
 };
 
-export default Tracks;
+export default React.memo(Tracks);

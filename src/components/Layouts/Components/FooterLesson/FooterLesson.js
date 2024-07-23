@@ -1,4 +1,4 @@
-import React, { useState, memo, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { Button, Drawer } from 'antd';
@@ -12,21 +12,17 @@ const cx = classNames.bind(styles);
 function FooterLesson({ data, topicParameter }) {
     const [visible, setVisible] = useState(false);
     const navigate = useNavigate();
-    const { lessonId: currentLessonId } = useParams();
+    const { lessonId } = useParams();
 
-    const currentLessonIdNew = handleSplitParam(currentLessonId);
+    const currentLessonId = useMemo(() => handleSplitParam(lessonId), [lessonId]);
 
-    const showDrawer = () => {
-        setVisible(true);
-    };
+    const currentIndex = useMemo(
+        () => data.findIndex((lesson) => lesson.lessonId === currentLessonId),
+        [data, currentLessonId],
+    );
 
-    const onClose = () => {
-        setVisible(false);
-    };
-
-    const getCurrentLessonIndex = useCallback(() => {
-        return data.findIndex((lesson) => lesson.lessonId === currentLessonIdNew);
-    }, [data, currentLessonIdNew]);
+    const isFirstLesson = currentIndex === 0;
+    const isLastLesson = currentIndex === data.length - 1;
 
     const navigateToLesson = useCallback(
         (index) => {
@@ -38,27 +34,16 @@ function FooterLesson({ data, topicParameter }) {
         [data, navigate, topicParameter],
     );
 
-    const handlePrevious = () => {
-        const currentIndex = getCurrentLessonIndex();
-        navigateToLesson(currentIndex - 1);
-    };
+    const handlePrevious = useCallback(() => navigateToLesson(currentIndex - 1), [navigateToLesson, currentIndex]);
+    const handleNext = useCallback(() => navigateToLesson(currentIndex + 1), [navigateToLesson, currentIndex]);
 
-    const handleNext = () => {
-        const currentIndex = getCurrentLessonIndex();
-        navigateToLesson(currentIndex + 1);
-    };
-
-    const currentIndex = getCurrentLessonIndex();
-    const isFirstLesson = currentIndex === 0;
-    const isLastLesson = currentIndex === data.length - 1;
+    const toggleDrawer = useCallback(() => setVisible((prev) => !prev), []);
 
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navigation')}>
                 <Button
-                    className={cx('btn-icon-lesson', {
-                        'btn-icon-disabled': isFirstLesson,
-                    })}
+                    className={cx('btn-icon-lesson', { 'btn-icon-disabled': isFirstLesson })}
                     icon={<LeftOutlined />}
                     onClick={handlePrevious}
                     disabled={isFirstLesson}
@@ -66,9 +51,7 @@ function FooterLesson({ data, topicParameter }) {
                     Bài trước
                 </Button>
                 <Button
-                    className={cx('btn-icon-lesson', {
-                        'btn-icon-disabled': isLastLesson,
-                    })}
+                    className={cx('btn-icon-lesson', { 'btn-icon-disabled': isLastLesson })}
                     onClick={handleNext}
                     disabled={isLastLesson}
                 >
@@ -77,20 +60,20 @@ function FooterLesson({ data, topicParameter }) {
                 </Button>
             </div>
             <div className={cx('menu')}>
-                <Button className={cx('btn-icon')} size="middle" icon={<MenuOutlined />} onClick={showDrawer} />
+                <Button className={cx('btn-icon')} size="middle" icon={<MenuOutlined />} onClick={toggleDrawer} />
             </div>
             <Drawer
                 title="Nội dung khóa học"
                 placement="right"
-                onClose={onClose}
+                onClose={toggleDrawer}
                 open={visible}
                 height="100%"
                 width="100%"
             >
-                <Tracks data={data} topicParameter={topicParameter} onClose={onClose} />
+                <Tracks data={data} topicParameter={topicParameter} onClose={toggleDrawer} />
             </Drawer>
         </div>
     );
 }
 
-export default memo(FooterLesson);
+export default React.memo(FooterLesson);
