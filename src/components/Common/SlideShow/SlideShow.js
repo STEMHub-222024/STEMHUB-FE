@@ -10,6 +10,7 @@ import SlidePrevArrow from '~/components/Common/SlidePrevArrow';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBannerAsync } from '~/app/slices/slideShowSlice';
 import { selectBanner } from '~/app/selectors';
+import config from '~/config';
 
 const cx = classNames.bind(styles);
 
@@ -54,7 +55,7 @@ function SlideShow() {
                           <div className={cx('wrapper', { [`slide-item-${index + 1}`]: true })} key={barber.bannerId}>
                               <div className={cx('left')}>
                                   <h2 className={cx('heading')}>
-                                      <a href="https://www.facebook.com/Nvdqb73">{barber.title}</a>
+                                      <a href={config.routes.home}>{barber.title}</a>
                                   </h2>
                                   <p className={cx('desc')}>{barber?.content}</p>
                               </div>

@@ -22,6 +22,15 @@ export const getPostsAsync = createAsyncThunk('post/getPostsAsync', async (_, { 
     }
 });
 
+export const getPostsAllAsync = createAsyncThunk('post/getPostsAllAsync', async (_, { rejectWithValue }) => {
+    try {
+        const response = await postServices.getPosts();
+        return response;
+    } catch (err) {
+        return rejectWithValue(err.response.data.message);
+    }
+});
+
 export const getPostsByIdAsync = createAsyncThunk('post/getPostsByIdAsync', async (infoData, { rejectWithValue }) => {
     try {
         const response = await postServices.getPostsById(infoData);
@@ -64,6 +73,18 @@ export const postSlice = createSlice({
                 state.data.posts = action.payload.slice(0, 8);
             })
             .addCase(getPostsAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMassage = action.payload;
+            });
+        builder
+            .addCase(getPostsAllAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(getPostsAllAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.data.posts = action.payload;
+            })
+            .addCase(getPostsAllAsync.rejected, (state, action) => {
                 state.status = 'failed';
                 state.errorMassage = action.payload;
             });

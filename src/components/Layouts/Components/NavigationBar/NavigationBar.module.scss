@@ -1,0 +1,46 @@
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+
+    .content {
+        width: 100%;
+
+        :global(.ant-segmented-group) {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        :global(.ant-segmented-item-label) {
+            line-height: 15px !important;
+        }
+
+        .main {
+            padding: 4px;
+            min-width: 58px;
+
+            .icon {
+                width: 40px;
+                height: 40px;
+                padding-top: 4px;
+                color: var(--main-color);
+            }
+
+            .title {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--main-color);
+            }
+        }
+    }
+}
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .wrapper {
+        .content {
+            :global(.ant-segmented-item-label) {
+                padding: 8px 52px 0 52px !important;
+            }
+        }
+    }
+}

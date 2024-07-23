@@ -1,16 +1,17 @@
 import classNames from 'classnames/bind';
 import React, { useRef, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import Highlighter from 'react-highlight-words';
-import { Space, Table, Layout, Button, message, Input, Tooltip, Form, Modal, Select, Upload } from 'antd';
-import { SearchOutlined, UploadOutlined } from '@ant-design/icons';
 import Heading from '~/components/Common/Heading';
 import * as postServices from '~/services/postServices';
 import * as userServices from '~/services/userServices';
 import { postImage, deleteImage } from '~/services/uploadImage';
 import TextEditor from '~/components/Common/TextEditor';
 import { selectPosts } from '~/app/selectors';
+import { setMarkdown, setHtmlContent } from '~/app/slices/postSlice';
+import { SearchOutlined, UploadOutlined } from '@ant-design/icons';
+import { Space, Table, Layout, Button, message, Input, Tooltip, Form, Modal, Select, Upload } from 'antd';
 import styles from './Posts.module.scss';
 
 const { Content } = Layout;
@@ -19,11 +20,16 @@ const { Option } = Select;
 const cx = classNames.bind(styles);
 
 function Posts() {
+    const textEditorRef = useRef();
+    const dispatch = useDispatch();
     const { markdown, htmlContent } = useSelector(selectPosts).data;
     const [postList, setPostList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingPost, setEditingPost] = useState(null);
     const [users, setUsers] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [fileList, setFileList] = useState([]);
     const [form] = Form.useForm();
@@ -59,6 +65,12 @@ function Posts() {
         }
     };
 
+    const handleClearEditor = () => {
+        if (textEditorRef.current) {
+            textEditorRef.current.clearEditorContent();
+        }
+    };
+
     const handleDelete = async (newspaperArticleId) => {
         await postServices.deletePosts(newspaperArticleId);
         message.success('Post deleted successfully');
@@ -66,6 +78,7 @@ function Posts() {
     };
 
     const handleSave = async (values) => {
+        const hide = message.loading('Đang xuất bản...', 0);
         try {
             values.image = backgroundImage;
             const postData = {
@@ -76,15 +89,18 @@ function Posts() {
 
             if (editingPost) {
                 await postServices.updatePost(editingPost.newspaperArticleId, postData);
+                hide();
                 message.success('Post updated successfully');
             } else {
                 await postServices.addPost(postData);
+                hide();
                 message.success('Post created successfully');
             }
             fetchPosts();
             setIsModalVisible(false);
-            window.location.reload();
+            handleClearEditor();
         } catch (error) {
+            hide();
             message.error('Error saving post');
         }
     };
@@ -94,6 +110,15 @@ function Posts() {
         form.resetFields();
         setBackgroundImage(null);
         setFileList([]);
+        dispatch(setMarkdown(''));
+        dispatch(setHtmlContent(''));
+        form.setFieldsValue({
+            title: '',
+            description_NA: '',
+            userId: undefined,
+            image: undefined,
+        });
+
         setIsModalVisible(true);
     };
 
@@ -109,6 +134,8 @@ function Posts() {
                 url: record.image,
             },
         ]);
+        dispatch(setMarkdown(record.markdown));
+        dispatch(setHtmlContent(record.htmlContent));
         setIsModalVisible(true);
     };
 
@@ -138,9 +165,7 @@ function Posts() {
             }
         }
     };
-    const [searchText, setSearchText] = useState('');
-    const [searchedColumn, setSearchedColumn] = useState('');
-    const searchInput = useRef(null);
+
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
         setSearchText(selectedKeys[0]);
@@ -364,7 +389,13 @@ function Posts() {
 
                     <Form.Item label="Content">
                         <div className={cx('text-editor')}>
-                            <TextEditor className={cx('text-content')} showHtml placeholder="Nội dung viết ở đây" />
+                            <TextEditor
+                                ref={textEditorRef}
+                                className={cx('text-content')}
+                                showHtml
+                                placeholder="Nội dung viết ở đây"
+                                initialContent={{ markdown, htmlContent }}
+                            />
                         </div>
                     </Form.Item>
 

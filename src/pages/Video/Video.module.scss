@@ -19,11 +19,11 @@
 
         .addNote {
             background-color: var(--white);
-            border: 1px solid;
+            border: 1px solid var(--main-color);
             border-radius: 6px;
             cursor: pointer;
             font-size: 1.4rem;
-            padding: 8px 16px;
+            padding: 6px 14px;
             position: relative;
             transition: 0.3s ease;
             -webkit-user-select: none;
@@ -31,11 +31,17 @@
             user-select: none;
             display: flex;
             align-items: center;
+            justify-content: center;
+
+            .icon {
+                color: var(--main-color);
+            }
+
             &:hover {
                 background-color: var(--main-color);
             }
 
-            &:hover .label {
+            &:hover .num {
                 color: var(--white);
             }
 
@@ -54,6 +60,7 @@
                     font-size: 1.4rem;
                     font-variant-numeric: tabular-nums;
                     font-weight: 600;
+                    color: var(--main-color);
                 }
             }
         }
@@ -61,5 +68,25 @@
 
     .contentBottom {
         margin-bottom: 44px;
+    }
+}
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .content {
+        .contentTop {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+}
+
+/* Small devices (large phones and small tablets, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .content {
+        .contentTop {
+            flex-direction: column;
+            align-items: flex-start;
+        }
     }
 }

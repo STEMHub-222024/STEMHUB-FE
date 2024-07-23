@@ -2,29 +2,30 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { IconEyeClosed, IconEye, IconLoader2 } from '@tabler/icons-react';
-
+import { message } from 'antd';
 import Button from '~/components/Common/Button';
 import Image from '~/components/Common/Image';
 import FormControl from '~/components/Common/FormControl';
 import images from '~/assets/images';
 import styles from './ResetPassword.module.scss';
 import config from '~/config';
-import Validator, { isRequired, minLength, isValidPassword, isEmail, isConfirmed } from '~/utils/validation';
+import Validator, { isRequired, minLength, isValidPassword, isConfirmed } from '~/utils/validation';
 import { toast } from 'react-toastify';
 
 //Service
 import { useDispatch, useSelector } from 'react-redux';
 import { resetPasswordAsync } from '~/app/slices/userSlice';
 import { selectUser } from '~/app/selectors';
-import useQuery from '~/utils/useQuery';
+import useQuery from '~/hooks/useQuery';
 
 const cx = classNames.bind(styles);
 
 function ResetPassword() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { email, password, confirmPassword, loading } = useSelector(selectUser).data;
+    const { password, confirmPassword, loading } = useSelector(selectUser).data;
     const [isShowPassword, setIsShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     let IconPassword = IconEyeClosed;
     let inputType = 'password';
@@ -34,6 +35,7 @@ function ResetPassword() {
     }
 
     const token = useQuery().get('token');
+    const emailUser = useQuery().get('email');
 
     useEffect(() => {
         Validator({
@@ -41,8 +43,6 @@ function ResetPassword() {
             formGroupSelector: '.form-group',
             errorSelector: '.form-message',
             rules: [
-                isRequired('#email'),
-                isEmail('#email'),
                 minLength('#password', 8),
                 isValidPassword('#password'),
                 isRequired('input[name="gender"]'),
@@ -56,26 +56,33 @@ function ResetPassword() {
                 ),
             ],
             onSubmit(data) {
+                const hide = message.loading('Vui lòng chờ...', 0);
                 const fetchApi = async () => {
                     try {
+                        setIsLoading(false);
                         const result = await dispatch(
                             resetPasswordAsync({
                                 ...data,
+                                emailUser,
                                 token,
                             }),
                         ).unwrap();
                         if (result) {
+                            hide();
+                            setIsLoading(true);
                             navigate(config.routes.login);
                             toast.success(result);
                         }
                     } catch (rejectedValueOrSerializedError) {
+                        hide();
+                        setIsLoading(true);
                         toast.error(rejectedValueOrSerializedError);
                     }
                 };
                 fetchApi();
             },
         });
-    }, [dispatch, navigate, token]);
+    }, [dispatch, navigate, emailUser, token]);
 
     return (
         <div className={cx('wrapper', 'hasBg')}>
@@ -95,14 +102,6 @@ function ResetPassword() {
                             })}
                             id="form-2"
                         >
-                            <FormControl
-                                id="email"
-                                labelTitle="Email"
-                                placeholder="Địa chỉ email"
-                                name="emailUser"
-                                type="text"
-                                showBack
-                            />
                             <div className={cx('inputPassword')}>
                                 <FormControl
                                     id="password"
@@ -129,8 +128,12 @@ function ResetPassword() {
                             </div>
 
                             <Button
-                                className={email && password && confirmPassword ? cx('btnSubmit') : cx('btnDisabled')}
-                                disabled={email && password && confirmPassword ? false : true}
+                                className={
+                                    isLoading && emailUser && password && confirmPassword
+                                        ? cx('btnSubmit')
+                                        : cx('btnDisabled')
+                                }
+                                disabled={isLoading && emailUser && password && confirmPassword ? false : true}
                             >
                                 {loading && <IconLoader2 className={cx('loading')} size={20} />}
                                 &nbsp;Xác nhận
@@ -146,7 +149,7 @@ function ResetPassword() {
                     </div>
                     <div className={cx('footer')}>
                         Việc bạn tiếp tục sử dụng trang web này đồng nghĩa bạn đồng ý với
-                        <a href="http://localhost:3003/terms">Điều khoản sử dụng</a>
+                        <a href={config.routes.home}>Điều khoản sử dụng</a>
                         của chúng tôi.
                     </div>
                 </div>

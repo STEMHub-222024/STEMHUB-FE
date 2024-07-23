@@ -8,10 +8,10 @@ const cx = classNames.bind(styles);
 function Powered() {
     return (
         <p className={cx('wrapper')}>
-            Made with
+            Welcome to
             <IconHeartHandshake size={20} color="#d43c68" stroke={3.5} />
+            STEM
             <span className={cx('dot')}>.</span>
-            Powered by nvd
         </p>
     );
 }

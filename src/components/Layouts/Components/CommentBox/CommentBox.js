@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, memo, useEffect } from 'react';
+import { useState, memo } from 'react';
 import { message } from 'antd';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,10 +10,7 @@ import Button from '~/components/Common/Button';
 import { commentPostAsync } from '~/app/slices/commentSlice';
 import { selectComment, selectAuth } from '~/app/selectors';
 import { handleSplitParam } from '~/utils/splitParamUrl';
-import { getUserIdAsync } from '~/app/slices/userSlice';
-// Check Auth
-import { setAllow } from '~/app/slices/authSlice';
-import checkCookie from '~/utils/checkCookieExists';
+import useUserInfo from '~/hooks/useUserInfo';
 
 const cx = classNames.bind(styles);
 
@@ -23,57 +20,24 @@ function CommentBox() {
     const { content_C } = useSelector(selectComment).data;
     const { infoUserCurrent } = useSelector(selectAuth).data;
     const [showEditText, setShowEditText] = useState(false);
-    const [resetToken, setIsResetToken] = useState(false);
-    const [userInfo, setUserInfo] = useState({});
-
-    useLayoutEffect(() => {
-        checkCookie(dispatch)
-            .then((isUser) => {
-                dispatch(setAllow(isUser));
-            })
-            .catch((isUser) => {
-                dispatch(setAllow(isUser));
-            });
-    }, [dispatch, resetToken]);
-
-    useEffect(() => {
-        const fetchApi = async () => {
-            try {
-                const res = await dispatch(
-                    getUserIdAsync({
-                        userId: infoUserCurrent.userId,
-                    }),
-                ).unwrap();
-                if (res) {
-                    setUserInfo(res);
-                }
-            } catch (rejectedValueOrSerializedError) {
-                console.error(rejectedValueOrSerializedError);
-            }
-        };
-        fetchApi();
-    }, [dispatch, infoUserCurrent]);
+    const { data: userInfo } = useUserInfo(infoUserCurrent?.userId);
 
     const handleShowEditText = () => {
         setShowEditText(!showEditText);
     };
 
     const handleComment = async () => {
-        if (!infoUserCurrent.userId) {
-            setIsResetToken(!resetToken);
-        } else {
-            const lessonIdSplit = handleSplitParam(lessonId);
-            if (!lessonIdSplit) {
-                message.warning('LessonId does not exist');
-            }
-            await dispatch(
-                commentPostAsync({
-                    content_C,
-                    lessonId: lessonIdSplit,
-                    userId: infoUserCurrent.userId,
-                }),
-            );
+        const lessonIdSplit = handleSplitParam(lessonId);
+        if (!lessonIdSplit) {
+            message.warning('LessonId does not exist');
         }
+        await dispatch(
+            commentPostAsync({
+                content_C,
+                lessonId: lessonIdSplit,
+                userId: infoUserCurrent.userId,
+            }),
+        );
         setShowEditText(!showEditText);
     };
     return (

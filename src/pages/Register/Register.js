@@ -3,7 +3,6 @@ import { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { IconEyeClosed, IconEye } from '@tabler/icons-react';
-
 import styles from './Register.module.scss';
 import config from '~/config';
 import Button from '~/components/Common/Button';
@@ -26,6 +25,7 @@ function Register() {
     const { userName, password } = useSelector(selectAuth).data;
     const [currentLogin, setCurrentLogin] = useState(true);
     const [isShowPassword, setIsShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     let IconPassword = IconEyeClosed;
     let inputType = 'password';
@@ -52,13 +52,19 @@ function Register() {
                 ],
                 onSubmit(data) {
                     const fetchApi = async () => {
+                        const hide = message.loading('Vui lòng chờ...', 0);
                         try {
+                            setIsLoading(false);
                             const result = await dispatch(registerUserAsync(data)).unwrap();
                             if (result) {
+                                hide();
+                                setIsLoading(true);
                                 navigate(config.routes.login);
                                 message.success('Đăng ký thành công...!');
                             }
                         } catch (rejectedValueOrSerializedError) {
+                            hide();
+                            setIsLoading(true);
                             inputNameRef.current.focus();
                             message.error('Đăng ký thất bại...!');
                         }
@@ -151,8 +157,10 @@ function Register() {
                                     </div>
 
                                     <Button
-                                        className={userName && password ? cx('btnSubmit') : cx('btnDisabled')}
-                                        disabled={userName && password ? false : true}
+                                        className={
+                                            isLoading && userName && password ? cx('btnSubmit') : cx('btnDisabled')
+                                        }
+                                        disabled={isLoading && userName && password ? false : true}
                                     >
                                         Đăng ký
                                     </Button>
@@ -174,9 +182,11 @@ function Register() {
                         )}
                     </div>
                     <div className={cx('footer')}>
-                        Việc bạn tiếp tục sử dụng trang web này đồng nghĩa bạn đồng ý với
-                        <a href={config.routes.home}>Điều khoản sử dụng</a>
-                        của chúng tôi.
+                        <p>
+                            Việc bạn tiếp tục sử dụng trang web này đồng nghĩa bạn đồng ý với
+                            <a href={config.routes.home}>Điều khoản sử dụng</a>
+                            của chúng tôi.
+                        </p>
                     </div>
                 </div>
             </div>

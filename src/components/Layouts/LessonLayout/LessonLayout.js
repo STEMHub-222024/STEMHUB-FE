@@ -4,6 +4,7 @@ import classNames from 'classnames/bind';
 import Header from '~/components/Layouts/Components/Header';
 import styles from './LessonLayout.module.scss';
 import Tracks from '~/components/Layouts/Components/Tracks';
+import FooterLesson from '~/components/Layouts/Components/FooterLesson';
 import { handleSplitParam } from '~/utils/splitParamUrl';
 
 //Services
@@ -56,8 +57,11 @@ function LessonLayout({ children }) {
             <Header />
             <div className={cx('container')}>
                 <div className={cx('content')}>{children}</div>
-                <Tracks data={lessonFilter} topicParameter={topic} />
+                <div className={cx('tracks')}>
+                    <Tracks data={lessonFilter} topicParameter={topic} />
+                </div>
             </div>
+            <FooterLesson data={lessonFilter} topicParameter={topic} />
         </div>
     );
 }

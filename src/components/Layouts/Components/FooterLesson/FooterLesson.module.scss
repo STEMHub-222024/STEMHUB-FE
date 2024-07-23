@@ -1,0 +1,94 @@
+.wrapper {
+    position: fixed;
+    width: 100%;
+    height: 50px;
+    background-color: #f0f0f0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .navigation {
+        padding: 12px;
+        display: flex;
+        justify-content: space-evenly;
+        flex: 1;
+
+        .btn-icon-lesson {
+            color: var(--main-color);
+        }
+
+        .btn-icon-disabled {
+            color: rgba(0, 0, 0, 0.25);
+        }
+    }
+
+    .menu {
+        margin-right: 12px;
+        .btn-icon {
+            padding: 18px;
+            border-radius: 50%;
+        }
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .wrapper {
+        height: 65px;
+        .navigation {
+            .btn-icon-lesson {
+                font-size: 22px;
+                padding: 22px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+        .menu {
+            margin-right: 22px;
+            .btn-icon {
+                padding: 24px;
+                border-radius: 50%;
+
+                span {
+                    font-size: 24px;
+                }
+            }
+        }
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .wrapper {
+        height: 65px;
+        .navigation {
+            .btn-icon-lesson {
+                font-size: 22px;
+                padding: 22px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+        .menu {
+            margin-right: 22px;
+            .btn-icon {
+                padding: 24px;
+                border-radius: 50%;
+
+                span {
+                    font-size: 24px;
+                }
+            }
+        }
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .wrapper {
+        display: none;
+    }
+}

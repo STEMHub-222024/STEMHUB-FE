@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import classNames from 'classnames/bind';
-import { IconSquareRoundedPlus } from '@tabler/icons-react';
+import { IconRobot } from '@tabler/icons-react';
 
 import styles from './Video.module.scss';
 import Powered from '~/components/Layouts/Components/Powered';
@@ -71,15 +71,13 @@ function Video() {
                 <div className={cx('contentTop')}>
                     <Heading>{titleLesson}</Heading>
                     <button className={cx('addNote')} onClick={handleShowModal}>
-                        <IconSquareRoundedPlus className={cx('icon')} size={20} strokeWidth={1} />
+                        <IconRobot className={cx('icon')} />
                         <span className={cx('label')}>
-                            Chat Box AI
                             <span className={cx('num')}>{playedTime}</span>
                         </span>
                     </button>
                 </div>
-                {/* Fix */}
-                <p>{videoFilter?.description}</p>
+                <p>{videoFilter?.description_V}</p>
 
                 <div className={cx('contentBottom')}>
                     <Comment />

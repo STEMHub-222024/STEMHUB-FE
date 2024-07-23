@@ -17,3 +17,15 @@
         justify-content: flex-end;
     }
 }
+
+.text-editor {
+    margin-top: 16px;
+    border: 1px solid #e0e0e0;
+
+    .text-content {
+        margin-bottom: 31px;
+        height: calc(-100px + 100vh);
+        border: none;
+        scrollbar-width: thin;
+    }
+}

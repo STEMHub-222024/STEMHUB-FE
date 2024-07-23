@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import classNames from 'classnames/bind';
+import { useEffect, useMemo, memo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconDots } from '@tabler/icons-react';
-import classNames from 'classnames/bind';
+import { getPostsByIdAsync } from '~/app/slices/postSlice';
+import { selectPosts } from '~/app/selectors';
+import useUserInfo from '~/hooks/useUserInfo';
 import styles from './PostsDetail.module.scss';
 import Button from '~/components/Common/Button';
 import config from '~/config';
@@ -10,51 +13,34 @@ import Heading from '~/components/Common/Heading';
 import Reaction from '~/components/Layouts/Components/Reaction';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';
 import MarkdownParser from '~/components/Layouts/Components/MarkdownParser';
+import Loading from '~/components/Common/Loading';
 import formatDateToNow from '~/utils/formatDateToNow';
 
-import { getUserIdAsync } from '~/app/slices/userSlice';
-import { getPostsByIdAsync } from '~/app/slices/postSlice';
-import { selectPosts } from '~/app/selectors';
-
 const cx = classNames.bind(styles);
+
+const UserInfo = memo(({ fullName, Component, className, h4 }) => (
+    <Component className={cx(className)} h4={h4}>
+        {fullName}
+    </Component>
+));
 
 function PostsDetail() {
     const { postsId } = useParams();
     const dispatch = useDispatch();
     const { post } = useSelector(selectPosts).data;
-    const { title, htmlContent, userId, create_at } = post;
-    const [userInfo, setUserInfo] = useState({});
+    const { title, htmlContent, userId, create_at } = post || {};
+    const { data: userInfo, isLoading } = useUserInfo(userId);
 
     useEffect(() => {
-        const fetchApi = async () => {
-            try {
-                await dispatch(
-                    getPostsByIdAsync({
-                        postsId,
-                    }),
-                );
-            } catch (rejectedValueOrSerializedError) {
-                console.error(rejectedValueOrSerializedError);
-            }
-        };
-        fetchApi();
+        dispatch(getPostsByIdAsync({ postsId }));
     }, [dispatch, postsId]);
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const info = await dispatch(
-                    getUserIdAsync({
-                        userId,
-                    }),
-                ).unwrap();
-                if (info) setUserInfo(info);
-            } catch (rejectedValueOrSerializedError) {
-                console.error(rejectedValueOrSerializedError);
-            }
-        };
-        fetchUsers();
-    }, [dispatch, userId]);
+    const fullName = useMemo(
+        () => (userInfo ? `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim() : ''),
+        [userInfo],
+    );
+
+    if (isLoading) return <Loading title="Đang tải...." />;
 
     return (
         <div className={cx('wrapper')}>
@@ -63,9 +49,7 @@ function PostsDetail() {
                     <div className={cx('grid-column-3', { repositoryMarginLeft: true })}>
                         <div className={cx('aside')}>
                             <div style={{ textAlign: 'center' }}>
-                                <Heading className={cx('userName')} h4>
-                                    {`${userInfo.firstName} ${userInfo.lastName}`}
-                                </Heading>
+                                <UserInfo fullName={fullName} Component={Heading} className="userName" h4 />
                             </div>
                             <p className={cx('userTitle')}></p>
                             <hr />
@@ -73,7 +57,7 @@ function PostsDetail() {
                         </div>
                     </div>
                     <div className={cx('grid-column-9', { repositoryWith: true })}>
-                        <div>
+                        <article>
                             <Heading className={cx('heading')}>{title}</Heading>
                             <div className={cx('header')}>
                                 <div className={cx('user')}>
@@ -81,15 +65,13 @@ function PostsDetail() {
                                         <FallbackAvatar
                                             className={cx('avatar')}
                                             pro
-                                            linkImage={userInfo.image}
+                                            linkImage={userInfo?.image || ''}
                                             altImage="avatar"
                                         />
                                     </Link>
                                     <div className={cx('info')}>
                                         <Link to={config.routes.home}>
-                                            <span
-                                                className={cx('name')}
-                                            >{`${userInfo.firstName} ${userInfo.lastName}`}</span>
+                                            <UserInfo fullName={fullName} Component={'span'} className="name" />
                                         </Link>
                                         <p className={cx('time')}>{create_at && formatDateToNow(create_at)}</p>
                                     </div>
@@ -101,7 +83,7 @@ function PostsDetail() {
                                 </div>
                             </div>
                             <MarkdownParser content_C={htmlContent} />
-                        </div>
+                        </article>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import HeadlessTippy from '@tippyjs/react/headless';
 import { IconSquareRoundedXFilled, IconLoader, IconSearch } from '@tabler/icons-react';
@@ -34,7 +33,6 @@ function Search({ currentUser }) {
     const debouncedValue = useDebounce(searchValue, 500);
     const inputRef = useRef();
 
-    // Trong phần useEffect của bạn
     useEffect(() => {
         if (!debouncedValue.trim()) {
             dispatch(updateTopicSearch([]));
@@ -100,7 +98,7 @@ function Search({ currentUser }) {
                         <PopperWrapper>
                             <>
                                 <Heading h3 className={cx('search-title')}>
-                                    Topic
+                                    Chủ đề
                                 </Heading>
 
                                 {searchTopics.length > 0 &&
@@ -113,7 +111,7 @@ function Search({ currentUser }) {
                                     ))}
                                 <hr />
                                 <Heading h3 className={cx('search-title')}>
-                                    Posts
+                                    Bài viết
                                 </Heading>
 
                                 {searchPosts.length > 0 &&
@@ -135,12 +133,13 @@ function Search({ currentUser }) {
                     <input
                         ref={inputRef}
                         value={searchValue}
-                        placeholder="Want to learn?"
+                        placeholder="Tìm kiếm chủ đề, bài viết....."
                         spellCheck={false}
                         onChange={handleChange}
                         onFocus={() => setShowResult(true)}
+                        className={cx('input-search')}
                     />
-                    {currentUser ? (
+                    {currentUser && currentUser.isUser ? (
                         <>
                             {!!searchValue && !loading && (
                                 <button className={cx('clear')} onClick={handleClear}>
@@ -161,16 +160,12 @@ function Search({ currentUser }) {
                     )}
 
                     <Button mainColor small className={cx('search-btn')}>
-                        Explore
+                        Tìm kiếm
                     </Button>
                 </div>
             </HeadlessTippy>
         </div>
     );
 }
-
-Search.propTypes = {
-    currentUser: PropTypes.bool,
-};
 
 export default Search;

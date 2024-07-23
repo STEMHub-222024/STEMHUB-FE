@@ -1,0 +1,17 @@
+.wrapper {
+    background: var(--white);
+    .content {
+        height: 700px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .custom-spin {
+            margin-right: 8px;
+        }
+
+        .loading-text {
+            font-size: 16px;
+        }
+    }
+}

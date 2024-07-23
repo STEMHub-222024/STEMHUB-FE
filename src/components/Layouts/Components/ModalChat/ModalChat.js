@@ -11,7 +11,7 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
     const inputChatRef = useRef(null);
     const [messages, setMessages] = useState(() => {
         const savedMessages = JSON.parse(sessionStorage.getItem('chatMessages'));
-        return savedMessages || [{ role: 'assistant', message: 'Welcome to Chat AI' }];
+        return savedMessages || [{ role: 'assistant', message: 'Chào mừng đến với STEM AI' }];
     });
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -116,7 +116,7 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                 {isTyping && (
                     <div className={styles.typing}>
                         <Spin className={styles.typingIcon} size="small" />
-                        <p>{'Loading...'}</p>
+                        <p>{'Đang tải...'}</p>
                     </div>
                 )}
                 {messages.map((item, index) => (
@@ -130,7 +130,7 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                     value={message}
                     className={styles.input}
                     type="text"
-                    placeholder={'Enter your message...'}
+                    placeholder={'Nhập tin nhắn của bạn...'}
                     onChange={handleChangeMessage}
                     onKeyDown={handleSendInput}
                 />

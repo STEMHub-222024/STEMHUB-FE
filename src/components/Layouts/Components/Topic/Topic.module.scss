@@ -20,7 +20,7 @@
     }
 
     .content {
-        margin: 0 22px;
+        margin: 0 18px;
 
         .name {
             padding: 12px 0 0 0;
@@ -35,14 +35,13 @@
             display: block;
             display: -webkit-box;
             -webkit-box-orient: vertical;
-
             -webkit-line-clamp: 2;
         }
 
         .group-action {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0 16px 0;
+            padding: 8px 0;
             .video-number {
                 display: flex;
                 align-items: center;
@@ -62,8 +61,24 @@
                     font-size: 1.6rem;
                     font-weight: 400;
                     margin-left: 8px;
+                    display: flex;
+                    padding-right: 2px;
+
+                    p {
+                        overflow: hidden;
+                        word-wrap: break-word;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 1;
+                        max-width: 38px;
+                        padding-right: 2px;
+                    }
                 }
             }
         }
+    }
+
+    .wrapper-jon-table {
+        padding-bottom: 12px;
     }
 }

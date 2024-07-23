@@ -1,169 +1,163 @@
-import React, { useState, useLayoutEffect, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import classNames from 'classnames/bind';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './Profile.module.scss';
 import Heading from '~/components/Common/Heading';
 import Button from '~/components/Common/Button';
 import { selectAuth } from '~/app/selectors';
-import { getUserIdAsync, putUserIdAsync } from '~/app/slices/userSlice';
+import { putUserIdAsync } from '~/app/slices/userSlice';
 import Validator, { isRequired, isEmail } from '~/utils/validation';
-import { PlusOutlined } from '@ant-design/icons';
-import { Image as ImageNew, Upload, message } from 'antd';
-import { setAllow } from '~/app/slices/authSlice';
-import checkCookie from '~/utils/checkCookieExists';
+import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Image as ImageNew, Upload, message, Spin } from 'antd';
 import getBase64 from '~/utils/getBase64';
 import { postImage, deleteImage } from '~/services/uploadImage';
+import useUserInfo from '~/hooks/useUserInfo';
 
 const cx = classNames.bind(styles);
 
 function Profile() {
     const dispatch = useDispatch();
     const { infoUserCurrent } = useSelector(selectAuth).data;
-    const [userInfo, setUserInfo] = useState({});
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
-    const [resetToken, setResetToken] = useState(false);
 
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
-    const [fileList, setFileList] = useState([]);
     const [imageWaitRemove, setImageWaitRemove] = useState('');
-
-    useLayoutEffect(() => {
-        checkCookie(dispatch)
-            .then((isUser) => {
-                dispatch(setAllow(isUser));
-            })
-            .catch((isUser) => {
-                dispatch(setAllow(isUser));
-            });
-    }, [dispatch, resetToken]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isImageLoading, setIsImageLoading] = useState(true);
+    const { data: userInfo } = useUserInfo(infoUserCurrent?.userId);
+    const [userInfoNew, setUserInfoNew] = useState({});
 
     useEffect(() => {
-        const fetchUser = async () => {
-            if (!infoUserCurrent.userId) {
-                setResetToken(!resetToken);
-            } else {
-                try {
-                    const res = await dispatch(getUserIdAsync({ userId: infoUserCurrent.userId })).unwrap();
-                    if (res) setUserInfo(res);
-                } catch (error) {
-                    console.error('Failed to fetch user:', error);
-                }
-            }
-        };
-        fetchUser();
-    }, [dispatch, infoUserCurrent, resetToken]);
-
-    useEffect(() => {
-        setFirstName(userInfo.firstName || '');
-        setLastName(userInfo.lastName || '');
-        setPhone(userInfo.phoneNumber || '');
-        setEmail(userInfo.email || '');
-        setFileList(
-            [
-                {
-                    name: 'Avatar',
-                    status: 'done',
-                    url: userInfo.image ?? '',
-                },
-            ] || [],
-        );
+        if (userInfo) {
+            setUserInfoNew(userInfo);
+            setFirstName(userInfo.firstName || '');
+            setLastName(userInfo.lastName || '');
+            setPhone(userInfo.phoneNumber || '');
+            setEmail(userInfo.email || '');
+        }
     }, [userInfo]);
 
-    const handleChange = (setter) => (e) => setter(e.target.value);
+    const fileList = useMemo(() => {
+        if (userInfoNew?.image) {
+            return [
+                {
+                    uid: '-1',
+                    name: 'Avatar',
+                    status: 'done',
+                    url: userInfoNew.image,
+                },
+            ];
+        }
+        return [];
+    }, [userInfoNew]);
 
-    Validator({
-        form: '#form-1',
-        formGroupSelector: '.form-group',
-        errorSelector: '.form-message',
-        rules: [
-            isRequired('#lastName'),
-            isRequired('#firstName'),
-            isRequired('#phone'),
-            isRequired('#email'),
-            isEmail('#email'),
-            isRequired('input[name="gender"]'),
-        ],
-        async onSubmit(data) {
-            if (!infoUserCurrent.userId) {
-                setResetToken(!resetToken);
-            } else {
+    const handleSubmit = useCallback(
+        async (data) => {
+            setIsLoading(true);
+            const hide = message.loading('Saving changes...', 0);
+            try {
                 if (imageWaitRemove) {
-                    try {
-                        await deleteImage(imageWaitRemove.split('uploadimage/')[1]);
-                    } catch (error) {
-                        console.error('Failed to fetch user:', error);
-                    }
+                    await deleteImage(imageWaitRemove.split('uploadimage/')[1]);
                 }
-                try {
-                    const { lastName, firstName, email, phone } = data;
-                    const newData = {
-                        lastName,
-                        firstName,
-                        email,
-                        phoneNumber: phone,
-                        image: fileList[0]?.url ?? '',
-                        userId: infoUserCurrent.userId,
-                    };
-                    const res = await dispatch(putUserIdAsync(newData)).unwrap();
-                    if (res) {
-                        message.success(res.message);
-                    }
-                } catch (error) {
-                    console.error('Failed to fetch user:', error);
+                const { lastName, firstName, email, phone } = data;
+                const newData = {
+                    lastName,
+                    firstName,
+                    email,
+                    phoneNumber: phone,
+                    image: fileList[0]?.url ?? '',
+                    userId: infoUserCurrent.userId,
+                };
+                const res = await dispatch(putUserIdAsync(newData)).unwrap();
+                if (res) {
+                    message.success(res.message);
                 }
+            } catch (error) {
+                console.error('Failed to update user:', error);
+                message.error('Failed to save changes');
+            } finally {
+                hide();
+                setIsLoading(false);
             }
         },
-    });
+        [infoUserCurrent.userId, imageWaitRemove, fileList, dispatch],
+    );
 
-    const handlePreview = async (file) => {
+    useEffect(() => {
+        Validator({
+            form: '#form-1',
+            formGroupSelector: '.form-group',
+            errorSelector: '.form-message',
+            rules: [
+                isRequired('#lastName'),
+                isRequired('#firstName'),
+                isRequired('#phone'),
+                isRequired('#email'),
+                isEmail('#email'),
+                isRequired('input[name="gender"]'),
+            ],
+            onSubmit: handleSubmit,
+        });
+    }, [handleSubmit]);
+
+    const handlePreview = useCallback(async (file) => {
         if (!file.url && !file.preview) {
             file.preview = await getBase64(file.originFileObj);
         }
         setPreviewImage(file.url || file.preview);
         setPreviewOpen(true);
-    };
+    }, []);
 
-    const handleFileChange = async ({ fileList: newFileList }) => {
+    const handleFileChange = useCallback(async ({ fileList: newFileList }) => {
+        setIsImageLoading(true);
         if (newFileList.length > 0 && newFileList[0].status !== 'uploading') {
-            const response = await postImage(newFileList[0].originFileObj);
-            if (response) {
-                setFileList((prev) => [
-                    ...prev,
-                    {
-                        uid: newFileList[0].uid,
-                        name: newFileList[0].name,
-                        status: 'done',
-                        url: response.fileUrl,
-                    },
-                ]);
-            } else {
-                setFileList(newFileList);
+            try {
+                const response = await postImage(newFileList[0].originFileObj);
+                if (response) {
+                    setUserInfoNew((prev) => ({
+                        ...prev,
+                        image: response.fileUrl,
+                    }));
+                } else {
+                    message.error('Image upload failed!');
+                }
+            } catch (error) {
+                console.error('Failed to upload image:', error);
                 message.error('Image upload failed!');
+            } finally {
+                setIsImageLoading(false);
             }
         } else {
-            setFileList(newFileList);
+            setIsImageLoading(false);
         }
-    };
-    const handleFileRemove = async (file) => {
+    }, []);
+
+    const handleFileRemove = useCallback(async (file) => {
         if (!file.url || file.url === undefined) return;
         setImageWaitRemove(file.url);
-    };
+        setUserInfoNew((prev) => ({ ...prev, image: '' }));
+    }, []);
 
-    const uploadButton = (
-        <button style={{ border: 0, background: 'none' }} type="button">
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Image</div>
-        </button>
+    const uploadButton = useMemo(
+        () => (
+            <button style={{ border: 0, background: 'none' }} type="button">
+                {isImageLoading ? <LoadingOutlined /> : <PlusOutlined />}
+                <div style={{ marginTop: 8 }}>Image</div>
+            </button>
+        ),
+        [isImageLoading],
     );
+
+    const handleChange = useCallback((setter) => (e) => setter(e.target.value), []);
 
     return (
         <div className={cx('wrapper')}>
             <Heading className={cx('heading')} h2>
-                My Account
+                Tài khoản của tôi
             </Heading>
             <form className={cx('formBody', { form: true })} id="form-1">
                 <div id="file" className={cx('group-avatar')}>
@@ -194,7 +188,7 @@ function Profile() {
 
                 <div className={cx('info')}>
                     <div className={cx('group-input', 'form-group')}>
-                        <span className={cx('title')}>First Name</span>
+                        <span className={cx('title')}>Tên</span>
                         <input
                             type="text"
                             id="firstName"
@@ -205,7 +199,7 @@ function Profile() {
                         <span className={cx('error-message', 'form-message')}></span>
                     </div>
                     <div className={cx('group-input', 'form-group')}>
-                        <span className={cx('title')}>Last Name</span>
+                        <span className={cx('title')}>Họ & Tên đệm</span>
                         <input
                             type="text"
                             id="lastName"
@@ -216,11 +210,11 @@ function Profile() {
                         <span className={cx('error-message', 'form-message')}></span>
                     </div>
                     <div className={cx('group-input')}>
-                        <span className={cx('title')}>User Name</span>
+                        <span className={cx('title')}>Tên người dùng</span>
                         <input type="text" name="userName" value={infoUserCurrent?.username} disabled />
                     </div>
                     <div className={cx('group-input', 'form-group')}>
-                        <span className={cx('title')}>Phone</span>
+                        <span className={cx('title')}>Số điện thoại</span>
                         <input type="text" id="phone" name="phone" value={phone} onChange={handleChange(setPhone)} />
                         <span className={cx('error-message', 'form-message')}></span>
                     </div>
@@ -230,8 +224,9 @@ function Profile() {
                         <span className={cx('error-message', 'form-message')}></span>
                     </div>
                 </div>
-                <Button type="submit" className={cx('btn-save')} mainColor medium borderMedium>
-                    Save
+
+                <Button type="submit" className={cx('btn-save')} mainColor medium borderMedium disabled={isLoading}>
+                    {isLoading ? <Spin /> : 'Save'}
                 </Button>
             </form>
         </div>

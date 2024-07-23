@@ -1,0 +1,82 @@
+.wrapper {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 99999;
+    .body {
+        display: flex;
+        flex-direction: column;
+        .options {
+            display: flex;
+            flex-direction: column-reverse;
+
+            .item {
+                color: var(--main-color);
+                background: var(--white);
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 4px solid var(--main-color);
+                border-radius: 50%;
+                cursor: pointer;
+                ::selection {
+                    background-color: transparent !important;
+                    color: inherit !important;
+                }
+
+                &:hover .message {
+                    display: block;
+                }
+            }
+
+            .message {
+                display: none;
+            }
+        }
+        .icon {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            color: var(--main-color);
+        }
+    }
+}
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .wrapper {
+        bottom: 132px;
+        right: 10px;
+    }
+}
+
+/* Small devices (large phones and small tablets, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .wrapper {
+        bottom: 132px;
+        right: 10px;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .wrapper {
+        bottom: 100px;
+        right: 36px;
+    }
+
+    .icon {
+        background-color: var(--white);
+        border-radius: 50%;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .icon {
+        background-color: var(--white);
+        border-radius: 50%;
+    }
+}

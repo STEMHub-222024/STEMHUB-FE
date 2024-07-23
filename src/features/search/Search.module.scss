@@ -84,3 +84,67 @@
         border-radius: 6px;
     }
 }
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .search {
+        width: 100% !important;
+        font-size: 1.2rem !important;
+        .input-search {
+            font-size: 1.2rem !important;
+        }
+    }
+
+    .search-btn {
+        min-width: 72px !important;
+        font-size: 1.2rem !important;
+    }
+
+    .clear,
+    .loading {
+        transform: translateY(-50%) translateX(700%);
+    }
+
+    .clear-update,
+    .loading-update {
+        transform: translateY(-50%) translateX(700%);
+    }
+
+    .search,
+    .search-result {
+        width: 365px;
+    }
+}
+
+/* Small devices (large phones and small tablets, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .search {
+        width: 100% !important;
+        font-size: 1.2rem !important;
+        .input-search {
+            font-size: 1.2rem !important;
+        }
+    }
+
+    .search-btn {
+        min-width: 72px !important;
+        font-size: 1.2rem !important;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .search {
+        width: 100% !important;
+    }
+
+    .clear,
+    .loading {
+        transform: translateY(-50%) translateX(900%);
+    }
+
+    .clear-update,
+    .loading-update {
+        transform: translateY(-50%) translateX(900%);
+    }
+}

@@ -20,3 +20,10 @@
         color: var(--text-color-desc);
     }
 }
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .posts-content {
+        padding: 0 2px 40px 2px;
+    }
+}

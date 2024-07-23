@@ -21,7 +21,11 @@ function Footer() {
         <div className={cx('wrapper')}>
             <div className={cx('grid', { container: 'container' })}>
                 <div className={cx('grid-row', { 'content-first': 'content-first' })}>
-                    <div className={cx('grid-column-4')}>
+                    <div
+                        className={cx('grid-column-4', {
+                            'grid-column-table': true,
+                        })}
+                    >
                         <div className={cx('trademark')}>
                             <Image src={images.logo} alt="logo" className={cx('logo')} />
                             <Heading className={cx('title')} h2>
@@ -38,32 +42,40 @@ function Footer() {
 
                     <div className={cx('grid-column-8')}>
                         <div className={cx('grid-row')}>
-                            <div className={cx('grid-column-4')}>
+                            <div
+                                className={cx('grid-column-4', {
+                                    'item-footer': true,
+                                })}
+                            >
                                 <Heading className={cx('title')} h4>
-                                    Quick Links
+                                    Đường dẫn nhanh
                                 </Heading>
 
                                 <div className={cx('option-one')}>
                                     <a className={cx('link')} href={config.routes.home}>
-                                        About
+                                        Youtube
                                     </a>
                                     <a className={cx('link')} href={config.routes.home}>
-                                        Blog
+                                        Tiktok
                                     </a>
                                 </div>
                                 <div className={cx('option-tow')}>
                                     <a className={cx('link')} href={config.routes.home}>
-                                        Course
+                                        Facebook
                                     </a>
-                                    <a className={cx('link')} href={config.routes.home}>
-                                        Contact
+                                    <a className={cx('link')} href={config.routes.home} style={{ marginLeft: '6px' }}>
+                                        Instagram
                                     </a>
                                 </div>
                             </div>
 
-                            <div className={cx('grid-column-4')}>
+                            <div
+                                className={cx('grid-column-4', {
+                                    'item-footer': true,
+                                })}
+                            >
                                 <Heading className={cx('title')} h4>
-                                    Contact us
+                                    Liên hệ chúng tôi
                                 </Heading>
                                 <div className={cx('contact')}>
                                     <IconPhone size={20} />
@@ -71,13 +83,17 @@ function Footer() {
                                 </div>
                                 <div className={cx('contact')}>
                                     <IconMail size={20} />
-                                    <span>michelle.rivera@example.com</span>
+                                    <span>nvdqb73@example.com</span>
                                 </div>
                             </div>
 
-                            <div className={cx('grid-column-4')}>
+                            <div
+                                className={cx('grid-column-4', {
+                                    'item-footer': true,
+                                })}
+                            >
                                 <Heading className={cx('title')} h4>
-                                    Address
+                                    Địa chỉ
                                 </Heading>
                                 <div className={cx('contact')}>
                                     <IconMapPin size={30} />
@@ -90,7 +106,7 @@ function Footer() {
                 <div className={cx('grid-row', { 'content-last': 'content-last' })}>
                     <div className={cx('grid-column-12', { 'group-license': 'group-license' })}>
                         <div className={cx('Donors')}>
-                            <span>nvdqb73 2024 | All Rights Reserved</span>
+                            <span>2024 | Nền tảng học STEM hàng đầu Việt Nam</span>
                         </div>
                         <div className={cx('foundation')}>
                             <a className={cx('link')} href={config.routes.home}>
