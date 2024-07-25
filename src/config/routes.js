@@ -30,6 +30,7 @@ const routes = {
     topicAdmin: '/admin/topic',
     lesson: '/admin/lesson',
     images: '/admin/images',
+    owner: '/admin/owner',
 };
 
 export default routes;

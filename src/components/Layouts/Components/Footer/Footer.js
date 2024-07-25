@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useLayoutEffect, useState, useMemo } from 'react';
 import {
     IconPhone,
     IconMail,
@@ -12,11 +13,35 @@ import styles from './Footer.module.scss';
 import images from '~/assets/images';
 import Image from '~/components/Common/Image';
 import Heading from '~/components/Common/Heading';
+import SocialLink from './SocialLink';
 import config from '~/config';
+import * as ownerServices from '~/services/ownerServices';
 
 const cx = classNames.bind(styles);
 
 function Footer() {
+    const [owner, setOwner] = useState(null);
+
+    useLayoutEffect(() => {
+        const fetchApi = async () => {
+            const response = await ownerServices.getOwner();
+            if (response?.length > 0) {
+                setOwner(response[response.length - 1]);
+            }
+        };
+
+        fetchApi();
+    }, []);
+
+    const socialLinks = useMemo(
+        () => [
+            { icon: IconBrandFacebook, href: config.routes.home },
+            { icon: IconBrandX, href: config.routes.home },
+            { icon: IconBrandTiktok, href: config.routes.home },
+            { icon: IconBrandInstagram, href: config.routes.home },
+        ],
+        [],
+    );
     return (
         <div className={cx('wrapper')}>
             <div className={cx('grid', { container: 'container' })}>
@@ -33,11 +58,7 @@ function Footer() {
                             </Heading>
                         </div>
 
-                        <p className={cx('content')}>
-                            Veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                            pariatur.
-                        </p>
+                        <p className={cx('content')}>{owner?.introduction}</p>
                     </div>
 
                     <div className={cx('grid-column-8')}>
@@ -79,11 +100,11 @@ function Footer() {
                                 </Heading>
                                 <div className={cx('contact')}>
                                     <IconPhone size={20} />
-                                    <span>0816-788-646</span>
+                                    <span>{owner?.phone}</span>
                                 </div>
                                 <div className={cx('contact')}>
                                     <IconMail size={20} />
-                                    <span>nvdqb73@example.com</span>
+                                    <span>{owner?.gmail}</span>
                                 </div>
                             </div>
 
@@ -97,7 +118,7 @@ function Footer() {
                                 </Heading>
                                 <div className={cx('contact')}>
                                     <IconMapPin size={30} />
-                                    <span>2715 Ash Dr. San Jose, South Dakota 83475</span>
+                                    <span>{owner?.address}</span>
                                 </div>
                             </div>
                         </div>
@@ -109,18 +130,9 @@ function Footer() {
                             <span>2024 | Nền tảng học STEM hàng đầu Việt Nam</span>
                         </div>
                         <div className={cx('foundation')}>
-                            <a className={cx('link')} href={config.routes.home}>
-                                <IconBrandFacebook size={18} className={cx('icon')} />
-                            </a>
-                            <a className={cx('link')} href={config.routes.home}>
-                                <IconBrandX size={18} className={cx('icon')} />
-                            </a>
-                            <a className={cx('link')} href={config.routes.home}>
-                                <IconBrandTiktok size={18} className={cx('icon')} />
-                            </a>
-                            <a className={cx('link')} href={config.routes.home}>
-                                <IconBrandInstagram size={18} className={cx('icon')} />
-                            </a>
+                            {socialLinks.map((link, index) => (
+                                <SocialLink key={index} Icon={link.icon} href={link.href} />
+                            ))}
                         </div>
                     </div>
                 </div>

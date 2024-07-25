@@ -10,6 +10,7 @@ import {
     IconPhotoSearch,
     IconSteam,
     IconPhotoScan,
+    IconTower,
 } from '@tabler/icons-react';
 import config from '~/config';
 
@@ -69,6 +70,12 @@ function MenuAdmin() {
             icon: <IconPhotoSearch stroke={1} fontSize={18} />,
             label: 'Images',
             to: config.routes.images,
+        },
+        {
+            key: '9',
+            icon: <IconTower stroke={1} fontSize={18} />,
+            label: 'Owner',
+            to: config.routes.owner,
         },
     ];
 
