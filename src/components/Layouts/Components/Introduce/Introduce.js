@@ -1,50 +1,70 @@
+import { useMemo, useCallback } from 'react';
 import classNames from 'classnames/bind';
-import { IconBrain, IconBackpack, IconBulb } from '@tabler/icons-react';
 import styles from './Introduce.module.scss';
-import images from '~/assets/images';
 import Heading from '~/components/Common/Heading';
 import Button from '~/components/Common/Button';
+import ScientistImage from './ScientistImage';
+import useScientistData from '~/hooks/useScientistData';
 
 const cx = classNames.bind(styles);
 
 function Introduce() {
+    const { scientists, setScientists, selectedScientist, setSelectedScientist, mainIndex } = useScientistData();
+
+    const handleScientistClick = useCallback(
+        (index) => {
+            setScientists((prevScientists) => {
+                const newScientists = [...prevScientists];
+                [newScientists[mainIndex], newScientists[index]] = [newScientists[index], newScientists[mainIndex]];
+                return newScientists;
+            });
+            setSelectedScientist(scientists[index]);
+        },
+        [mainIndex, scientists, setScientists, setSelectedScientist],
+    );
+
+    const lastFiveScientists = useMemo(() => scientists.slice(-5), [scientists]);
     return (
         <>
             <div className={cx('grid-column-5')}>
                 <div className={cx('wrap-avatar')}>
                     <div className={cx('group-background-left')}>
                         <div className={cx('background-top-left')}>
-                            <div
-                                className={cx('image-top-left')}
-                                style={{ backgroundImage: `url(${images.introduce_2})` }}
-                            ></div>
+                            <ScientistImage
+                                scientist={lastFiveScientists[0]}
+                                index={0}
+                                onClick={() => handleScientistClick(0)}
+                                isMain={false}
+                            />
                         </div>
                         <div className={cx('background-bottom-left')}>
-                            <div
-                                className={cx('image-bottom-left')}
-                                style={{ backgroundImage: `url(${images.introduce_3})` }}
-                            ></div>
+                            <ScientistImage
+                                scientist={lastFiveScientists[1]}
+                                index={1}
+                                onClick={() => handleScientistClick(1)}
+                                isMain={false}
+                            />
                         </div>
                     </div>
                     <div className={cx('background-main')}>
-                        <div
-                            className={cx('image-main')}
-                            style={{ backgroundImage: `url(${images.introduce_1})` }}
-                        ></div>
+                        <ScientistImage scientist={lastFiveScientists[2]} index={2} isMain={true} />
                     </div>
-
                     <div className={cx('group-background-right')}>
                         <div className={cx('background-top-right')}>
-                            <div
-                                className={cx('image-top-right')}
-                                style={{ backgroundImage: `url(${images.introduce_4})` }}
-                            ></div>
+                            <ScientistImage
+                                scientist={lastFiveScientists[3]}
+                                index={3}
+                                onClick={() => handleScientistClick(3)}
+                                isMain={false}
+                            />
                         </div>
                         <div className={cx('background-bottom-right')}>
-                            <div
-                                className={cx('image-bottom-right')}
-                                style={{ backgroundImage: `url(${images.introduce_5})` }}
-                            ></div>
+                            <ScientistImage
+                                scientist={lastFiveScientists[4]}
+                                index={4}
+                                onClick={() => handleScientistClick(4)}
+                                isMain={false}
+                            />
                         </div>
                     </div>
                 </div>
@@ -52,31 +72,26 @@ function Introduce() {
             <div className={cx('grid-column-7')}>
                 <div className={cx('wrap-content')}>
                     <Heading h2 className={cx('title')}>
-                        The number one factor in<span> relevance drives out resistance.</span>
+                        {selectedScientist ? selectedScientist.fullName : ''}
                     </Heading>
                     <div className={cx('criteria')}>
                         <div className={cx('criteria-item')}>
-                            <IconBrain size={20} color="#f1bf5a" />
-                            <span>Public Speaking</span>
-                        </div>
-                        <div className={cx('criteria-item')}>
-                            <IconBackpack size={20} color="#f1bf5a" />
-                            <span>Public Speaking</span>
-                        </div>
-                        <div className={cx('criteria-item')}>
-                            <IconBulb size={20} color="#f1bf5a" />
-                            <span>Public Speaking</span>
+                            <span>{selectedScientist ? selectedScientist.adage : ''}</span>
                         </div>
                     </div>
-                    <p className={cx('context')}>
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                        mollit anim id est laborum.
-                    </p>
-
+                    <div className={cx('container')}>
+                        <p className={cx('context')}>
+                            {selectedScientist ? selectedScientist.descriptionScientist : ''}
+                        </p>
+                    </div>
                     <div className={cx('action')}>
-                        <Button className={cx('btn-title')} mainColor small>
-                            Learn More
+                        <Button
+                            className={cx('btn-title')}
+                            mainColor
+                            small
+                            to={`/scientist/${selectedScientist ? selectedScientist.scientistId : ''}`}
+                        >
+                            Xem thêm
                         </Button>
                     </div>
                 </div>

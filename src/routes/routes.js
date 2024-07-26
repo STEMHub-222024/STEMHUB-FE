@@ -19,6 +19,8 @@ import Login from '~/pages/Login';
 import Register from '~/pages/Register';
 import ForgotPassword from '~/pages/ForgotPassword';
 import ResetPassword from '~/pages/ResetPassword';
+import ScientistDetail from '~/pages/ScientistDetail';
+
 //private page
 import Profile from '~/pages/Profile';
 import NewPost from '~/pages/NewPost';
@@ -34,6 +36,7 @@ import Stem from '~/pages/Admin/Stem';
 import Images from '~/pages/Admin/Images/Images';
 import PostsAdmin from '~/pages/Admin/Posts';
 import Owner from '~/pages/Admin/Owner';
+import Scientist from '~/pages/Admin/Scientist';
 
 //Route
 const publicRouter = [
@@ -50,6 +53,7 @@ const publicRouter = [
     { path: config.routes.register, component: Register, layout: null },
     { path: config.routes.forgotPassword, component: ForgotPassword, layout: null },
     { path: config.routes.resetPassword, component: ResetPassword, layout: null },
+    { path: config.routes.scientist, component: ScientistDetail },
 ];
 
 const privateRouter = [
@@ -71,6 +75,7 @@ const privateRouterAdmin = [
     { path: config.routes.images, component: Images, layout: AdminLayout },
     { path: config.routes.owner, component: Owner, layout: AdminLayout },
     { path: config.routes.postsAdmin, component: PostsAdmin, layout: AdminLayout },
+    { path: config.routes.scientistAdmin, component: Scientist, layout: AdminLayout },
 ];
 
 export { publicRouter, privateRouter, privateRouterAdmin };
