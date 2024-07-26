@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import React from 'react';
-import { FacebookOutlined, LinkedinOutlined, TwitterOutlined, YoutubeOutlined } from '@ant-design/icons';
+import { FacebookOutlined, TwitterOutlined, YoutubeOutlined } from '@ant-design/icons';
 import { Flex, Tag } from 'antd';
 import Heading from '~/components/Common/Heading';
 import MarkdownParser from '~/components/Layouts/Components/MarkdownParser';
@@ -27,7 +27,6 @@ function ScientistDetail() {
         fetchApi();
     }, [id]);
 
-    console.log('scientist', scientist);
     return (
         <div className={cx('wrapper')}>
             <div className={cx('gird', { fullWidth: true })}>
@@ -51,7 +50,7 @@ function ScientistDetail() {
 
                             <div className={cx('line')}></div>
 
-                            {/* <MarkdownParser content_C={htmlContent} /> */}
+                            <MarkdownParser content_C={scientist ? scientist.content : ''} />
                         </article>
                     </div>
                 </div>

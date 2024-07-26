@@ -159,11 +159,111 @@
         position: absolute;
         bottom: 0;
         width: 100%;
-
         .btn-title {
             margin-left: 6px;
             font-size: 1.4rem;
             width: 105px;
         }
+    }
+}
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .wrap-content {
+        .criteria {
+            padding: 16px 8px 4px 2px;
+        }
+
+        .action {
+            margin: 8px 0 8px 0;
+            display: flex;
+            justify-content: center;
+        }
+    }
+
+    .grid-column-5 {
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .grid-column-7 {
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+        text-align: center;
+    }
+}
+
+/* Small devices (large phones and small tablets, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .wrap-content {
+        .criteria {
+            padding: 16px 8px 4px 2px;
+        }
+
+        .action {
+            margin: 8px 0 8px 0;
+            display: flex;
+            justify-content: center;
+        }
+    }
+
+    .grid-column-5 {
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .grid-column-7 {
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+        text-align: center;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .grid-column-5 {
+        width: 41.667%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .grid-column-7 {
+        width: 58.33%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .grid-column-5 {
+        width: 41.667%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .grid-column-7 {
+        width: 58.33%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .grid-column-5 {
+        width: 41.667%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .grid-column-7 {
+        width: 58.33%;
+        padding-left: 12px;
+        padding-right: 12px;
     }
 }
