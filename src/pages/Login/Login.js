@@ -36,7 +36,6 @@ function Login() {
     const { userName, password, loading } = useSelector(selectAuthData);
     const [currentLogin, setCurrentLogin] = useState(true);
     const [isShowPassword, setIsShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
 
     const IconPassword = useMemo(() => (isShowPassword ? IconEye : IconEyeClosed), [isShowPassword]);
     const inputType = useMemo(() => (isShowPassword ? 'text' : 'password'), [isShowPassword]);
@@ -49,7 +48,6 @@ function Login() {
         async (data) => {
             const hide = message.loading('Đang đăng nhập...', 0);
             try {
-                setIsLoading(true);
                 const result = await dispatch(loginUserAsync(data)).unwrap();
                 if (result.isSuccess) {
                     const { refreshToken, accessToken } = result.response;
@@ -67,7 +65,6 @@ function Login() {
                 toast.error(error.message || 'Đăng nhập thất bại!');
             } finally {
                 hide();
-                setIsLoading(false);
             }
         },
         [dispatch],

@@ -40,7 +40,7 @@ function Posts() {
     }, [currentPage]);
 
     const indexOfLastRecord = useMemo(() => currentPage * recordsPerPage, [currentPage, recordsPerPage]);
-    const indexOfFirstRecord = useMemo(() => indexOfLastRecord - recordsPerPage, [indexOfLastRecord]);
+    const indexOfFirstRecord = useMemo(() => indexOfLastRecord - recordsPerPage, [indexOfLastRecord, recordsPerPage]);
     const currentRecords = useMemo(
         () => posts.slice(indexOfFirstRecord, indexOfLastRecord),
         [posts, indexOfFirstRecord, indexOfLastRecord],

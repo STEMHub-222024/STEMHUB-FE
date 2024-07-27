@@ -6,7 +6,6 @@ import styles from './ModalChat.module.scss';
 
 // GeminiAI
 import config from '~/config';
-import { useDebounce } from '~/hooks';
 
 const ModalChat = ({ isOpen, setIsOpen }) => {
     const inputChatRef = useRef(null);
@@ -16,7 +15,6 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
     });
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-    const debouncedMessage = useDebounce(message, 300);
 
     const typeWords = useCallback((words) => {
         let currentMessage = '';

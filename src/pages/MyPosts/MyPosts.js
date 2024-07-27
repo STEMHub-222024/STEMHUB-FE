@@ -99,7 +99,7 @@ function MyPosts() {
                 message.error('Cập nhật bài viết thất bại!');
             }
         },
-        [backgroundImage, dispatch, editingPost, fetchPosts, markdown, htmlContent],
+        [backgroundImage, editingPost, fetchPosts, markdown, htmlContent],
     );
 
     const handleFileChange = useCallback(
