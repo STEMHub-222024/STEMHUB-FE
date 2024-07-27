@@ -1,6 +1,6 @@
 {
     "short_name": "STEM",
-    "name": "STEM",
+    "name": "STEM - Khám Phá và Học Hỏi",
     "icons": [
         {
             "src": "logo.png",
@@ -8,8 +8,8 @@
             "sizes": "38x38"
         }
     ],
-    "start_url": ".",
+    "start_url": "/",
+    "background_color": "#ffffff",
     "display": "standalone",
-    "theme_color": "#000000",
-    "background_color": "#ffffff"
+    "theme_color": "#000000"
 }
