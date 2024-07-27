@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Modal, Spin } from 'antd';
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import BoxMessage from '~/components/Layouts/Components/BoxMessage';
@@ -6,6 +6,7 @@ import styles from './ModalChat.module.scss';
 
 // GeminiAI
 import config from '~/config';
+import { useDebounce } from '~/hooks';
 
 const ModalChat = ({ isOpen, setIsOpen }) => {
     const inputChatRef = useRef(null);
@@ -15,8 +16,9 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
     });
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const debouncedMessage = useDebounce(message, 300);
 
-    const typeWords = (words) => {
+    const typeWords = useCallback((words) => {
         let currentMessage = '';
         words.forEach((word, index) => {
             setTimeout(() => {
@@ -38,65 +40,70 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                 });
             }, 75 * index);
         });
-    };
+    }, []);
 
-    const handleSendInput = async (event) => {
-        if (!isTyping && event.key === 'Enter' && message.trim()) {
-            setIsTyping(true);
+    const handleSendInput = useCallback(
+        async (event) => {
+            if (!isTyping && event.key === 'Enter' && message.trim()) {
+                setIsTyping(true);
+                setMessages((prevMessages) => [{ role: 'user', message }, ...prevMessages]);
+                setMessage('');
+                inputChatRef.current?.focus();
 
-            setMessages((prevMessages) => [{ role: 'user', message }, ...prevMessages]);
-            setMessage('');
-            inputChatRef.current?.focus();
-
-            try {
-                const res = await config.runGemini(message);
-                const newResponse = res.split(' ');
-                sessionStorage.setItem(
-                    'chatMessages',
-                    JSON.stringify([{ role: 'assistant', message: res }, { role: 'user', message }, ...messages]),
-                );
-                setMessages((prevMessages) => [{ role: 'assistant', message: '' }, ...prevMessages]);
-                typeWords(newResponse);
-            } catch (error) {
-                console.error('Error Gemini:', error);
-            } finally {
-                setIsTyping(false);
+                try {
+                    const res = await config.runGemini(message);
+                    const newResponse = res.split(' ');
+                    sessionStorage.setItem(
+                        'chatMessages',
+                        JSON.stringify([{ role: 'assistant', message: res }, { role: 'user', message }, ...messages]),
+                    );
+                    setMessages((prevMessages) => [{ role: 'assistant', message: '' }, ...prevMessages]);
+                    typeWords(newResponse);
+                } catch (error) {
+                    console.error('Error Gemini:', error);
+                } finally {
+                    setIsTyping(false);
+                }
             }
-        }
-    };
+        },
+        [isTyping, message, typeWords, messages],
+    );
 
-    const handleSendIcon = async (event) => {
-        if (!isTyping && event.type === 'click' && message.trim()) {
-            setIsTyping(true);
-            setMessages((prevMessages) => [{ role: 'user', message }, ...prevMessages]);
-            setMessage('');
-            inputChatRef.current?.focus();
+    const handleSendIcon = useCallback(
+        async (event) => {
+            if (!isTyping && event.type === 'click' && message.trim()) {
+                setIsTyping(true);
+                setMessages((prevMessages) => [{ role: 'user', message }, ...prevMessages]);
+                setMessage('');
+                inputChatRef.current?.focus();
 
-            try {
-                const res = await config.runGemini(message);
-                const newResponse = res.split(' ');
-                sessionStorage.setItem(
-                    'chatMessages',
-                    JSON.stringify([{ role: 'assistant', message: res }, { role: 'user', message }, ...messages]),
-                );
-                setMessages((prevMessages) => [{ role: 'assistant', message: '' }, ...prevMessages]);
-                typeWords(newResponse);
-            } catch (error) {
-                console.error('Error Gemini:', error);
-            } finally {
-                setIsTyping(false);
+                try {
+                    const res = await config.runGemini(message);
+                    const newResponse = res.split(' ');
+                    sessionStorage.setItem(
+                        'chatMessages',
+                        JSON.stringify([{ role: 'assistant', message: res }, { role: 'user', message }, ...messages]),
+                    );
+                    setMessages((prevMessages) => [{ role: 'assistant', message: '' }, ...prevMessages]);
+                    typeWords(newResponse);
+                } catch (error) {
+                    console.error('Error Gemini:', error);
+                } finally {
+                    setIsTyping(false);
+                }
             }
-        }
-    };
+        },
+        [isTyping, message, typeWords, messages],
+    );
 
-    const handleChangeMessage = (event) => {
+    const handleChangeMessage = useCallback((event) => {
         const messageValue = event.target.value;
         if (!messageValue.startsWith(' ')) {
             setMessage(messageValue);
         }
-    };
+    }, []);
 
-    const handleShowModal = () => setIsOpen(!isOpen);
+    const handleShowModal = useCallback(() => setIsOpen(!isOpen), [isOpen, setIsOpen]);
 
     return (
         <Modal

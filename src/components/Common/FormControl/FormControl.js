@@ -1,11 +1,11 @@
-import { forwardRef } from 'react';
+import { forwardRef, memo } from 'react';
 import classNames from 'classnames/bind';
 import styles from './FormControl.module.scss';
 import FormInput from './FormInput';
 
 const cx = classNames.bind(styles);
 
-function FormControl({ ...props }, ref) {
+const FormControl = (props, ref) => {
     const {
         id,
         labelStyle,
@@ -22,11 +22,7 @@ function FormControl({ ...props }, ref) {
     } = props;
 
     return (
-        <div
-            className={cx('wrapper', {
-                hidden,
-            })}
-        >
+        <div className={cx('wrapper', { hidden })}>
             <FormInput
                 ref={ref}
                 id={id}
@@ -43,6 +39,6 @@ function FormControl({ ...props }, ref) {
             />
         </div>
     );
-}
+};
 
-export default forwardRef(FormControl);
+export default memo(forwardRef(FormControl));

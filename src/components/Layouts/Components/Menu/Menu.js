@@ -4,20 +4,11 @@ import styles from './Menu.module.scss';
 
 const cx = classNames.bind(styles);
 
-function Menu({ className, children }) {
-    return (
-        <nav
-            className={cx('wrapper', {
-                [className]: className,
-            })}
-        >
-            {children}
-        </nav>
-    );
-}
+const Menu = ({ className, children }) => <nav className={cx('wrapper', className)}>{children}</nav>;
 
 Menu.propTypes = {
     children: PropTypes.node.isRequired,
+    className: PropTypes.string,
 };
 
 export default Menu;

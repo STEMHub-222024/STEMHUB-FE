@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames/bind';
 import styles from './Posts.module.scss';
@@ -39,10 +39,17 @@ function Posts() {
         localStorage.setItem('currentPage', currentPage);
     }, [currentPage]);
 
-    const indexOfLastRecord = currentPage * recordsPerPage;
-    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentRecords = posts.slice(indexOfFirstRecord, indexOfLastRecord);
-    const nPages = Math.ceil(posts.length / recordsPerPage);
+    const indexOfLastRecord = useMemo(() => currentPage * recordsPerPage, [currentPage, recordsPerPage]);
+    const indexOfFirstRecord = useMemo(() => indexOfLastRecord - recordsPerPage, [indexOfLastRecord]);
+    const currentRecords = useMemo(
+        () => posts.slice(indexOfFirstRecord, indexOfLastRecord),
+        [posts, indexOfFirstRecord, indexOfLastRecord],
+    );
+    const nPages = useMemo(() => Math.ceil(posts.length / recordsPerPage), [posts.length, recordsPerPage]);
+
+    const handlePageChange = useCallback((page) => {
+        setCurrentPage(page);
+    }, []);
 
     return (
         <div className={cx('wrapper')}>
@@ -62,7 +69,7 @@ function Posts() {
                             {currentRecords.map((data, index) => (
                                 <PostItem key={index} data={data} />
                             ))}
-                            <Pagination nPages={nPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                            <Pagination nPages={nPages} currentPage={currentPage} setCurrentPage={handlePageChange} />
                         </div>
                     </div>
                 </div>

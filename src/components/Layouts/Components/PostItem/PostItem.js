@@ -1,3 +1,4 @@
+import React, { memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { IconCircleCheckFilled, IconDots } from '@tabler/icons-react';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';
@@ -12,20 +13,25 @@ import styles from './PostItem.module.scss';
 const cx = classNames.bind(styles);
 
 function PostItem({ data }) {
-    const { userId } = data;
+    const { userId, newspaperArticleId, title, description_NA, image } = data;
     const { data: userInfo } = useUserInfo(userId);
+
+    const userName = useMemo(() => {
+        if (userInfo) {
+            return `${userInfo.firstName} ${userInfo.lastName}`;
+        }
+        return '';
+    }, [userInfo]);
 
     return (
         <div className={cx('wrapper')}>
             <div className={cx('header')}>
                 <div className={cx('author')}>
-                    <Button to={`/posts/${data.newspaperArticleId}`} className={cx('group-avatar')}>
+                    <Button to={`/posts/${newspaperArticleId}`} className={cx('group-avatar')}>
                         <FallbackAvatar className={cx('avatar')} linkImage={userInfo?.image} altImage="avatar" />
                         <div className={cx('info')}>
-                            <span className={cx('user-name')}>
-                                {userInfo ? `${userInfo?.firstName} ${userInfo?.lastName}` : ''}
-                            </span>
-                            <IconCircleCheckFilled size={15} className={cx('icon-check')} />
+                            <span className={cx('user-name')}>{userName}</span>
+                            {userInfo && <IconCircleCheckFilled size={15} className={cx('icon-check')} />}
                         </div>
                     </Button>
                 </div>
@@ -38,16 +44,16 @@ function PostItem({ data }) {
 
             <div className={cx('body')}>
                 <div className={cx('content')}>
-                    <Link to={`/posts/${data.newspaperArticleId}`}>
+                    <Link to={`/posts/${newspaperArticleId}`}>
                         <Heading h2 className={cx('title')}>
-                            {data.title}
+                            {title}
                         </Heading>
                     </Link>
-                    <p className={cx('desc')}>{data.description_NA}</p>
+                    <p className={cx('desc')}>{description_NA}</p>
                 </div>
                 <div className={cx('thumb')}>
-                    <Link to={`/posts/${data.newspaperArticleId}`}>
-                        <Image className={cx('image')} src={data.image} alt={data.title} />
+                    <Link to={`/posts/${newspaperArticleId}`}>
+                        <Image className={cx('image')} src={image} alt={title} />
                     </Link>
                 </div>
             </div>
@@ -55,4 +61,4 @@ function PostItem({ data }) {
     );
 }
 
-export default PostItem;
+export default memo(PostItem);

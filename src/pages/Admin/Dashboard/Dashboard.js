@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, Suspense } from 'react';
 import moment from 'moment';
 import classNames from 'classnames/bind';
 import { Layout, Card, Row, Col, Spin, message, Space } from 'antd';
-import { Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, LineChart, Line } from 'recharts';
 import Heading from '~/components/Common/Heading';
+import UserChart from './UserChart';
+import TopicChart from './TopicChart';
+import LessonInteractionChart from './LessonInteractionChart';
 import * as userServices from '~/services/userServices';
 import * as topicServices from '~/services/topicServices';
 import * as lessonServices from '~/services/lessonServices';
@@ -20,47 +22,31 @@ const Dashboard = () => {
     const [lessons, setLessons] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const lessonResponse = await lessonServices.getLesson();
-                setLessons(lessonResponse);
-
-                setLoading(false);
-            } catch (error) {
-                message.error('Failed to fetch data');
-                setLoading(false);
-            }
-        };
-
-        if (lessons.length === 0) {
-            fetchData();
+    const fetchData = useCallback(async () => {
+        try {
+            const lessonResponse = await lessonServices.getLesson();
+            setLessons(lessonResponse);
+            setLoading(false);
+        } catch (error) {
+            message.error('Failed to fetch data');
+            setLoading(false);
         }
-    }, [lessons]);
-
-    useEffect(() => {
-        const fetchUsersAndTopics = async () => {
-            try {
-                const userResponse = await userServices.getUseAll();
-                setUsers(userResponse);
-
-                const topicResponse = await topicServices.getTopic();
-                setTopics(topicResponse);
-            } catch (error) {
-                message.error('Failed to fetch users and topics');
-            }
-        };
-
-        fetchUsersAndTopics();
     }, []);
 
-    useEffect(() => {
-        if (lessons.length > 0 && lessons.some((lesson) => lesson.comments === undefined)) {
-            fetchLessonInteractions();
+    const fetchUsersAndTopics = useCallback(async () => {
+        try {
+            const [userResponse, topicResponse] = await Promise.all([
+                userServices.getUseAll(),
+                topicServices.getTopic(),
+            ]);
+            setUsers(userResponse);
+            setTopics(topicResponse);
+        } catch (error) {
+            message.error('Failed to fetch users and topics');
         }
-    }, [lessons]);
+    }, []);
 
-    const fetchLessonInteractions = async () => {
+    const fetchLessonInteractions = useCallback(async () => {
         try {
             const lessonIds = lessons.map((lesson) => lesson.lessonId);
 
@@ -68,15 +54,8 @@ const Dashboard = () => {
                 lessonIds.map((lessonId) =>
                     commentServices
                         .getCommentIdLesson({ newLessonId: lessonId })
-                        .then((response) => {
-                            return response.length;
-                        })
-                        .catch((error) => {
-                            if (error?.response?.status === 404) {
-                                return 0;
-                            }
-                            throw error;
-                        }),
+                        .then((response) => response.length)
+                        .catch((error) => (error?.response?.status === 404 ? 0 : Promise.reject(error))),
                 ),
             );
             const updatedLessons = lessons.map((lesson, index) => ({
@@ -88,33 +67,57 @@ const Dashboard = () => {
         } catch (error) {
             message.error('Failed to fetch lesson interactions');
         }
-    };
+    }, [lessons]);
 
-    const userRegistrationData = users.reduce((acc, user) => {
-        const date = moment(user.registrationDate).format('YYYY-MM-DD');
-        if (!acc[date]) {
-            acc[date] = 0;
+    useEffect(() => {
+        if (lessons.length === 0) {
+            fetchData();
         }
-        acc[date]++;
-        return acc;
-    }, {});
+    }, [lessons, fetchData]);
 
-    const userChartData = Object.entries(userRegistrationData).map(([date, count]) => ({
-        date,
-        count,
-    }));
+    useEffect(() => {
+        fetchUsersAndTopics();
+    }, [fetchUsersAndTopics]);
 
-    const topicChartData = topics.map((topic) => ({
-        name: topic.topicName,
-        views: topic.view,
-    }));
+    useEffect(() => {
+        if (lessons.length > 0 && lessons.some((lesson) => lesson.comments === undefined)) {
+            fetchLessonInteractions();
+        }
+    }, [lessons, fetchLessonInteractions]);
 
-    const lessonInteractionChartData = lessons.map((lesson) => {
-        return {
-            name: lesson.lessonName,
-            comments: typeof lesson.comments === 'number' ? lesson.comments : 0,
-        };
-    });
+    const userChartData = useMemo(() => {
+        const userRegistrationData = users.reduce((acc, user) => {
+            const date = moment(user.registrationDate).format('YYYY-MM-DD');
+            if (!acc[date]) {
+                acc[date] = 0;
+            }
+            acc[date]++;
+            return acc;
+        }, {});
+
+        return Object.entries(userRegistrationData).map(([date, count]) => ({
+            date,
+            count,
+        }));
+    }, [users]);
+
+    const topicChartData = useMemo(
+        () =>
+            topics.map((topic) => ({
+                name: topic.topicName,
+                views: topic.view,
+            })),
+        [topics],
+    );
+
+    const lessonInteractionChartData = useMemo(
+        () =>
+            lessons.map((lesson) => ({
+                name: lesson.lessonName,
+                comments: typeof lesson.comments === 'number' ? lesson.comments : 0,
+            })),
+        [lessons],
+    );
 
     return (
         <Content
@@ -136,18 +139,11 @@ const Dashboard = () => {
                     <Spin size="large" />
                 </div>
             ) : (
-                <>
+                <Suspense fallback={<Spin size="large" />}>
                     <Row gutter={16}>
                         <Col span={24} className={cx('colum')}>
                             <Card title="User Registrations Over Time">
-                                <LineChart width={800} height={300} data={userChartData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="date" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Line type="monotone" dataKey="count" stroke="#8884d8" />
-                                </LineChart>
+                                <UserChart data={userChartData} />
                             </Card>
                         </Col>
                     </Row>
@@ -155,14 +151,7 @@ const Dashboard = () => {
                     <Row gutter={16}>
                         <Col span={24} className={cx('colum')}>
                             <Card title="Topics">
-                                <BarChart width={800} height={300} data={topicChartData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Bar dataKey="views" fill="#82ca9d" />
-                                </BarChart>
+                                <TopicChart data={topicChartData} />
                             </Card>
                         </Col>
                     </Row>
@@ -170,18 +159,11 @@ const Dashboard = () => {
                     <Row gutter={16}>
                         <Col span={24} className={cx('colum')}>
                             <Card title="Lesson Interactions">
-                                <BarChart width={800} height={300} data={lessonInteractionChartData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Bar dataKey="comments" fill="#8884d8" />
-                                </BarChart>
+                                <LessonInteractionChart data={lessonInteractionChartData} />
                             </Card>
                         </Col>
                     </Row>
-                </>
+                </Suspense>
             )}
         </Content>
     );

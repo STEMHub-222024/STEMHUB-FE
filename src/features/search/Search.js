@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import classNames from 'classnames/bind';
 import HeadlessTippy from '@tippyjs/react/headless';
 import { IconSquareRoundedXFilled, IconLoader, IconSearch } from '@tabler/icons-react';
@@ -10,7 +10,7 @@ import Heading from '~/components/Common/Heading';
 import SearchCourseItem from '~/components/Layouts/Components/SearchCourseItem';
 import { Wrapper as PopperWrapper } from '~/components/Common/Popper';
 
-//Services
+// Services
 import { useDispatch, useSelector } from 'react-redux';
 import {
     searchTopicAsync,
@@ -20,79 +20,77 @@ import {
 } from '~/app/slices/searchSlice';
 import { selectSearch } from '~/app/selectors';
 
-//Clear fetch
-const controller = new AbortController();
-
 const cx = classNames.bind(styles);
 
 function Search({ currentUser }) {
     const dispatch = useDispatch();
-    const { searchTopics, loading, searchLessons, searchPosts } = useSelector(selectSearch).data;
+    const { searchTopics, loading, searchPosts } = useSelector(selectSearch).data;
     const [searchValue, setSearchValue] = useState('');
     const [showResult, setShowResult] = useState(false);
     const debouncedValue = useDebounce(searchValue, 500);
     const inputRef = useRef();
 
-    useEffect(() => {
+    const fetchApi = useCallback(async () => {
         if (!debouncedValue.trim()) {
             dispatch(updateTopicSearch([]));
             dispatch(updatePostsSearch([]));
             return;
         }
 
-        const fetchApi = async () => {
-            try {
-                const [topicsResult, newspaperArticleResult] = await Promise.allSettled([
-                    dispatch(searchTopicAsync({ topicKey: debouncedValue })).unwrap(),
-                    dispatch(searchNewspaperArticleAsync({ newspaperArticleKey: debouncedValue })).unwrap(),
-                ]);
+        try {
+            const [topicsResult, newspaperArticleResult] = await Promise.allSettled([
+                dispatch(searchTopicAsync({ topicKey: debouncedValue })).unwrap(),
+                dispatch(searchNewspaperArticleAsync({ newspaperArticleKey: debouncedValue })).unwrap(),
+            ]);
 
-                if (topicsResult.status === 'fulfilled') {
-                    dispatch(updateTopicSearch(topicsResult.value));
-                } else {
-                    dispatch(updateTopicSearch([]));
-                }
-
-                if (newspaperArticleResult.status === 'fulfilled') {
-                    dispatch(updatePostsSearch(newspaperArticleResult.value));
-                } else {
-                    dispatch(updatePostsSearch([]));
-                }
-            } catch (error) {
-                console.error('Unexpected error:', error);
+            if (topicsResult.status === 'fulfilled') {
+                dispatch(updateTopicSearch(topicsResult.value));
+            } else {
+                dispatch(updateTopicSearch([]));
             }
-        };
 
-        fetchApi();
-
-        return () => {
-            controller.abort();
-        };
+            if (newspaperArticleResult.status === 'fulfilled') {
+                dispatch(updatePostsSearch(newspaperArticleResult.value));
+            } else {
+                dispatch(updatePostsSearch([]));
+            }
+        } catch (error) {
+            console.error('Unexpected error:', error);
+        }
     }, [dispatch, debouncedValue]);
 
-    const handleClear = () => {
+    useEffect(() => {
+        fetchApi();
+        return () => {};
+    }, [fetchApi]);
+
+    const handleClear = useCallback(() => {
         setSearchValue('');
         dispatch(updateTopicSearch([]));
         inputRef.current.focus();
-    };
+    }, [dispatch]);
 
-    const handleHideResult = () => {
-        setShowResult(true);
-    };
+    const handleHideResult = useCallback(() => {
+        setShowResult(false);
+    }, []);
 
-    const handleChange = (e) => {
-        const searchValue = e.target.value;
-
-        if (!searchValue.startsWith(' ')) {
-            setSearchValue(searchValue);
+    const handleChange = useCallback((e) => {
+        const value = e.target.value;
+        if (!value.startsWith(' ')) {
+            setSearchValue(value);
         }
-    };
+    }, []);
+
+    const showResults = useMemo(
+        () => searchTopics.length > 0 || searchPosts.length > 0,
+        [searchTopics.length, searchPosts.length],
+    );
 
     return (
         <div>
             <HeadlessTippy
                 interactive
-                visible={showResult && (searchTopics.length > 0 || searchLessons.length > 0 || searchPosts.length > 0)}
+                visible={showResult && showResults}
                 render={(attrs) => (
                     <div className={cx('search-result')} tabIndex="-1" {...attrs}>
                         <PopperWrapper>
@@ -100,7 +98,6 @@ function Search({ currentUser }) {
                                 <Heading h3 className={cx('search-title')}>
                                     Chủ đề
                                 </Heading>
-
                                 {searchTopics.length > 0 &&
                                     searchTopics.map((topicResult) => (
                                         <SearchCourseItem
@@ -113,7 +110,6 @@ function Search({ currentUser }) {
                                 <Heading h3 className={cx('search-title')}>
                                     Bài viết
                                 </Heading>
-
                                 {searchPosts.length > 0 &&
                                     searchPosts.map((searchPostsResult) => (
                                         <SearchCourseItem

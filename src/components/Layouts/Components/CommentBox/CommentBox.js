@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, memo, useCallback } from 'react';
 import { message } from 'antd';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,24 +22,30 @@ function CommentBox() {
     const [showEditText, setShowEditText] = useState(false);
     const { data: userInfo } = useUserInfo(infoUserCurrent?.userId);
 
-    const handleShowEditText = () => {
-        setShowEditText(!showEditText);
-    };
+    const handleShowEditText = useCallback(() => {
+        setShowEditText((prev) => !prev);
+    }, []);
 
-    const handleComment = async () => {
+    const handleComment = useCallback(async () => {
         const lessonIdSplit = handleSplitParam(lessonId);
         if (!lessonIdSplit) {
-            message.warning('LessonId does not exist');
+            message.warning('Bài học không tồn tại');
+            return;
         }
-        await dispatch(
-            commentPostAsync({
-                content_C,
-                lessonId: lessonIdSplit,
-                userId: infoUserCurrent.userId,
-            }),
-        );
-        setShowEditText(!showEditText);
-    };
+        try {
+            await dispatch(
+                commentPostAsync({
+                    content_C,
+                    lessonId: lessonIdSplit,
+                    userId: infoUserCurrent.userId,
+                }),
+            ).unwrap();
+            setShowEditText(false);
+        } catch (error) {
+            console.error('Failed to post comment:', error);
+        }
+    }, [dispatch, content_C, lessonId, infoUserCurrent.userId]);
+
     return (
         <div className={cx('commentWrapper')}>
             <div className={cx('avatarWrapper')}>
@@ -55,14 +61,10 @@ function CommentBox() {
                             </Button>
                             <Button
                                 small
-                                className={
-                                    content_C
-                                        ? cx('btnSubmit')
-                                        : cx('btnDisabled', {
-                                              ok: true,
-                                          })
-                                }
-                                disabled={content_C ? false : true}
+                                className={cx('btnSubmit', {
+                                    disabled: !content_C,
+                                })}
+                                disabled={!content_C}
                                 onClick={handleComment}
                             >
                                 Bình luận

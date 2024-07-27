@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import classNames from 'classnames/bind';
 import styles from './MarkdownParser.module.scss';
 
@@ -7,4 +8,4 @@ function MarkdownParser({ content_C }) {
     return <div className={cx('wrapper')} dangerouslySetInnerHTML={{ __html: content_C }} />;
 }
 
-export default MarkdownParser;
+export default memo(MarkdownParser);

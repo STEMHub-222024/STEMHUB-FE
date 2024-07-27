@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames/bind';
@@ -11,9 +11,19 @@ const cx = classNames.bind(styles);
 function TrackItem({ data, index, topicParameter, isActive, onClose }) {
     const { lessonId, lessonName } = data;
 
+    const handleClick = useCallback(() => {
+        if (onClose) {
+            onClose();
+        }
+    }, [onClose]);
+
     return (
         <div className={cx('wrapper', { active: isActive })}>
-            <Link className={cx('info')} to={`/topic/${topicParameter}/${lessonName}=${lessonId}`} onClick={onClose}>
+            <Link
+                className={cx('info')}
+                to={`/topic/${topicParameter}/${lessonName}=${lessonId}`}
+                onClick={handleClick}
+            >
                 <h3 className={cx('title')}>
                     {`${index + 1}. `}
                     {lessonName}

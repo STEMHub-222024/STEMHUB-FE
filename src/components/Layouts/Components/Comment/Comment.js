@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind';
 import Cookies from 'js-cookie';
 import { message, Popconfirm } from 'antd';
-import { useEffect, useState, memo } from 'react';
+import { useEffect, useState, memo, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { IconTrash } from '@tabler/icons-react';
 
@@ -27,24 +27,15 @@ const Comment = memo(() => {
     const [userInfoMap, setUserInfoMap] = useState({});
 
     useEffect(() => {
-        const controller = new AbortController();
         const fetchComments = async () => {
             try {
-                await dispatch(commentGetIdLessonAsync({ newLessonId, signal: controller.signal })).unwrap();
+                await dispatch(commentGetIdLessonAsync({ newLessonId })).unwrap();
             } catch (error) {
                 console.error('Error fetching comments:', error);
             }
-
-            return () => {
-                controller.abort();
-            };
         };
 
         fetchComments();
-
-        return () => {
-            controller.abort();
-        };
     }, [dispatch, newLessonId]);
 
     useEffect(() => {
@@ -66,64 +57,73 @@ const Comment = memo(() => {
         }
     }, [dispatch, commentByLessonIds]);
 
-    const confirm = (commentId) => {
-        if (Cookies.get('accessToken')) {
-            const accessToken = Cookies.get('accessToken');
-            dispatch(removeCommentByIdAsync({ commentId, accessToken }));
-            message.success('Xoá thành công!');
-        } else {
-            message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
-        }
-    };
+    const confirm = useCallback(
+        (commentId) => {
+            if (Cookies.get('accessToken')) {
+                const accessToken = Cookies.get('accessToken');
+                dispatch(removeCommentByIdAsync({ commentId, accessToken }));
+                message.success('Xoá thành công!');
+            } else {
+                message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
+            }
+        },
+        [dispatch],
+    );
+
+    const renderedComments = useMemo(
+        () =>
+            commentByLessonIds.map((comment) => {
+                const user = userInfoMap[comment.userId];
+                return (
+                    <div key={comment.commentId} className={cx('detailComment')}>
+                        <div className={cx('avatarWrap')}>
+                            <div className={cx('avatarWrapper')}>
+                                <FallbackAvatar
+                                    className={cx('avatar')}
+                                    linkImage={user?.image}
+                                    altImage={user?.lastName ?? 'avatar'}
+                                />
+                            </div>
+                        </div>
+                        <div className={cx('commentBody')}>
+                            <div className={cx('commentInner')}>
+                                <div className={cx('commentWrapper')}>
+                                    <div className={cx('commentContent')}>
+                                        <div className={cx('commentHeading')}>
+                                            <span className={cx('commentAuthor')}>
+                                                {`${user?.firstName} ${user?.lastName}`}
+                                            </span>
+                                            {allow && comment.userId === infoUserCurrent.userId && (
+                                                <Popconfirm
+                                                    title="Xoá Bình luận"
+                                                    description="Bạn có chắc muốn xoá không?"
+                                                    onConfirm={() => confirm(comment.commentId)}
+                                                    okText="Xoá"
+                                                    cancelText="Không"
+                                                >
+                                                    <IconTrash className={cx('iconRemoveComment')} />
+                                                </Popconfirm>
+                                            )}
+                                        </div>
+                                        <div className={cx('commentText')}>
+                                            <MarkdownParser content_C={comment.content_C} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }),
+        [commentByLessonIds, userInfoMap, allow, infoUserCurrent.userId, confirm],
+    );
 
     return (
         <div className={cx('detailRow')}>
             {allow && <CommentBox commentByLessonIds={commentByLessonIds} />}
             <div className={cx('container')}>
-                {commentByLessonIds && commentByLessonIds.length > 0 ? (
-                    commentByLessonIds.map((comment) => {
-                        const user = userInfoMap[comment.userId];
-                        return (
-                            <div key={comment.commentId} className={cx('detailComment')}>
-                                <div className={cx('avatarWrap')}>
-                                    <div className={cx('avatarWrapper')}>
-                                        <FallbackAvatar
-                                            className={cx('avatar')}
-                                            linkImage={user?.image}
-                                            altImage={user?.lastName ?? 'avatar'}
-                                        />
-                                    </div>
-                                </div>
-                                <div className={cx('commentBody')}>
-                                    <div className={cx('commentInner')}>
-                                        <div className={cx('commentWrapper')}>
-                                            <div className={cx('commentContent')}>
-                                                <div className={cx('commentHeading')}>
-                                                    <span className={cx('commentAuthor')}>
-                                                        {`${user?.firstName} ${user?.lastName}`}
-                                                    </span>
-                                                    {allow && comment.userId === infoUserCurrent.userId && (
-                                                        <Popconfirm
-                                                            title="Xoá Bình luận"
-                                                            description="Bạn có chắc muốn xoá không?"
-                                                            onConfirm={() => confirm(comment.commentId)}
-                                                            okText="Xoá"
-                                                            cancelText="Không"
-                                                        >
-                                                            <IconTrash className={cx('iconRemoveComment')} />
-                                                        </Popconfirm>
-                                                    )}
-                                                </div>
-                                                <div className={cx('commentText')}>
-                                                    <MarkdownParser content_C={comment.content_C} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })
+                {commentByLessonIds.length > 0 ? (
+                    renderedComments
                 ) : (
                     <div className={cx('noCommentMessage')}>Không có bình luận nào.</div>
                 )}

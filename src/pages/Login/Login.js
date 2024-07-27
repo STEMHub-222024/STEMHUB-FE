@@ -13,6 +13,7 @@ import config from '~/config';
 import Header from './Header';
 import Footer from './Footer';
 import Validator, { isRequired, minLength, isValidPassword } from '~/utils/validation';
+import { createSelector } from '@reduxjs/toolkit';
 
 // Service
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,13 +21,19 @@ import { loginUserAsync } from '~/app/slices/authSlice';
 
 const cx = classNames.bind(styles);
 
+const selectAuthData = createSelector(
+    (state) => state.auth.data,
+    (authData) => ({
+        userName: authData.userName,
+        password: authData.password,
+        loading: authData.loading,
+    }),
+);
+
 function Login() {
     const dispatch = useDispatch();
-    const { userName, password, loading } = useSelector((state) => ({
-        userName: state.auth.data.userName,
-        password: state.auth.data.password,
-        loading: state.auth.data.loading,
-    }));
+
+    const { userName, password, loading } = useSelector(selectAuthData);
     const [currentLogin, setCurrentLogin] = useState(true);
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +49,7 @@ function Login() {
         async (data) => {
             const hide = message.loading('Đang đăng nhập...', 0);
             try {
-                setIsLoading(false);
+                setIsLoading(true);
                 const result = await dispatch(loginUserAsync(data)).unwrap();
                 if (result.isSuccess) {
                     const { refreshToken, accessToken } = result.response;
@@ -54,18 +61,17 @@ function Login() {
                     Cookies.set('saveRefreshToken', JSON.stringify(result.response), { expires: 7 });
 
                     hide();
-                    setIsLoading(true);
                     window.location.href = config.routes.home;
                 }
             } catch (error) {
-                hide();
-                setIsLoading(true);
                 toast.error(error.message || 'Đăng nhập thất bại!');
+            } finally {
+                hide();
+                setIsLoading(false);
             }
         },
         [dispatch],
     );
-
     useEffect(() => {
         if (!currentLogin) {
             Validator({
@@ -116,8 +122,8 @@ function Login() {
                                     <IconPassword className={cx('icon')} size={20} onClick={togglePasswordVisibility} />
                                 </div>
                                 <Button
-                                    className={cx('btnSubmit', { disabled: isLoading && userName && password })}
-                                    disabled={isLoading && userName && password ? false : true}
+                                    className={cx('btnSubmit', { disabled: !userName || !password || loading })}
+                                    disabled={!userName || !password || loading}
                                 >
                                     {loading && <IconLoader2 className={cx('loading')} size={20} />}
                                     &nbsp;Đăng nhập

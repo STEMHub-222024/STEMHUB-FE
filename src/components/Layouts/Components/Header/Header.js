@@ -23,6 +23,7 @@ function Header() {
     const dispatch = useDispatch();
     const { infoUserCurrent, allow } = useSelector(selectAuth).data;
     const { data: userInfo, isLoading: isUserLoading } = useUserInfo(infoUserCurrent?.userId);
+
     const handleLogout = useCallback(() => {
         dispatch(logout());
     }, [dispatch]);
@@ -52,6 +53,7 @@ function Header() {
         ],
         [handleLogout],
     );
+
     if (isUserLoading) return <Loading title="Chào mừng đến với STEM..." />;
 
     return (
