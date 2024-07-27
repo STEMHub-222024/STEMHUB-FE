@@ -1,22 +1,21 @@
-import { memo, useState } from 'react';
+import { memo, useState, useEffect } from 'react';
 import tinycolor from 'tinycolor2';
 import classNames from 'classnames/bind';
 import styles from './Stem10.module.scss';
 import Topic from '~/components/Layouts/Components/Topic';
+import Loading from '~/components/Common/Loading';
 
 // Services
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getTopicAsync } from '~/app/slices/topicSlice';
 import * as stemServices from '~/services/stemServices';
 
-//Clear fetch
-const controller = new AbortController();
-
 const cx = classNames.bind(styles);
+
 function Stem10() {
     const dispatch = useDispatch();
     const [listStem10, setListStem10] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchApi = async () => {
@@ -25,7 +24,7 @@ function Stem10() {
                 if (res) {
                     const stemNamePromises = res.map(async (topic) => {
                         const stem = await stemServices.getStemById(topic.stemId);
-                        if (!stem) return;
+                        if (!stem) return null;
                         return {
                             stemId: stem.stemId,
                             stemName: stem?.stemName,
@@ -46,16 +45,19 @@ function Stem10() {
                         }
                     }
                 }
-            } catch (rejectedValueOrSerializedError) {
-                console.error(rejectedValueOrSerializedError);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
             }
         };
-        fetchApi();
 
-        return () => {
-            controller.abort();
-        };
+        fetchApi();
     }, [dispatch]);
+
+    if (loading) {
+        return <Loading title="Đang tải...." />;
+    }
 
     return (
         <div className={cx('wrapper')}>
