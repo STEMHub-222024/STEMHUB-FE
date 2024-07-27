@@ -25,21 +25,22 @@
 
 .small-group-logo {
     display: flex;
-}
+    align-items: center;
 
-.logo {
-    width: 70px;
-    margin-right: -10px;
-    margin-left: -20px;
-    height: 60px;
-    flex-shrink: 0;
-}
+    .logo {
+        width: 50px;
+        margin-right: 4px;
+        height: 100%;
+        flex-shrink: 0;
+        text-align: center;
+    }
 
-.trademark {
-    font-family: var(--font-family-trademark);
-    color: var(--text-color-trademark);
-    font-size: 2.8rem;
-    line-height: var(--default-layout-header-height);
+    .trademark {
+        font-family: var(--font-family-trademark);
+        color: var(--text-color-trademark);
+        font-size: 2.8rem;
+        line-height: var(--default-layout-header-height);
+    }
 }
 
 // Menu
@@ -58,6 +59,7 @@
 
 .group-action {
     display: flex;
+    align-items: center;
 }
 
 .action-btn {
