@@ -21,9 +21,7 @@ function SlideShow() {
         const fetchApi = async () => {
             try {
                 await dispatch(getBannerAsync()).unwrap();
-            } catch (rejectedValueOrSerializedError) {
-                console.error(rejectedValueOrSerializedError);
-            }
+            } catch (rejectedValueOrSerializedError) {}
         };
         fetchApi();
     }, [dispatch]);

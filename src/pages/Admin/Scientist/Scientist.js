@@ -63,8 +63,6 @@ function Scientist() {
                 contentMarkdown: markdown,
                 content: htmlContent,
             };
-
-            console.log('scientistData', scientistData);
             if (editingScientist) {
                 await scientistServices.updateScientist(editingScientist.scientistId, scientistData);
                 hide();

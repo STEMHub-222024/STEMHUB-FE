@@ -48,9 +48,7 @@ const MyPostsItem = React.memo(({ data, onPostDeleted, onPostEdit }) => {
                 if (removeImage) {
                     try {
                         await deleteImage(removeImage.split('uploadimage/')[1]);
-                    } catch (error) {
-                        console.error('Error deleting image:', error);
-                    }
+                    } catch (error) {}
                 }
 
                 if (htmlContent) {
@@ -59,9 +57,7 @@ const MyPostsItem = React.memo(({ data, onPostDeleted, onPostEdit }) => {
                     newImages.forEach(async (url) => {
                         try {
                             await deleteImage(url.split('uploadimage/')[1]);
-                        } catch (error) {
-                            console.error('Error deleting image:', error);
-                        }
+                        } catch (error) {}
                     });
                 }
             }

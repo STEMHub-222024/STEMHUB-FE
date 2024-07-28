@@ -31,9 +31,7 @@ function LessonLayout({ children }) {
                         dispatch(handleFilter({ lessonCurrents }));
                     }
                 }
-            } catch (rejectedValueOrSerializedError) {
-                console.error(rejectedValueOrSerializedError);
-            }
+            } catch (rejectedValueOrSerializedError) {}
         },
         [dispatch],
     );

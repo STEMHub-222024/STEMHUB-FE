@@ -41,9 +41,7 @@ function CommentBox() {
                 }),
             ).unwrap();
             setShowEditText(false);
-        } catch (error) {
-            console.error('Failed to post comment:', error);
-        }
+        } catch (error) {}
     }, [dispatch, content_C, lessonId, infoUserCurrent.userId]);
 
     return (

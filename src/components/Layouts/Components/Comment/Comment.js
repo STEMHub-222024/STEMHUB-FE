@@ -30,9 +30,7 @@ const Comment = memo(() => {
         const fetchComments = async () => {
             try {
                 await dispatch(commentGetIdLessonAsync({ newLessonId })).unwrap();
-            } catch (error) {
-                console.error('Error fetching comments:', error);
-            }
+            } catch (error) {}
         };
 
         fetchComments();
@@ -45,9 +43,7 @@ const Comment = memo(() => {
                 try {
                     const userInfo = await dispatch(getUserIdAsync({ userId: comment.userId })).unwrap();
                     map[comment.userId] = userInfo;
-                } catch (error) {
-                    console.error('Error fetching user info:', error);
-                }
+                } catch (error) {}
             }
             setUserInfoMap(map);
         };

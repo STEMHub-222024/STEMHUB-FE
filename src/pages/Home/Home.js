@@ -51,9 +51,7 @@ function Home() {
                     await dispatch(getOutstanding({ stemId: defaultStem?.stemId })).unwrap();
                     dispatch(handleOnClickStem({ stemName: defaultStem?.stemName }));
                 }
-            } catch (error) {
-                console.error(error);
-            }
+            } catch (error) {}
         };
 
         fetchApi();
@@ -67,9 +65,7 @@ function Home() {
         const fetchPosts = async () => {
             try {
                 await dispatch(getPostsAsync()).unwrap();
-            } catch (error) {
-                console.error(error);
-            }
+            } catch (error) {}
         };
 
         fetchPosts();

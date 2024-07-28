@@ -40,7 +40,6 @@ function Video() {
                 }
             } catch (error) {
                 if (error.name !== 'AbortError') {
-                    console.error(error);
                 }
             }
         };

@@ -58,7 +58,6 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                     setMessages((prevMessages) => [{ role: 'assistant', message: '' }, ...prevMessages]);
                     typeWords(newResponse);
                 } catch (error) {
-                    console.error('Error Gemini:', error);
                 } finally {
                     setIsTyping(false);
                 }
@@ -85,7 +84,6 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                     setMessages((prevMessages) => [{ role: 'assistant', message: '' }, ...prevMessages]);
                     typeWords(newResponse);
                 } catch (error) {
-                    console.error('Error Gemini:', error);
                 } finally {
                     setIsTyping(false);
                 }

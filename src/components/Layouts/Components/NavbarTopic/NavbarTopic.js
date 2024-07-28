@@ -24,9 +24,7 @@ function NavbarTopic({ checkStemDefault }) {
                     stemId,
                 }),
             ).unwrap();
-        } catch (rejectedValueOrSerializedError) {
-            console.error(rejectedValueOrSerializedError);
-        }
+        } catch (rejectedValueOrSerializedError) {}
     };
 
     function handleTopiShow(e, stemId, stemName) {

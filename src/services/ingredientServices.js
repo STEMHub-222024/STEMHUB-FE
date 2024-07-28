@@ -6,10 +6,7 @@ export const getIngredient = async () => {
         if (res.status === 200) {
             return res.data;
         }
-    } catch (error) {
-        console.error('Failed to add Ingredients:', error);
-        throw error;
-    }
+    } catch (error) {}
 };
 
 export const getIngredientsByTopic = async () => {
@@ -18,38 +15,26 @@ export const getIngredientsByTopic = async () => {
         if (res.status === 200) {
             return res.data;
         }
-    } catch (error) {
-        console.error('Failed to add Ingredients:', error);
-        throw error;
-    }
+    } catch (error) {}
 };
 
 export const addIngredient = async (ingredientData) => {
     try {
         const res = await httpRequest.post('Ingredients', ingredientData);
         return res.data;
-    } catch (error) {
-        console.error('Failed to add Ingredients:', error);
-        throw error;
-    }
+    } catch (error) {}
 };
 
 export const updateIngredient = async (id, ingredientData) => {
     try {
         const res = await httpRequest.put(`Ingredients/${id}`, ingredientData);
         return res.data;
-    } catch (error) {
-        console.error(`Failed to update Ingredients with id ${id}:`, error);
-        throw error;
-    }
+    } catch (error) {}
 };
 
 export const deleteIngredient = async (id) => {
     try {
         const res = await httpRequest.deleteRequest(`Ingredients/${id}`);
         return res.data;
-    } catch (error) {
-        console.error(`Failed to delete Ingredients with id ${id}:`, error);
-        throw error;
-    }
+    } catch (error) {}
 };

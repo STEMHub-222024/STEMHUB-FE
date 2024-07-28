@@ -147,9 +147,7 @@ function Account() {
                     });
                 }
             })
-            .catch((info) => {
-                console.log('Validate Failed:', info);
-            });
+            .catch((info) => {});
     };
 
     return (

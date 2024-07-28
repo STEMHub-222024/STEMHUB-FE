@@ -17,9 +17,7 @@ function useScientistData() {
                         setSelectedScientist(lastFiveScientists[2]);
                     }
                 }
-            } catch (error) {
-                console.error('Error fetching scientists:', error);
-            }
+            } catch (error) {}
         };
 
         fetchApi();

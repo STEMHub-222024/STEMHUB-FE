@@ -88,11 +88,9 @@ function Validator({ form, formGroupSelector, rules, errorSelector, onSubmit }) 
                         switch (input.type) {
                             case 'radio':
                             case 'checkbox':
-                                var a = (values[input.name] = formElement.querySelector(
+                                values[input.name] = formElement.querySelector(
                                     'input[name="' + input.name + '"]:checked',
-                                ).value);
-
-                                console.log(a);
+                                ).value;
                                 break;
                             default:
                                 values[input.name] = input.value;

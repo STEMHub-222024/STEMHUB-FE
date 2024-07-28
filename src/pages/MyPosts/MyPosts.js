@@ -38,9 +38,7 @@ function MyPosts() {
                 const filterPosts = res.filter((item) => item.userId === infoUserCurrent.userId);
                 setMyPosts(filterPosts);
             }
-        } catch (error) {
-            console.error('Failed to fetch posts:', error);
-        }
+        } catch (error) { }
     }, [dispatch, infoUserCurrent.userId]);
 
     useEffect(() => {

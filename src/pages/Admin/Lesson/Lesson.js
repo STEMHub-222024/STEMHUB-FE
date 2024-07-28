@@ -40,9 +40,7 @@ function Lesson() {
                 });
                 setState((prevState) => ({ ...prevState, lessonList: mergedLessons, topicList: topicRes }));
             }
-        } catch (error) {
-            console.error('Failed to fetch lessons and topics:', error);
-        }
+        } catch (error) {}
     };
 
     const fetchVideos = async () => {
@@ -51,9 +49,7 @@ function Lesson() {
             if (videoRes) {
                 setState((prevState) => ({ ...prevState, videoList: videoRes }));
             }
-        } catch (error) {
-            console.error('Failed to fetch videos:', error);
-        }
+        } catch (error) {}
     };
 
     const handleAddLesson = () => {
@@ -72,7 +68,6 @@ function Lesson() {
             message.success('Lesson deleted successfully');
             fetchLessonsAndTopics();
         } catch (error) {
-            console.error('Failed to delete lesson:', error);
             message.error('Failed to delete lesson');
         }
     };
@@ -90,7 +85,6 @@ function Lesson() {
             setState((prevState) => ({ ...prevState, isLessonModalVisible: false }));
             fetchLessonsAndTopics();
         } catch (error) {
-            console.error('Failed to save lesson:', error);
             message.error('Failed to save lesson');
         }
     };
@@ -116,7 +110,6 @@ function Lesson() {
             message.success('Video deleted successfully');
             fetchVideos();
         } catch (error) {
-            console.error('Failed to delete video:', error);
             message.error('Failed to delete video');
         }
     };
@@ -134,7 +127,6 @@ function Lesson() {
             setState((prevState) => ({ ...prevState, isVideoModalVisible: false }));
             fetchVideos();
         } catch (error) {
-            console.error('Failed to save video:', error);
             message.error('Failed to save video');
         }
     };

@@ -14,7 +14,6 @@ const handleAccessToken = async (dispatch, accessToken) => {
         await dispatch(getUserCurrentAsync({ accessToken })).unwrap();
         return { isUser: true };
     } catch (error) {
-        console.error('Error in getUserCurrentAsync:', error);
         return { isUser: false };
     }
 };
@@ -39,7 +38,6 @@ const handleRefreshToken = async (dispatch) => {
         }
         return { isUser: false };
     } catch (error) {
-        console.error('Error in refreshTokenAsync:', error);
         return { isUser: false };
     }
 };

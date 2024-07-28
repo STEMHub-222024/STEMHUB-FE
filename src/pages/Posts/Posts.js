@@ -28,9 +28,7 @@ function Posts() {
         const fetchApi = async () => {
             try {
                 await dispatch(getPostsAllAsync()).unwrap();
-            } catch (rejectedValueOrSerializedError) {
-                console.error(rejectedValueOrSerializedError);
-            }
+            } catch (rejectedValueOrSerializedError) {}
         };
         fetchApi();
     }, [dispatch]);

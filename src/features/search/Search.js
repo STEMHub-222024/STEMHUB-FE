@@ -54,9 +54,7 @@ function Search({ currentUser }) {
             } else {
                 dispatch(updatePostsSearch([]));
             }
-        } catch (error) {
-            console.error('Unexpected error:', error);
-        }
+        } catch (error) {}
     }, [dispatch, debouncedValue]);
 
     useEffect(() => {

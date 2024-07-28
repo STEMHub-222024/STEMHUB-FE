@@ -16,8 +16,9 @@ import tasklists from 'markdown-it-task-lists';
 import hljs from 'highlight.js';
 import { setContent_C } from '~/app/slices/commentSlice';
 import { setMarkdown, setHtmlContent } from '~/app/slices/postSlice';
-import styles from './TextEditor.module.scss';
 import { postImage, deleteImage } from '~/services/uploadImage';
+import { message } from 'antd';
+import styles from './TextEditor.module.scss';
 
 const cx = classNames.bind(styles);
 
@@ -90,9 +91,7 @@ const TextEditor = forwardRef(
                 try {
                     await deleteImage(url.split('uploadimage/')[1]);
                     uploadedImages.current = uploadedImages.current.filter((imgUrl) => imgUrl !== url);
-                } catch (error) {
-                    console.error('Error deleting image:', error);
-                }
+                } catch (error) {}
             });
 
             currentImages.current = Array.from(newImages);
@@ -121,10 +120,9 @@ const TextEditor = forwardRef(
                     uploadedImagesRef.current.push(urlRef.current.fileUrl);
                     return urlRef.current.fileUrl;
                 } else {
-                    throw new Error('Image upload failed');
+                    message.error('Tải hình ảnh lên không thành công!');
                 }
             } catch (error) {
-                console.error('Error uploading image:', error);
                 return '';
             } finally {
                 if (urlRef.current) {
