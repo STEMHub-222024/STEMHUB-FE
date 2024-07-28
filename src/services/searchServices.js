@@ -10,7 +10,9 @@ export const searchTopiKey = async ({ topicKey }) => {
         if (res.status === 200) {
             return res.data;
         }
-    } catch (error) {}
+    } catch (error) {
+        return null;
+    }
 };
 
 export const searchLessonKey = async ({ lessonKey }) => {
@@ -23,7 +25,9 @@ export const searchLessonKey = async ({ lessonKey }) => {
         if (res.status === 200) {
             return res.data;
         }
-    } catch (error) {}
+    } catch (error) {
+        return null;
+    }
 };
 
 export const searchNewspaperArticle = async ({ newspaperArticleKey }) => {
@@ -36,5 +40,7 @@ export const searchNewspaperArticle = async ({ newspaperArticleKey }) => {
         if (res) {
             return res.data;
         }
-    } catch (error) {}
+    } catch (error) {
+        return null;
+    }
 };

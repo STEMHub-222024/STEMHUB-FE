@@ -80,10 +80,11 @@ function Search({ currentUser }) {
     }, []);
 
     const showResults = useMemo(
-        () => searchTopics.length > 0 || searchPosts.length > 0,
-        [searchTopics.length, searchPosts.length],
+        () =>
+            (Array.isArray(searchTopics) && searchTopics.length > 0) ||
+            (Array.isArray(searchPosts) && searchPosts.length > 0),
+        [searchTopics, searchPosts],
     );
-
     return (
         <div>
             <HeadlessTippy
@@ -93,29 +94,36 @@ function Search({ currentUser }) {
                     <div className={cx('search-result')} tabIndex="-1" {...attrs}>
                         <PopperWrapper>
                             <>
-                                <Heading h3 className={cx('search-title')}>
-                                    Chủ đề
-                                </Heading>
-                                {searchTopics.length > 0 &&
-                                    searchTopics.map((topicResult) => (
-                                        <SearchCourseItem
-                                            key={topicResult.topicId}
-                                            topicData={topicResult}
-                                            setSearchValue={setSearchValue}
-                                        />
-                                    ))}
+                                {Array.isArray(searchTopics) && searchTopics.length > 0 && (
+                                    <>
+                                        <Heading h3 className={cx('search-title')}>
+                                            Chủ đề
+                                        </Heading>
+                                        {searchTopics.map((topicResult) => (
+                                            <SearchCourseItem
+                                                key={topicResult.topicId}
+                                                topicData={topicResult}
+                                                setSearchValue={setSearchValue}
+                                            />
+                                        ))}
+                                    </>
+                                )}
                                 <hr />
-                                <Heading h3 className={cx('search-title')}>
-                                    Bài viết
-                                </Heading>
-                                {searchPosts.length > 0 &&
-                                    searchPosts.map((searchPostsResult) => (
-                                        <SearchCourseItem
-                                            key={searchPostsResult.newspaperArticleId}
-                                            newspaperArticleData={searchPostsResult}
-                                            setSearchValue={setSearchValue}
-                                        />
-                                    ))}
+                                {Array.isArray(searchPosts) && searchPosts.length > 0 && (
+                                    <>
+                                        <hr />
+                                        <Heading h3 className={cx('search-title')}>
+                                            Bài viết
+                                        </Heading>
+                                        {searchPosts.map((searchPostsResult) => (
+                                            <SearchCourseItem
+                                                key={searchPostsResult.newspaperArticleId}
+                                                newspaperArticleData={searchPostsResult}
+                                                setSearchValue={setSearchValue}
+                                            />
+                                        ))}
+                                    </>
+                                )}
                             </>
                         </PopperWrapper>
                     </div>
