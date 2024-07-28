@@ -62,7 +62,7 @@ function Login() {
                     window.location.href = config.routes.home;
                 }
             } catch (error) {
-                toast.error(error.message || 'Đăng nhập thất bại!');
+                toast.error('Đăng nhập thất bại!');
             } finally {
                 hide();
             }

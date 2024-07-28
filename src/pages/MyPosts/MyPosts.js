@@ -38,7 +38,7 @@ function MyPosts() {
                 const filterPosts = res.filter((item) => item.userId === infoUserCurrent.userId);
                 setMyPosts(filterPosts);
             }
-        } catch (error) { }
+        } catch (error) {}
     }, [dispatch, infoUserCurrent.userId]);
 
     useEffect(() => {
@@ -123,7 +123,7 @@ function MyPosts() {
                         },
                     ]);
                 } catch (error) {
-                    message.error('Image upload failed!');
+                    message.error('Tải lên hình ảnh không thành công!');
                 }
             }
         },
