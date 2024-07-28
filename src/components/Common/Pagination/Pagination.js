@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useCallback, useMemo, memo } from 'react';
 import classNames from 'classnames/bind';
 import { IconSquareRoundedChevronsLeft, IconSquareRoundedChevronsRight } from '@tabler/icons-react';
 import styles from './Pagination.module.scss';
@@ -6,14 +7,15 @@ import styles from './Pagination.module.scss';
 const cx = classNames.bind(styles);
 
 function Pagination({ nPages, currentPage, setCurrentPage }) {
-    const pageNumbers = [...Array(nPages + 1).keys()].slice(1);
+    const pageNumbers = useMemo(() => [...Array(nPages + 1).keys()].slice(1), [nPages]);
 
-    const goToNextPage = () => {
-        if (currentPage !== nPages) setCurrentPage(currentPage + 1);
-    };
-    const goToPrevPage = () => {
-        if (currentPage !== 1) setCurrentPage(currentPage - 1);
-    };
+    const goToNextPage = useCallback(() => {
+        if (currentPage < nPages) setCurrentPage(currentPage + 1);
+    }, [currentPage, nPages, setCurrentPage]);
+
+    const goToPrevPage = useCallback(() => {
+        if (currentPage > 1) setCurrentPage(currentPage - 1);
+    }, [currentPage, setCurrentPage]);
 
     return (
         <div className={cx('wrapper')}>
@@ -41,9 +43,9 @@ function Pagination({ nPages, currentPage, setCurrentPage }) {
 }
 
 Pagination.propTypes = {
-    nPages: PropTypes.number,
-    currentPage: PropTypes.number,
-    setCurrentPage: PropTypes.func,
+    nPages: PropTypes.number.isRequired,
+    currentPage: PropTypes.number.isRequired,
+    setCurrentPage: PropTypes.func.isRequired,
 };
 
-export default Pagination;
+export default memo(Pagination);

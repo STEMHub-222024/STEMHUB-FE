@@ -8,7 +8,7 @@ import Button from '~/components/Common/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectNavbarTopic } from '~/app/selectors';
 import { getOutstanding } from '~/app/slices/topicSlice';
-import { handleOnClickStem } from '../../../../app/slices/navbarTopicSlice';
+import { handleOnClickStem } from '~/app/slices/navbarTopicSlice';
 
 const cx = classNames.bind(styles);
 
@@ -24,9 +24,7 @@ function NavbarTopic({ checkStemDefault }) {
                     stemId,
                 }),
             ).unwrap();
-        } catch (rejectedValueOrSerializedError) {
-            console.error(rejectedValueOrSerializedError);
-        }
+        } catch (rejectedValueOrSerializedError) {}
     };
 
     function handleTopiShow(e, stemId, stemName) {

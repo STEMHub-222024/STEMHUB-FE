@@ -7,14 +7,11 @@ import Tracks from '~/components/Layouts/Components/Tracks';
 import FooterLesson from '~/components/Layouts/Components/FooterLesson';
 import { handleSplitParam } from '~/utils/splitParamUrl';
 
-//Services
-import { useEffect } from 'react';
+// Services
+import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLessonAsync, handleFilter } from '~/app/slices/lessonSlice';
 import { selectLesson } from '~/app/selectors';
-
-//Clear fetch
-const controller = new AbortController();
 
 const cx = classNames.bind(styles);
 
@@ -22,35 +19,28 @@ function LessonLayout({ children }) {
     const { topic } = useParams();
     const dispatch = useDispatch();
     const { lessonFilter } = useSelector(selectLesson).data;
-    useEffect(() => {
-        const fetchApi = async () => {
+
+    const fetchApi = useCallback(
+        async (topic) => {
             try {
                 const result = handleSplitParam(topic);
                 if (result) {
                     const lessonAll = await dispatch(getLessonAsync()).unwrap();
-                    if (lessonAll) {
-                        const lessonCurrents = lessonAll?.filter((lesson) => {
-                            return lesson?.topicId === result;
-                        });
-                        if (lessonCurrents) {
-                            dispatch(
-                                handleFilter({
-                                    lessonCurrents,
-                                }),
-                            );
-                        }
+                    const lessonCurrents = lessonAll?.filter((lesson) => lesson?.topicId === result);
+                    if (lessonCurrents) {
+                        dispatch(handleFilter({ lessonCurrents }));
                     }
                 }
-            } catch (rejectedValueOrSerializedError) {
-                console.error(rejectedValueOrSerializedError);
-            }
-        };
-        fetchApi();
+            } catch (rejectedValueOrSerializedError) {}
+        },
+        [dispatch],
+    );
 
-        return () => {
-            controller.abort();
-        };
-    }, [dispatch, topic]);
+    useEffect(() => {
+        fetchApi(topic);
+
+        return () => {};
+    }, [fetchApi, topic]);
 
     return (
         <div className={cx('wrapper')}>
@@ -65,6 +55,7 @@ function LessonLayout({ children }) {
         </div>
     );
 }
+
 LessonLayout.propTypes = {
     children: PropTypes.node.isRequired,
 };

@@ -1,4 +1,5 @@
 import * as httpRequest from '~/utils/httpRequest';
+import { message } from 'antd';
 
 export const getImages = async () => {
     try {
@@ -6,16 +7,13 @@ export const getImages = async () => {
         if (res.status === 200) {
             return res.data;
         }
-    } catch (error) {
-        console.error('Failed to fetch UploadImage:', error);
-        throw error;
-    }
+    } catch (error) {}
 };
 
 export const postImage = async (file) => {
     try {
         if (!file) {
-            throw new Error('File is required');
+            message.error('Vui lòng chọn một file ảnh để tải lên!');
         }
 
         const formData = new FormData();
@@ -30,11 +28,9 @@ export const postImage = async (file) => {
         if (res && res.data) {
             return res.data;
         } else {
-            throw new Error('Failed to upload image');
+            message.error('Không thể tải hình ảnh lên!');
         }
-    } catch (error) {
-        console.error('Error uploading image:', error.message);
-    }
+    } catch (error) {}
 };
 
 export const deleteImage = async (nameImage) => {
@@ -43,7 +39,5 @@ export const deleteImage = async (nameImage) => {
         if (res) {
             return res.data;
         }
-    } catch (error) {
-        console.error('Error uploading image:', error.message);
-    }
+    } catch (error) {}
 };

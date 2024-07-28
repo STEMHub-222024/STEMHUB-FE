@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, Pagination, Empty, Typography, Modal, Form, message, Input, Space, Button, Upload } from 'antd';
 import { getPostsAsync } from '~/app/slices/postSlice';
@@ -38,10 +38,8 @@ function MyPosts() {
                 const filterPosts = res.filter((item) => item.userId === infoUserCurrent.userId);
                 setMyPosts(filterPosts);
             }
-        } catch (error) {
-            console.error('Failed to fetch posts:', error);
-        }
-    }, [dispatch, infoUserCurrent]);
+        } catch (error) {}
+    }, [dispatch, infoUserCurrent.userId]);
 
     useEffect(() => {
         fetchPosts();
@@ -52,83 +50,91 @@ function MyPosts() {
         localStorage.setItem('pageSize', pageSize);
     }, [currentPage, pageSize]);
 
-    const totalPosts = myPosts.length;
+    const totalPosts = useMemo(() => myPosts.length, [myPosts]);
 
-    const handlePageChange = (page, pageSize) => {
+    const handlePageChange = useCallback((page, pageSize) => {
         setCurrentPage(page);
         setPageSize(pageSize);
-    };
+    }, []);
 
-    const handlePostEdit = (post) => {
-        setEditingPost(post);
-        form.setFieldsValue(post);
+    const handlePostEdit = useCallback(
+        (post) => {
+            setEditingPost(post);
+            form.setFieldsValue(post);
+            setBackgroundImage(post.image);
+            setFileList([
+                {
+                    uid: '-1',
+                    name: 'image.png',
+                    status: 'done',
+                    url: post.image,
+                },
+            ]);
+            dispatch(setMarkdown(post.markdown));
+            dispatch(setHtmlContent(post.htmlContent));
+            setIsEditModalVisible(true);
+        },
+        [dispatch, form],
+    );
 
-        setBackgroundImage(post.image);
-        setFileList([
-            {
-                uid: '-1',
-                name: 'image.png',
-                status: 'done',
-                url: post.image,
-            },
-        ]);
-        dispatch(setMarkdown(post.markdown));
-        dispatch(setHtmlContent(post.htmlContent));
-        setIsEditModalVisible(true);
-    };
-
-    const handleEditSubmit = async (values) => {
-        const hide = message.loading('Đang cập nhât...', 0);
-        try {
-            values.image = backgroundImage;
-            const postData = {
-                ...values,
-                markdown,
-                htmlContent,
-            };
-            await postServices.updatePost(editingPost.newspaperArticleId, postData);
-            message.success('Cập nhật bài viết thành công!');
-            hide();
-            setIsEditModalVisible(false);
-            await fetchPosts();
-        } catch (error) {
-            hide();
-            message.error('Cập nhật bài viết thất bại!');
-        }
-    };
-
-    const handleFileChange = async (event) => {
-        const currentImageURL = backgroundImage;
-
-        if (event.file) {
-            const file = event.file;
+    const handleEditSubmit = useCallback(
+        async (values) => {
+            const hide = message.loading('Đang cập nhật...', 0);
             try {
-                if (currentImageURL) {
-                    const nameImage = currentImageURL.split('uploadimage/')[1];
-                    await deleteImage(nameImage);
-                    return;
-                }
-                const imageURL = await postImage(file);
-                setBackgroundImage(imageURL.fileUrl);
-                setFileList([
-                    {
-                        uid: '-1',
-                        name: file.name,
-                        status: 'done',
-                        url: imageURL.fileUrl,
-                    },
-                ]);
+                values.image = backgroundImage;
+                const postData = {
+                    ...values,
+                    markdown,
+                    htmlContent,
+                };
+                await postServices.updatePost(editingPost.newspaperArticleId, postData);
+                message.success('Cập nhật bài viết thành công!');
+                hide();
+                setIsEditModalVisible(false);
+                await fetchPosts();
             } catch (error) {
-                message.error('Image upload failed!');
+                hide();
+                message.error('Cập nhật bài viết thất bại!');
             }
-        }
-    };
+        },
+        [backgroundImage, editingPost, fetchPosts, markdown, htmlContent],
+    );
+
+    const handleFileChange = useCallback(
+        async (event) => {
+            const currentImageURL = backgroundImage;
+
+            if (event.file) {
+                const file = event.file;
+                try {
+                    if (currentImageURL) {
+                        const nameImage = currentImageURL.split('uploadimage/')[1];
+                        await deleteImage(nameImage);
+                        return;
+                    }
+                    const imageURL = await postImage(file);
+                    setBackgroundImage(imageURL.fileUrl);
+                    setFileList([
+                        {
+                            uid: '-1',
+                            name: file.name,
+                            status: 'done',
+                            url: imageURL.fileUrl,
+                        },
+                    ]);
+                } catch (error) {
+                    message.error('Tải lên hình ảnh không thành công!');
+                }
+            }
+        },
+        [backgroundImage],
+    );
 
     return (
         <div className={cx('wrapper')}>
             <div className={cx('container')}>
                 <Card title="Bài viết của tôi">
-                    {myPosts && myPosts.length > 0 ? (
+                    {myPosts.length > 0 ? (
                         myPosts.map((item) => (
                             <MyPostsItem
                                 key={item.newspaperArticleId}
@@ -210,7 +216,7 @@ function MyPosts() {
                         </Form.Item>
                     </Form>
                 </Modal>
-                {myPosts && myPosts.length > 0 && (
+                {myPosts.length > 0 && (
                     <Pagination
                         className={cx('pagination')}
                         current={currentPage}

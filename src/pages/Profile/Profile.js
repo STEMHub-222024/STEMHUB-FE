@@ -58,7 +58,7 @@ function Profile() {
     const handleSubmit = useCallback(
         async (data) => {
             setIsLoading(true);
-            const hide = message.loading('Saving changes...', 0);
+            const hide = message.loading('Đang lưu thay đổi...', 0);
             try {
                 if (imageWaitRemove) {
                     await deleteImage(imageWaitRemove.split('uploadimage/')[1]);
@@ -77,8 +77,7 @@ function Profile() {
                     message.success(res.message);
                 }
             } catch (error) {
-                console.error('Failed to update user:', error);
-                message.error('Failed to save changes');
+                message.error('Không lưu được thay đổi');
             } finally {
                 hide();
                 setIsLoading(false);
@@ -123,11 +122,10 @@ function Profile() {
                         image: response.fileUrl,
                     }));
                 } else {
-                    message.error('Image upload failed!');
+                    message.error('Tải hình ảnh lên không thành công!');
                 }
             } catch (error) {
-                console.error('Failed to upload image:', error);
-                message.error('Image upload failed!');
+                message.error('Tải hình ảnh lên không thành công!');
             } finally {
                 setIsImageLoading(false);
             }

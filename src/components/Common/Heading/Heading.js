@@ -36,7 +36,6 @@ function Heading({ className, onClick, children, ...passProps }) {
                 Comp = 'h6';
                 break;
             default:
-                console.error('The parameter passed ' + element + ' is does not exist!');
                 break;
         }
     }

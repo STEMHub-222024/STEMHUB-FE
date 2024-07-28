@@ -1,14 +1,13 @@
-import { forwardRef } from 'react';
-import classNames from 'classnames/bind';
+import { forwardRef, useCallback, memo } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUserName, setPassword, setEmail } from '~/app/slices/authSlice';
 import { setToken, setEmailUser, setPasswordUser, setConfirmPassword } from '~/app/slices/userSlice';
-
+import classNames from 'classnames/bind';
 import styles from './FormInput.module.scss';
 
 const cx = classNames.bind(styles);
 
-function FormInput({ medium, ...props }, ref) {
+const FormInput = (props, ref) => {
     const dispatch = useDispatch();
 
     const {
@@ -25,57 +24,47 @@ function FormInput({ medium, ...props }, ref) {
         maxLengthToken,
     } = props;
 
-    const handleInputValue = (e) => {
-        switch (name) {
-            case 'username':
-                dispatch(setUserName(e.target.value));
-                break;
-            case 'password':
-                dispatch(setPassword(e.target.value));
-                break;
-            case 'passwordUser':
-                dispatch(setPasswordUser(e.target.value));
-                break;
-            case 'email':
-                dispatch(setEmail(e.target.value));
-                dispatch(setPasswordUser(e.target.value));
-                break;
-            case 'emailUser':
-                dispatch(setEmailUser(e.target.value));
-                break;
-            case 'token':
-                dispatch(setToken(e.target.value));
-                break;
-            case 'confirmPassword':
-                dispatch(setConfirmPassword(e.target.value));
-                break;
-            default:
-                return;
-        }
-    };
+    const handleInputValue = useCallback(
+        (e) => {
+            const { value } = e.target;
+            switch (name) {
+                case 'username':
+                    dispatch(setUserName(value));
+                    break;
+                case 'password':
+                    dispatch(setPassword(value));
+                    break;
+                case 'passwordUser':
+                    dispatch(setPasswordUser(value));
+                    break;
+                case 'email':
+                    dispatch(setEmail(value));
+                    dispatch(setPasswordUser(value));
+                    break;
+                case 'emailUser':
+                    dispatch(setEmailUser(value));
+                    break;
+                case 'token':
+                    dispatch(setToken(value));
+                    break;
+                case 'confirmPassword':
+                    dispatch(setConfirmPassword(value));
+                    break;
+                default:
+                    return;
+            }
+        },
+        [name, dispatch],
+    );
+
     return (
-        <div
-            className={cx('wrapper', {
-                'form-group': true,
-            })}
-        >
-            <div
-                className={cx('labelGroup', {
-                    labelStyle,
-                })}
-            >
+        <div className={cx('wrapper', { 'form-group': true })}>
+            <div className={cx('labelGroup', { labelStyle })}>
                 <label className={cx('label')}>{labelTitle}</label>
-                {showBack ? (
-                    ''
-                ) : (
+                {!showBack && (
                     <label
-                        className={cx('label', {
-                            right: true,
-                            labelComeback,
-                        })}
-                        onClick={() => {
-                            setCurrentLogin(true);
-                        }}
+                        className={cx('label', { right: true, labelComeback })}
+                        onClick={() => setCurrentLogin(true)}
                     >
                         Quay lại
                     </label>
@@ -95,13 +84,9 @@ function FormInput({ medium, ...props }, ref) {
                     maxLength={maxLengthToken ? 500 : 40}
                 />
             </div>
-            <span
-                className={cx('error-message', {
-                    'form-message': true,
-                })}
-            ></span>
+            <span className={cx('error-message', { 'form-message': true })}></span>
         </div>
     );
-}
+};
 
-export default forwardRef(FormInput);
+export default memo(forwardRef(FormInput));

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import Tippy from '@tippyjs/react/headless';
+import React, { useMemo } from 'react';
 import styles from './MenuPopper.module.scss';
 
 import { Wrapper as PopperWrapper } from '~/components/Common/Popper';
@@ -11,13 +12,13 @@ import useUserInfo from '~/hooks/useUserInfo';
 
 const cx = classNames.bind(styles);
 
-function MenuPopper({ children, items = [], infoUserCurrent }) {
+const MenuPopper = React.memo(({ children, items = [], infoUserCurrent }) => {
     const { username, userId, lastName: currentLastName } = infoUserCurrent;
     const { data: userInfo } = useUserInfo(userId);
 
-    const renderItems = () => {
+    const renderItems = useMemo(() => {
         return items.map((item, index) => <MenuPopperItem key={index} data={item} />);
-    };
+    }, [items]);
 
     return (
         <Tippy
@@ -41,7 +42,7 @@ function MenuPopper({ children, items = [], infoUserCurrent }) {
                                 <span>@{username}</span>
                             </div>
                         </div>
-                        {renderItems()}
+                        {renderItems}
                     </PopperWrapper>
                 </div>
             )}
@@ -49,14 +50,14 @@ function MenuPopper({ children, items = [], infoUserCurrent }) {
             {children}
         </Tippy>
     );
-}
+});
 
 MenuPopper.propTypes = {
     children: PropTypes.node.isRequired,
     items: PropTypes.array,
     infoUserCurrent: PropTypes.shape({
         username: PropTypes.string,
-        userId: PropTypes.string.isRequired,
+        userId: PropTypes.string,
         lastName: PropTypes.string,
         firstName: PropTypes.string,
     }).isRequired,

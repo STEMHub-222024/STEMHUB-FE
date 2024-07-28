@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Space, Table, Layout, Button, Modal, Form, Input, Select, notification } from 'antd';
 import Heading from '~/components/Common/Heading';
 import { USER, ADMIN } from '~/utils/constant';
@@ -18,96 +18,100 @@ function Account() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
 
-    useEffect(() => {
-        const fetchApi = async () => {
-            const res = await userServices.getUseAll();
-            if (res) {
-                const resNew = res.map((user, index) => ({
-                    key: index,
-                    userName: user.userName,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                    phoneNumber: user.phoneNumber,
-                    role: user.role,
-                }));
-                setUserList(resNew);
-            }
-        };
-        fetchApi();
+    const fetchApi = useCallback(async () => {
+        const res = await userServices.getUseAll();
+        if (res) {
+            const resNew = res.map((user, index) => ({
+                key: index,
+                userName: user.userName,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                phoneNumber: user.phoneNumber,
+                role: user.role,
+            }));
+            setUserList(resNew);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchApi();
+    }, [fetchApi]);
 
     const handleChange = (_, filters, sorter) => {
         setFilteredInfo(filters);
         setSortedInfo(sorter);
     };
 
-    const columns = [
-        {
-            title: 'Last Name',
-            dataIndex: 'lastName',
-            key: 'lastName',
-            filteredValue: filteredInfo.lastName || null,
-            onFilter: (value, record) => record.lastName.includes(value),
-            sorter: (a, b) => a.lastName.length - b.lastName.length,
-            sortOrder: sortedInfo.columnKey === 'lastName' ? sortedInfo.order : null,
-            ellipsis: true,
-        },
-        {
-            title: 'First Name',
-            dataIndex: 'firstName',
-            key: 'firstName',
-            filteredValue: filteredInfo.firstName || null,
-            onFilter: (value, record) => record.firstName.includes(value),
-            sorter: (a, b) => a.firstName.length - b.firstName.length,
-            sortOrder: sortedInfo.columnKey === 'firstName' ? sortedInfo.order : null,
-            ellipsis: true,
-        },
-        {
-            title: 'User Name',
-            dataIndex: 'userName',
-            key: 'userName',
-            filteredValue: filteredInfo.userName || null,
-            onFilter: (value, record) => record.userName.includes(value),
-            sorter: (a, b) => a.userName.length - b.userName.length,
-            sortOrder: sortedInfo.columnKey === 'userName' ? sortedInfo.order : null,
-            ellipsis: true,
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            filteredValue: filteredInfo.email || null,
-            onFilter: (value, record) => record.email.includes(value),
-            sorter: (a, b) => a.email.length - b.email.length,
-            sortOrder: sortedInfo.columnKey === 'email' ? sortedInfo.order : null,
-            ellipsis: true,
-        },
-        {
-            title: 'Phone',
-            dataIndex: 'phoneNumber',
-            key: 'phoneNumber',
-            filters: [
-                {
-                    text: 'Viettel',
-                    value: '03',
-                },
-                {
-                    text: 'Vina',
-                    value: '08',
-                },
-                {
-                    text: 'Mobile',
-                    value: '07',
-                },
-            ],
-            filteredValue: filteredInfo.phoneNumber || null,
-            onFilter: (value, record) => record.phoneNumber?.startsWith(value),
-            sorter: (a, b) => (a.phoneNumber || '').length - (b.phoneNumber || '').length,
-            sortOrder: sortedInfo.columnKey === 'phoneNumber' ? sortedInfo.order : null,
-            ellipsis: true,
-        },
-    ];
+    const columns = useMemo(
+        () => [
+            {
+                title: 'Last Name',
+                dataIndex: 'lastName',
+                key: 'lastName',
+                filteredValue: filteredInfo.lastName || null,
+                onFilter: (value, record) => record.lastName.includes(value),
+                sorter: (a, b) => a.lastName.length - b.lastName.length,
+                sortOrder: sortedInfo.columnKey === 'lastName' ? sortedInfo.order : null,
+                ellipsis: true,
+            },
+            {
+                title: 'First Name',
+                dataIndex: 'firstName',
+                key: 'firstName',
+                filteredValue: filteredInfo.firstName || null,
+                onFilter: (value, record) => record.firstName.includes(value),
+                sorter: (a, b) => a.firstName.length - b.firstName.length,
+                sortOrder: sortedInfo.columnKey === 'firstName' ? sortedInfo.order : null,
+                ellipsis: true,
+            },
+            {
+                title: 'User Name',
+                dataIndex: 'userName',
+                key: 'userName',
+                filteredValue: filteredInfo.userName || null,
+                onFilter: (value, record) => record.userName.includes(value),
+                sorter: (a, b) => a.userName.length - b.userName.length,
+                sortOrder: sortedInfo.columnKey === 'userName' ? sortedInfo.order : null,
+                ellipsis: true,
+            },
+            {
+                title: 'Email',
+                dataIndex: 'email',
+                key: 'email',
+                filteredValue: filteredInfo.email || null,
+                onFilter: (value, record) => record.email.includes(value),
+                sorter: (a, b) => a.email.length - b.email.length,
+                sortOrder: sortedInfo.columnKey === 'email' ? sortedInfo.order : null,
+                ellipsis: true,
+            },
+            {
+                title: 'Phone',
+                dataIndex: 'phoneNumber',
+                key: 'phoneNumber',
+                filters: [
+                    {
+                        text: 'Viettel',
+                        value: '03',
+                    },
+                    {
+                        text: 'Vina',
+                        value: '08',
+                    },
+                    {
+                        text: 'Mobile',
+                        value: '07',
+                    },
+                ],
+                filteredValue: filteredInfo.phoneNumber || null,
+                onFilter: (value, record) => record.phoneNumber?.startsWith(value),
+                sorter: (a, b) => (a.phoneNumber || '').length - (b.phoneNumber || '').length,
+                sortOrder: sortedInfo.columnKey === 'phoneNumber' ? sortedInfo.order : null,
+                ellipsis: true,
+            },
+        ],
+        [filteredInfo, sortedInfo],
+    );
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -131,7 +135,7 @@ function Account() {
                         password: values.password,
                         roles: values.role,
                     });
-                    setUserList([...userList, { ...newUser, key: userList.length }]);
+                    setUserList((prevUserList) => [...prevUserList, { ...newUser, key: prevUserList.length }]);
                     setIsModalVisible(false);
                     form.resetFields();
                     notification.success({
@@ -143,9 +147,7 @@ function Account() {
                     });
                 }
             })
-            .catch((info) => {
-                console.log('Validate Failed:', info);
-            });
+            .catch((info) => {});
     };
 
     return (

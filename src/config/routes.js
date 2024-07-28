@@ -15,6 +15,7 @@ const routes = {
     register: '/register',
     forgotPassword: '/forgotPassword',
     resetPassword: '/resetPassword',
+    scientist: '/scientist/:id',
 
     //private routes
     personal: '/personal',
@@ -30,6 +31,8 @@ const routes = {
     topicAdmin: '/admin/topic',
     lesson: '/admin/lesson',
     images: '/admin/images',
+    owner: '/admin/owner',
+    scientistAdmin: '/admin/scientist',
 };
 
 export default routes;

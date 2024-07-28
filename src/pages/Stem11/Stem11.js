@@ -1,11 +1,11 @@
-import { memo, useState } from 'react';
+import { memo, useState, useEffect } from 'react';
 import tinycolor from 'tinycolor2';
 import classNames from 'classnames/bind';
 import styles from './Stem11.module.scss';
 import Topic from '~/components/Layouts/Components/Topic';
+import Loading from '~/components/Common/Loading';
 
 // Services
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getTopicAsync } from '~/app/slices/topicSlice';
 import * as stemServices from '~/services/stemServices';
@@ -18,6 +18,7 @@ const cx = classNames.bind(styles);
 function Stem11() {
     const dispatch = useDispatch();
     const [listStem11, setListStem11] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchApi = async () => {
@@ -26,7 +27,7 @@ function Stem11() {
                 if (res) {
                     const stemNamePromises = res.map(async (topic) => {
                         const stem = await stemServices.getStemById(topic.stemId);
-                        if (!stem) return;
+                        if (!stem) return null;
                         return {
                             stemId: stem.stemId,
                             stemName: stem?.stemName,
@@ -47,16 +48,22 @@ function Stem11() {
                         }
                     }
                 }
-            } catch (rejectedValueOrSerializedError) {
-                console.error(rejectedValueOrSerializedError);
+            } catch (error) {
+            } finally {
+                setLoading(false);
             }
         };
+
         fetchApi();
 
         return () => {
             controller.abort();
         };
     }, [dispatch]);
+
+    if (loading) {
+        return <Loading title="Đang tải...." />;
+    }
 
     return (
         <div className={cx('wrapper')}>

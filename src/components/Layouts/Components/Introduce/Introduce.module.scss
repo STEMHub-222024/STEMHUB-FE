@@ -86,15 +86,34 @@
         }
     }
 }
+.scientist-image {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.image-main {
+    cursor: default;
+
+    &:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
 
 // content
 .wrap-content {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 60px 0;
-
+    padding: 50px 0;
+    position: relative;
     .title {
+        margin-left: 4px;
         span {
             color: var(--main-color);
         }
@@ -106,28 +125,145 @@
         padding: 16px 60px 4px 2px;
         .criteria-item {
             display: flex;
+            min-height: 40px;
 
             span {
                 font-size: 1.4rem;
                 font-weight: 600;
                 margin-left: 4px;
+                overflow: hidden;
+                word-wrap: break-word;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
             }
         }
     }
-
-    .context {
-        padding: 16px 20px 4px 6px;
-        line-height: 3rem;
-        font-weight: 400;
-        font-size: 1.48rem;
+    .container {
+        min-height: 150px;
+        .context {
+            padding: 16px 20px 4px 6px;
+            line-height: 3rem;
+            font-weight: 400;
+            font-size: 1.48rem;
+            overflow: hidden;
+            word-wrap: break-word;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 5;
+        }
     }
 
     .action {
-        margin: 50px 0 0 0;
-
+        margin: 8px 0 0 0;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
         .btn-title {
             margin-left: 6px;
             font-size: 1.4rem;
+            width: 105px;
         }
+    }
+}
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .wrap-content {
+        .criteria {
+            padding: 16px 8px 4px 2px;
+        }
+
+        .action {
+            margin: 8px 0 8px 0;
+            display: flex;
+            justify-content: center;
+        }
+    }
+
+    .grid-column-5 {
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .grid-column-7 {
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+        text-align: center;
+    }
+}
+
+/* Small devices (large phones and small tablets, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .wrap-content {
+        .criteria {
+            padding: 16px 8px 4px 2px;
+        }
+
+        .action {
+            margin: 8px 0 8px 0;
+            display: flex;
+            justify-content: center;
+        }
+    }
+
+    .grid-column-5 {
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .grid-column-7 {
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+        text-align: center;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .grid-column-5 {
+        width: 41.667%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .grid-column-7 {
+        width: 58.33%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .grid-column-5 {
+        width: 41.667%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .grid-column-7 {
+        width: 58.33%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .grid-column-5 {
+        width: 41.667%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .grid-column-7 {
+        width: 58.33%;
+        padding-left: 12px;
+        padding-right: 12px;
     }
 }

@@ -1,33 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual } from 'react-redux';
 import { getUserIdAsync } from '~/app/slices/userSlice';
 import { selectAuth } from '~/app/selectors';
 import { useAuth } from '~/app/contexts/AuthContext';
 
 function useUserInfo(initialUserId) {
     const dispatch = useDispatch();
-    const { infoUserCurrent, allow } = useSelector(selectAuth).data;
-    const [userId, setUserId] = useState(initialUserId);
+    const { infoUserCurrent, allow } = useSelector(selectAuth, shallowEqual);
     const { isLoading: isAuthLoading } = useAuth();
 
-    useEffect(() => {
-        if (!userId && allow && infoUserCurrent?.userId) {
-            setUserId(infoUserCurrent.userId);
+    const userId = useMemo(() => {
+        if (!initialUserId && allow && infoUserCurrent?.userId) {
+            return infoUserCurrent.userId;
         }
-    }, [userId, allow, infoUserCurrent]);
+        return initialUserId;
+    }, [initialUserId, allow, infoUserCurrent]);
 
-    return useQuery(
-        ['user', userId],
-        async () => {
-            const info = await dispatch(getUserIdAsync({ userId })).unwrap();
-            return info;
-        },
-        {
-            enabled: !!userId && !isAuthLoading,
-            retry: false,
-        },
-    );
+    const fetchUserInfo = useCallback(async () => {
+        const info = await dispatch(getUserIdAsync({ userId })).unwrap();
+        return info;
+    }, [dispatch, userId]);
+
+    return useQuery(['user', userId], fetchUserInfo, {
+        enabled: !!userId && !isAuthLoading,
+        retry: false,
+    });
 }
 
 export default useUserInfo;

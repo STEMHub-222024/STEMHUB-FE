@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import ReactPlayer from 'react-player';
+import formatTime from '~/utils/formatTime';
 
 import styles from './VideoPlayer.module.scss';
 
@@ -11,17 +12,25 @@ function VideoPlayer({ isPlayed = true, isPlayTime, pathVideo, setPlayedTime }) 
     const [played, setPlayed] = useState(0);
     const [duration, setDuration] = useState(0);
 
-    const formatTime = (seconds) => {
-        const minutes = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-    };
+    const handleProgress = useCallback(
+        (progress) => {
+            setPlayed(progress.played);
+        },
+        [setPlayed],
+    );
+
+    const handleDuration = useCallback(
+        (dur) => {
+            setDuration(dur);
+        },
+        [setDuration],
+    );
 
     useEffect(() => {
         if (isPlayTime) return;
+
         const playedTimeInSeconds = played * duration;
         const playedTimeFormatted = formatTime(playedTimeInSeconds);
-
         setPlayedTime(playedTimeFormatted);
     }, [isPlayTime, played, duration, setPlayedTime]);
 
@@ -34,10 +43,8 @@ function VideoPlayer({ isPlayed = true, isPlayTime, pathVideo, setPlayedTime }) 
                     height="100%"
                     url={pathVideo}
                     controls
-                    onProgress={(progress) => {
-                        setPlayed(progress.played);
-                    }}
-                    onDuration={(dur) => setDuration(dur)}
+                    onProgress={handleProgress}
+                    onDuration={handleDuration}
                     progressInterval={100}
                     config={{
                         youtube: {
@@ -52,6 +59,8 @@ function VideoPlayer({ isPlayed = true, isPlayTime, pathVideo, setPlayedTime }) 
 
 VideoPlayer.propTypes = {
     pathVideo: PropTypes.string,
+    isPlayed: PropTypes.bool,
+    isPlayTime: PropTypes.bool,
 };
 
 export default VideoPlayer;

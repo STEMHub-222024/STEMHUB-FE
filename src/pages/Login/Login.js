@@ -1,37 +1,74 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import Cookies from 'js-cookie';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { IconEyeClosed, IconEye, IconLoader2 } from '@tabler/icons-react';
 import { message } from 'antd';
 import { toast } from 'react-toastify';
 import Button from '~/components/Common/Button';
-import Image from '~/components/Common/Image';
 import SignInButton from '~/components/Common/SignInButton';
 import FormControl from '~/components/Common/FormControl';
-import images from '~/assets/images';
 import styles from './Login.module.scss';
 import config from '~/config';
+import Header from './Header';
+import Footer from './Footer';
 import Validator, { isRequired, minLength, isValidPassword } from '~/utils/validation';
+import { createSelector } from '@reduxjs/toolkit';
 
 // Service
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUserAsync } from '~/app/slices/authSlice';
-import { selectAuth } from '~/app/selectors';
 
 const cx = classNames.bind(styles);
 
+const selectAuthData = createSelector(
+    (state) => state.auth.data,
+    (authData) => ({
+        userName: authData.userName,
+        password: authData.password,
+        loading: authData.loading,
+    }),
+);
+
 function Login() {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const { userName, password, loading } = useSelector(selectAuth).data;
+
+    const { userName, password, loading } = useSelector(selectAuthData);
     const [currentLogin, setCurrentLogin] = useState(true);
     const [isShowPassword, setIsShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
 
-    const IconPassword = isShowPassword ? IconEye : IconEyeClosed;
-    const inputType = isShowPassword ? 'text' : 'password';
+    const IconPassword = useMemo(() => (isShowPassword ? IconEye : IconEyeClosed), [isShowPassword]);
+    const inputType = useMemo(() => (isShowPassword ? 'text' : 'password'), [isShowPassword]);
 
+    const handleShowForm = useCallback(() => setCurrentLogin(false), []);
+
+    const togglePasswordVisibility = useCallback(() => setIsShowPassword((prev) => !prev), []);
+
+    const handleSubmit = useCallback(
+        async (data) => {
+            const hide = message.loading('Đang đăng nhập...', 0);
+            try {
+                const result = await dispatch(loginUserAsync(data)).unwrap();
+                if (result.isSuccess) {
+                    const { refreshToken, accessToken } = result.response;
+                    const expiresAccessToken = new Date(accessToken.expiryTokenDate);
+                    const expiresRefreshToken = new Date(refreshToken.expiryTokenDate);
+
+                    Cookies.set('accessToken', accessToken.token, { expires: expiresAccessToken });
+                    Cookies.set('refreshToken', refreshToken.token, { expires: expiresRefreshToken });
+                    Cookies.set('saveRefreshToken', JSON.stringify(result.response), { expires: 7 });
+
+                    hide();
+                    window.location.href = config.routes.home;
+                }
+            } catch (error) {
+                toast.error('Đăng nhập thất bại!');
+            } finally {
+                hide();
+            }
+        },
+        [dispatch],
+    );
     useEffect(() => {
         if (!currentLogin) {
             Validator({
@@ -44,47 +81,18 @@ function Login() {
                     isValidPassword('#password'),
                     isRequired('input[name="gender"]'),
                 ],
-                onSubmit: async (data) => {
-                    const hide = message.loading('Đang đăng nhập...', 0);
-                    try {
-                        setIsLoading(false);
-                        const result = await dispatch(loginUserAsync(data)).unwrap();
-                        if (result.isSuccess) {
-                            const { refreshToken, accessToken } = result.response;
-                            const expiresAccessToken = new Date(accessToken.expiryTokenDate);
-                            const expiresRefreshToken = new Date(refreshToken.expiryTokenDate);
-
-                            Cookies.set('accessToken', accessToken.token, { expires: expiresAccessToken });
-                            Cookies.set('refreshToken', refreshToken.token, { expires: expiresRefreshToken });
-                            Cookies.set('saveRefreshToken', JSON.stringify(result.response), { expires: 7 });
-
-                            hide();
-                            setIsLoading(true);
-                            navigate(config.routes.home, { replace: true });
-                            window.location.reload();
-                        }
-                    } catch (error) {
-                        hide();
-                        setIsLoading(true);
-                        toast.error(error.message || 'Đăng nhập thất bại!');
-                    }
-                },
+                onSubmit: handleSubmit,
             });
-        }
-    }, [dispatch, navigate, currentLogin]);
 
-    const handleShowForm = () => setCurrentLogin(false);
+            return () => {};
+        }
+    }, [currentLogin, handleSubmit]);
 
     return (
         <div className={cx('wrapper', 'hasBg')}>
             <div className={cx('container')}>
                 <div className={cx('content')}>
-                    <div className={cx('header')}>
-                        <Button className={cx('logo-link')} to={config.routes.home}>
-                            <Image className={cx('logo')} src={images.logo} alt="web khóa học" />
-                        </Button>
-                        <h1 className={cx('title')}>Đăng nhập vào Web</h1>
-                    </div>
+                    <Header />
                     <div className={cx('body')}>
                         {currentLogin ? (
                             <div className={cx('mainStep')} onClick={handleShowForm}>
@@ -108,15 +116,11 @@ function Login() {
                                         name="password"
                                         type={inputType}
                                     />
-                                    <IconPassword
-                                        className={cx('icon')}
-                                        size={20}
-                                        onClick={() => setIsShowPassword((prev) => !prev)}
-                                    />
+                                    <IconPassword className={cx('icon')} size={20} onClick={togglePasswordVisibility} />
                                 </div>
                                 <Button
-                                    className={cx('btnSubmit', { disabled: isLoading && userName && password })}
-                                    disabled={isLoading && userName && password ? false : true}
+                                    className={cx('btnSubmit', { disabled: !userName || !password || loading })}
+                                    disabled={!userName || !password || loading}
                                 >
                                     {loading && <IconLoader2 className={cx('loading')} size={20} />}
                                     &nbsp;Đăng nhập
@@ -135,11 +139,7 @@ function Login() {
                             </Link>
                         )}
                     </div>
-                    <div className={cx('footer')}>
-                        Việc bạn tiếp tục sử dụng trang web này đồng nghĩa bạn đồng ý với
-                        <a href={config.routes.home}>Điều khoản sử dụng</a>
-                        của chúng tôi.
-                    </div>
+                    <Footer />
                 </div>
             </div>
         </div>

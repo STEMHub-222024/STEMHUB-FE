@@ -18,7 +18,6 @@ export const AuthProvider = ({ children }) => {
                 dispatch(setAllow(false));
             }
         } catch (error) {
-            console.error('Error verifying user:', error);
             dispatch(setAllow(false));
         } finally {
             setIsLoading(false);

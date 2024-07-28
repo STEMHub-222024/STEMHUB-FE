@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { IconPlayerPlayFilled } from '@tabler/icons-react';
 import styles from './Topic.module.scss';
 import Heading from '~/components/Common/Heading';
@@ -12,7 +12,7 @@ const cx = classNames.bind(styles);
 function Topic({ colorCode, shine }) {
     const { topicImage, topicName, view, topicId } = shine;
 
-    const encodedImageUrl = encodeImageUrl(topicImage);
+    const encodedImageUrl = useMemo(() => encodeImageUrl(topicImage), [topicImage]);
 
     return (
         <div className={cx('wrapper')}>
@@ -49,7 +49,7 @@ function Topic({ colorCode, shine }) {
 Topic.propTypes = {
     colorCode: PropTypes.string.isRequired,
     shine: PropTypes.shape({
-        topicImage: PropTypes.string,
+        topicImage: PropTypes.string.isRequired,
         topicName: PropTypes.string.isRequired,
         view: PropTypes.number.isRequired,
         topicId: PropTypes.string.isRequired,

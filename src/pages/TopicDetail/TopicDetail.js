@@ -57,9 +57,7 @@ function TopicDetail() {
         const fetchApi = async () => {
             try {
                 await fetchApiData(dispatch, topic, handleSplitParam);
-            } catch (error) {
-                console.error(error);
-            }
+            } catch (error) {}
         };
         fetchApi();
         return () => {

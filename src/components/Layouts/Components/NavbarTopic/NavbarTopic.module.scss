@@ -20,3 +20,29 @@
         }
     }
 }
+
+/* Extra small devices (phones, 575px and down) */
+@media (max-width: 575.98px) {
+    .menu-topic {
+        width: 100%;
+
+        .group-menu {
+            .btnStem {
+                min-width: 96px;
+            }
+        }
+    }
+}
+
+/* Small devices (large phones and small tablets, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .menu-topic {
+        width: 100%;
+
+        .group-menu {
+            .btnStem {
+                min-width: 96px;
+            }
+        }
+    }
+}

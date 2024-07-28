@@ -44,14 +44,13 @@ function PostsDetail() {
 
     return (
         <div className={cx('wrapper')}>
-            <div className={cx('gird', { fullWidth: true })}>
+            <div className={cx('grid', { fullWidth: true })}>
                 <div className={cx('grid-row')}>
                     <div className={cx('grid-column-3', { repositoryMarginLeft: true })}>
                         <div className={cx('aside')}>
                             <div style={{ textAlign: 'center' }}>
                                 <UserInfo fullName={fullName} Component={Heading} className="userName" h4 />
                             </div>
-                            <p className={cx('userTitle')}></p>
                             <hr />
                             <Reaction />
                         </div>
@@ -91,4 +90,4 @@ function PostsDetail() {
     );
 }
 
-export default PostsDetail;
+export default memo(PostsDetail);

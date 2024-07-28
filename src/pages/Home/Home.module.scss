@@ -8,10 +8,6 @@
     height: 100%;
 }
 
-.introduce {
-    display: none !important;
-}
-
 // Slide
 .slideshow {
     margin-top: 18px;
@@ -81,6 +77,10 @@
         padding-left: 12px;
         padding-right: 12px;
     }
+
+    .introduce {
+        flex-direction: column;
+    }
 }
 
 /* Small devices (large phones and small tablets, 576px and up) */
@@ -89,6 +89,10 @@
         width: 41.667%;
         padding-left: 12px;
         padding-right: 12px;
+    }
+
+    .introduce {
+        flex-direction: column;
     }
 }
 
