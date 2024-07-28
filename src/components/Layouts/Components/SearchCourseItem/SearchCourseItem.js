@@ -1,47 +1,61 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
-import { memo } from 'react';
-import styles from './SearchCourseItem.module.scss';
+import { memo, useMemo, useCallback, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
-import Image from '~/components/Common/Image';
 import { useDispatch } from 'react-redux';
 import { updateTopicSearch } from '~/app/slices/searchSlice';
+import styles from './SearchCourseItem.module.scss';
 
 const cx = classNames.bind(styles);
+const wrapperClass = cx('wrapper');
+const avatarClass = cx('avatar');
+const nameClass = cx('name');
+
+const Image = lazy(() => import('~/components/Common/Image'));
 
 const SearchCourseItem = memo(({ topicData, newspaperArticleData, setSearchValue }) => {
     const dispatch = useDispatch();
 
-    // Function to handle hiding search results
-    const handleHideResult = () => {
+    const { link, imageSrc, altText, name } = useMemo(() => {
+        const link = topicData
+            ? `/topic/${topicData.topicId}`
+            : newspaperArticleData
+            ? `/posts/${newspaperArticleData.newspaperArticleId}`
+            : '/';
+
+        const imageSrc = topicData ? topicData.topicImage : newspaperArticleData ? newspaperArticleData.image : '';
+        const altText = topicData ? topicData.topicName : newspaperArticleData ? newspaperArticleData.title : '';
+        const name = topicData ? topicData.topicName : newspaperArticleData ? newspaperArticleData.title : '';
+
+        return { link, imageSrc, altText, name };
+    }, [topicData, newspaperArticleData]);
+
+    const handleHideResult = useCallback(() => {
         setSearchValue('');
         dispatch(updateTopicSearch([]));
-    };
-
-    // Determine the link
-    const link = topicData
-        ? `/topic/${topicData.topicName}=${topicData.topicId}`
-        : newspaperArticleData
-        ? `/posts/${newspaperArticleData.newspaperArticleId}`
-        : '/';
-
-    const imageSrc = topicData ? topicData.topicImage : newspaperArticleData ? newspaperArticleData.image : '';
-
-    const altText = topicData ? topicData.topicName : newspaperArticleData ? newspaperArticleData.title : '';
-
-    const name = topicData ? topicData.topicName : newspaperArticleData ? newspaperArticleData.title : '';
+    }, [dispatch, setSearchValue]);
 
     return (
-        <Link to={link} className={cx('wrapper')} onClick={handleHideResult}>
-            <Image className={cx('avatar')} src={imageSrc} alt={altText} />
-            <span className={cx('name')}>{name}</span>
+        <Link to={link} className={wrapperClass} onClick={handleHideResult}>
+            <Suspense fallback={<div>Loading...</div>}>
+                <Image className={avatarClass} src={imageSrc} alt={altText} />
+            </Suspense>
+            <span className={nameClass}>{name}</span>
         </Link>
     );
 });
 
 SearchCourseItem.propTypes = {
-    topicData: PropTypes.object,
-    newspaperArticleData: PropTypes.object,
+    topicData: PropTypes.shape({
+        topicId: PropTypes.string.isRequired,
+        topicImage: PropTypes.string.isRequired,
+        topicName: PropTypes.string.isRequired,
+    }),
+    newspaperArticleData: PropTypes.shape({
+        newspaperArticleId: PropTypes.string.isRequired,
+        image: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+    }),
     setSearchValue: PropTypes.func.isRequired,
 };
 
