@@ -46,7 +46,7 @@ function SlideShow() {
         nextArrow: <SlideNextArrow />,
         prevArrow: <SlidePrevArrow />,
         lazyLoad: 'ondemand',
-    }), [cx]);
+    }), []);
 
     return (
         <div className={cx('slider-container')}>
