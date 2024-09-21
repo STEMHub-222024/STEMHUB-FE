@@ -1,4 +1,16 @@
-const { override, useBabelRc } = require('customize-cra');
-const path = require('path');
+const { override, useBabelRc, addWebpackModuleRule } = require('customize-cra');
 
-module.exports = override(useBabelRc());
+module.exports = override(
+    useBabelRc(),
+    addWebpackModuleRule({
+        test: /\.config$/,
+        use: [
+            {
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]',
+                },
+            },
+        ],
+    }),
+);
