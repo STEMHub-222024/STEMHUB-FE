@@ -59,6 +59,14 @@
     flex: 1;
 }
 
+.image {
+    will-change: transform, opacity;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+}
+
 /* Extra small devices (phones, 575px and down) */
 @media (max-width: 575.98px) {
     .right {
