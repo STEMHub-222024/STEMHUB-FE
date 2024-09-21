@@ -58,10 +58,7 @@ function Posts() {
                             <div className={cx('group-title')}>
                                 <Heading className={cx('heading')}>Bài viết nổi bật</Heading>
                                 <div className={cx('desc')}>
-                                    <p>
-                                        Tổng hợp các bài viết chia sẻ về kinh nghiệm tự học lập trình online và các kỹ
-                                        thuật lập trình web.
-                                    </p>
+                                    <p>Tổng hợp các bài viết chia sẽ về kinh nghiệm tự học STEM và các kỹ năng khi làm STEM.</p>
                                 </div>
                             </div>
                             {currentRecords.map((data, index) => (

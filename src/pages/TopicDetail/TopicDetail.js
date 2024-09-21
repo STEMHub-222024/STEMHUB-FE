@@ -80,6 +80,7 @@ function TopicDetail() {
             )),
         [ingredientFilter],
     );
+
     return (
         <>
             <div className={cx('wrapper')}>
@@ -87,13 +88,13 @@ function TopicDetail() {
                     <div className={cx('grid-row')}>
                         <div className={cx('grid-column-8')}>
                             <div className={cx('group-title')}>
-                                <Heading className={cx('heading')}>Bài viết nổi bật</Heading>
+                                <Heading className={cx('heading')}>{topicIds?.topicName}</Heading>
                                 <div className={cx('desc')}>
                                     <p>{topicIds?.description}</p>
                                 </div>
                                 <div className={cx('topicList')}>
                                     <Heading className={cx('topicHeading')} h2>
-                                        Nguyên liệu chuẩn bị
+                                        Giới thiệu
                                     </Heading>
                                     <section className={cx('row')}>
                                         <section className={cx('col')}>

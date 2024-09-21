@@ -15,9 +15,9 @@
     .images {
         padding-top: 100%;
         background-repeat: no-repeat;
-        background-size: contain;
-        border-radius: 30px;
-        margin-bottom: -30%;
+        background-size: cover;
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px;
     }
 
     .content {

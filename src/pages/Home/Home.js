@@ -85,7 +85,7 @@ function Home() {
                     <div className={cx('grid-column-12')}>
                         <header className={cx('topic-header')}>
                             <Heading h2 className={cx('title')}>
-                                Chủ Đề <span>Nổi Bật</span>
+                                Bài Viết <span>Nổi Bật</span>
                             </Heading>
                             <NavbarTopic checkStemDefault={checkStemDefault} />
                         </header>
@@ -101,7 +101,7 @@ function Home() {
                                 <div className={cx('grid-column-12')}>
                                     <div className={cx('btn-explore-all')}>
                                         <Button mainColor borderMedium medium to={`/${convertedString}`}>
-                                            Khám phá chủ đề
+                                            Khám phá bài viết
                                         </Button>
                                     </div>
                                 </div>
