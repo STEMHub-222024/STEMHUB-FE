@@ -56,6 +56,9 @@
 }
 
 .right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     flex: 1;
 }
 
@@ -63,8 +66,8 @@
     will-change: transform, opacity;
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
     width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
+    height: 450px !important;
+    object-fit: contain;
 }
 
 /* Extra small devices (phones, 575px and down) */

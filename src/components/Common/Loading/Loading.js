@@ -5,7 +5,7 @@ import styles from './Loading.module.scss';
 const cx = classNames.bind(styles);
 
 const { Content } = Layout;
-function Loading({ title }) {
+function Loading({ title = '' }) {
     return (
         <Layout className={cx('wrapper')}>
             <Content className={cx('content')}>

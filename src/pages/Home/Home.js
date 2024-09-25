@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useConvertString from '~/hooks/useConvertString';
 import tinycolor from 'tinycolor2';
@@ -15,63 +15,54 @@ import { getOutstanding } from '~/app/slices/topicSlice';
 import { getPostsAsync } from '~/app/slices/postSlice';
 import { getStemAsync, handleOnClickStem } from '~/app/slices/navbarTopicSlice';
 import { selectTopic, selectNavbarTopic, selectPosts } from '~/app/selectors';
+import Loading from '~/components/Common/Loading';
 import config from '~/config';
 
 const cx = classNames.bind(styles);
 
 const checkStemDefault = (stemName, defaultValue) => {
-    const upperCaseName = stemName.toUpperCase();
-    if (!(defaultValue instanceof RegExp)) {
-        const stemDefault = stemName.includes(defaultValue);
-        return stemDefault ? { upperCaseName, stemDefault } : { upperCaseName };
-    }
-    const stemDefault = defaultValue.test(stemName);
-    return stemDefault ? { upperCaseName, stemDefault } : { upperCaseName };
+    const normalizedStemName = stemName.replace(/\s+/g, '').toUpperCase();
+    const normalizedDefaultValue = defaultValue.replace(/\s+/g, '').toUpperCase();
+    const isDefaultMatch = normalizedStemName.includes(normalizedDefaultValue);
+    return { upperCaseName: normalizedStemName, isDefaultMatch };
 };
 
 function Home() {
     const dispatch = useDispatch();
+    const [loading, setLoading] = useState(true);
     const { showOutstanding } = useSelector(selectTopic);
     const { isOnClickStem } = useSelector(selectNavbarTopic);
-    const { posts } = useSelector(selectPosts).data;
+    const posts = useSelector(selectPosts)?.data?.posts || [];
     const convertedString = useConvertString(isOnClickStem);
 
     useEffect(() => {
-        const controller = new AbortController();
-
-        const fetchApi = async () => {
+        const fetchData = async () => {
             try {
-                const result = await dispatch(getStemAsync()).unwrap();
+                const stemResult = await dispatch(getStemAsync()).unwrap();
+                const defaultStem = stemResult.find(
+                    (stem) => checkStemDefault(stem.stemName, stem.stemName)?.isDefaultMatch,
+                );
 
-                const defaultStem = result?.find((stem) => {
-                    const activeDefault = checkStemDefault(stem?.stemName, stem?.stemName);
-                    return activeDefault?.stemDefault;
-                });
                 if (defaultStem) {
-                    await dispatch(getOutstanding({ stemId: defaultStem?.stemId })).unwrap();
-                    dispatch(handleOnClickStem({ stemName: defaultStem?.stemName }));
+                    await dispatch(getOutstanding({ stemId: defaultStem.stemId })).unwrap();
+                    dispatch(handleOnClickStem({ stemName: defaultStem.stemName }));
                 }
-            } catch (error) {}
-        };
 
-        fetchApi();
-
-        return () => {
-            controller.abort();
-        };
-    }, [dispatch]);
-
-    useEffect(() => {
-        const fetchPosts = async () => {
-            try {
                 await dispatch(getPostsAsync()).unwrap();
-            } catch (error) {}
+            } catch (error) {
+            } finally {
+                setLoading(false);
+            }
         };
 
-        fetchPosts();
+        fetchData();
     }, [dispatch]);
 
     const topicColors = useMemo(() => showOutstanding?.map(() => tinycolor.random().toString()), [showOutstanding]);
+
+    if (loading) {
+        return <Loading title="Đang tải...." />;
+    }
 
     return (
         <div className={cx('wrapper')}>
@@ -80,8 +71,8 @@ function Home() {
                     <SlideShow />
                 </section>
             </div>
-            <div className={cx('container', { grid: 'grid' })}>
-                <div className={cx('topic-group', { 'grid-row': 'grid-row' })}>
+            <div className={cx('container', 'grid')}>
+                <div className={cx('topic-group', 'grid-row')}>
                     <div className={cx('grid-column-12')}>
                         <header className={cx('topic-header')}>
                             <Heading h2 className={cx('title')}>
@@ -109,12 +100,12 @@ function Home() {
                         </div>
                     </div>
                 </div>
-                <div className={cx('introduce', { 'grid-row': 'grid-row' })}>
+                <div className={cx('introduce', 'grid-row')}>
                     <Introduce />
                 </div>
                 <div className={cx('posts-content')}>
                     <div className={cx('grid-row')}>
-                        {posts?.map((post) => (
+                        {posts.map((post) => (
                             <div key={post.newspaperArticleId} className={cx('grid-column-3')}>
                                 <PostItem data={post} />
                             </div>
