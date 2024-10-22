@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { Modal, Spin } from 'antd';
+import { Drawer, Spin } from 'antd';
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import BoxMessage from '~/components/Layouts/Components/BoxMessage';
 import styles from './ModalChat.module.scss';
@@ -16,80 +16,88 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
 
-    const typeWords = useCallback((words) => {
-        let currentMessage = '';
-        words.forEach((word, index) => {
-            setTimeout(() => {
-                currentMessage += word + ' ';
-                setMessages((currentMessages) => {
-                    const updatedMessages = [...currentMessages];
-                    const latestMessageIndex = updatedMessages.findIndex((msg) => msg.role === 'assistant');
+    // const typeWords = useCallback((words) => {
+    //     let currentMessage = '';
+    //     words.forEach((word, index) => {
+    //         setTimeout(() => {
+    //             currentMessage += word + ' ';
+    //             setMessages((currentMessages) => {
+    //                 const updatedMessages = [...currentMessages];
+    //                 const latestMessageIndex = updatedMessages.findIndex((msg) => msg.role === 'assistant');
 
-                    if (latestMessageIndex !== -1) {
-                        updatedMessages[latestMessageIndex].message = currentMessage;
-                    } else {
-                        updatedMessages.unshift({
-                            role: 'assistant',
-                            message: currentMessage,
-                        });
-                    }
+    //                 if (latestMessageIndex !== -1) {
+    //                     updatedMessages[latestMessageIndex].message = currentMessage;
+    //                 } else {
+    //                     updatedMessages.unshift({
+    //                         role: 'assistant',
+    //                         message: currentMessage,
+    //                     });
+    //                 }
 
-                    return updatedMessages;
-                });
-            }, 75 * index);
-        });
-    }, []);
+    //                 return updatedMessages;
+    //             });
+    //         }, 75 * index);
+    //     });
+    // }, []);
 
     const handleSendInput = useCallback(
         async (event) => {
             if (!isTyping && event.key === 'Enter' && message.trim()) {
                 setIsTyping(true);
-                setMessages((prevMessages) => [{ role: 'user', message }, ...prevMessages]);
-                setMessage('');
                 inputChatRef.current?.focus();
+                setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
 
                 try {
                     const res = await config.runGemini(message);
-                    const newResponse = res.split(' ');
+                    // const newResponse = res.split(' ');
                     sessionStorage.setItem(
                         'chatMessages',
-                        JSON.stringify([{ role: 'assistant', message: res }, { role: 'user', message }, ...messages]),
+                        JSON.stringify([
+                            ...messages,
+                            { role: 'user', message: message },
+                            { role: 'assistant', message: res },
+                        ]),
                     );
-                    setMessages((prevMessages) => [{ role: 'assistant', message: '' }, ...prevMessages]);
-                    typeWords(newResponse);
+                    setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
+                    // typeWords(newResponse);
                 } catch (error) {
                 } finally {
+                    setMessage('');
                     setIsTyping(false);
                 }
             }
         },
-        [isTyping, message, typeWords, messages],
+        [isTyping, message, messages],
     );
 
     const handleSendIcon = useCallback(
         async (event) => {
             if (!isTyping && event.type === 'click' && message.trim()) {
                 setIsTyping(true);
-                setMessages((prevMessages) => [{ role: 'user', message }, ...prevMessages]);
-                setMessage('');
                 inputChatRef.current?.focus();
+                setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
 
                 try {
                     const res = await config.runGemini(message);
-                    const newResponse = res.split(' ');
+                    // const newResponse = res.split(' ');
                     sessionStorage.setItem(
                         'chatMessages',
-                        JSON.stringify([{ role: 'assistant', message: res }, { role: 'user', message }, ...messages]),
+                        JSON.stringify([
+                            ...messages,
+                            { role: 'user', message: message },
+                            { role: 'assistant', message: res },
+                        ]),
                     );
-                    setMessages((prevMessages) => [{ role: 'assistant', message: '' }, ...prevMessages]);
-                    typeWords(newResponse);
+                    setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
+                    // typeWords(newResponse);
                 } catch (error) {
                 } finally {
+                    setMessage('');
                     setIsTyping(false);
                 }
             }
         },
-        [isTyping, message, typeWords, messages],
+        [isTyping, message, messages],
     );
 
     const handleChangeMessage = useCallback((event) => {
@@ -102,32 +110,33 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
     const handleShowModal = useCallback(() => setIsOpen(!isOpen), [isOpen, setIsOpen]);
 
     return (
-        <Modal
+        <Drawer
+            closable
+            destroyOnClose
             title={'CHAT BOX AI'}
-            centered
+            placement="right"
             open={isOpen}
-            onOk={handleShowModal}
-            onCancel={handleShowModal}
-            footer={null}
-            classNames={{
-                wrapper: styles.modalWrapper,
-                body: styles.modalBody,
+            onClose={handleShowModal}
+            size="large"
+            styles={{
+                body: {
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    scrollbarWidth: 'thin',
+                },
             }}
-            className={styles.modalContent}
+            zIndex={99999}
         >
-            <div className={styles.messGroup}>
-                {isTyping && (
-                    <div className={styles.typing}>
-                        <Spin className={styles.typingIcon} size="small" />
-                        <p>{'Đang tải...'}</p>
-                    </div>
-                )}
+            <div className={styles.messGroup} style={{ display: 'flex', flexDirection: 'column' }}>
                 {messages.map((item, index) => (
                     <BoxMessage key={index} data={item} />
                 ))}
+                {isTyping && <BoxMessage data={{ role: 'assistant', message: 'Đang tải...' }} />}
             </div>
 
-            <div className={styles.inputChat}>
+            <div className={styles.inputChat} style={{ display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
                 <input
                     ref={inputChatRef}
                     value={message}
@@ -136,14 +145,26 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                     placeholder={'Nhập tin nhắn của bạn...'}
                     onChange={handleChangeMessage}
                     onKeyDown={handleSendInput}
+                    style={{
+                        width: '100%',
+                        padding: '8px 16px',
+                        border: '1px solid #ccc',
+                        borderRadius: '24px',
+                        height: '48px',
+                        fontSize: '1.25rem',
+                    }}
                 />
                 {isTyping ? (
-                    <Spin className={styles.typingIcon} indicator={<LoadingOutlined spin />} />
+                    <Spin
+                        className={styles.typingIcon}
+                        indicator={<LoadingOutlined spin />}
+                        style={{ fontSize: '24px' }}
+                    />
                 ) : (
-                    <SendOutlined className={styles.typingIcon} onClick={handleSendIcon} />
+                    <SendOutlined className={styles.typingIcon} onClick={handleSendIcon} style={{ fontSize: '24px' }} />
                 )}
             </div>
-        </Modal>
+        </Drawer>
     );
 };
 
