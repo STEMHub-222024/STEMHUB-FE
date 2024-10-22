@@ -10,7 +10,7 @@ const BoxMessage = ({ data }) => {
 
     return (
         <div className={`${data.role === 'assistant' ? styles.messChatAI : styles.messChat}`}>
-            <div className={styles.boxChat} style={{ backgroundColor: data.role === 'user' && '#619bdd' }}>
+            <div className={styles.boxChat} style={{ backgroundColor: data.role === 'user' && '#ADD8E6' }}>
                 <p dangerouslySetInnerHTML={{ __html: convertMarkdownToHtml(data.message ?? '') }}></p>
             </div>
             <Avatar
