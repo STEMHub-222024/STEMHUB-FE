@@ -16,29 +16,27 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
 
-    // const typeWords = useCallback((words) => {
-    //     let currentMessage = '';
-    //     words.forEach((word, index) => {
-    //         setTimeout(() => {
-    //             currentMessage += word + ' ';
-    //             setMessages((currentMessages) => {
-    //                 const updatedMessages = [...currentMessages];
-    //                 const latestMessageIndex = updatedMessages.findIndex((msg) => msg.role === 'assistant');
+    const typeWords = useCallback((words) => {
+        let currentMessage = '';
+        words.forEach((word, index) => {
+            setTimeout(() => {
+                currentMessage += word + ' ';
+                setMessages((currentMessages) => {
+                    const updatedMessages = [...currentMessages];
 
-    //                 if (latestMessageIndex !== -1) {
-    //                     updatedMessages[latestMessageIndex].message = currentMessage;
-    //                 } else {
-    //                     updatedMessages.unshift({
-    //                         role: 'assistant',
-    //                         message: currentMessage,
-    //                     });
-    //                 }
-
-    //                 return updatedMessages;
-    //             });
-    //         }, 75 * index);
-    //     });
-    // }, []);
+                    if (updatedMessages[updatedMessages.length - 1]?.role === 'assistant') {
+                        updatedMessages[updatedMessages.length - 1].message = currentMessage;
+                    } else {
+                        updatedMessages.push({
+                            role: 'assistant',
+                            message: currentMessage,
+                        });
+                    }
+                    return updatedMessages;
+                });
+            }, 75 * index);
+        });
+    }, []);
 
     const handleSendInput = useCallback(
         async (event) => {
@@ -49,7 +47,7 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
 
                 try {
                     const res = await config.runGemini(message);
-                    // const newResponse = res.split(' ');
+                    const newResponse = res.split(' ');
                     sessionStorage.setItem(
                         'chatMessages',
                         JSON.stringify([
@@ -58,8 +56,8 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                             { role: 'assistant', message: res },
                         ]),
                     );
-                    setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
-                    // typeWords(newResponse);
+                    // setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
+                    typeWords(newResponse);
                 } catch (error) {
                 } finally {
                     setMessage('');
@@ -67,7 +65,7 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                 }
             }
         },
-        [isTyping, message, messages],
+        [isTyping, message, messages, typeWords],
     );
 
     const handleSendIcon = useCallback(
@@ -79,7 +77,7 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
 
                 try {
                     const res = await config.runGemini(message);
-                    // const newResponse = res.split(' ');
+                    const newResponse = res.split(' ');
                     sessionStorage.setItem(
                         'chatMessages',
                         JSON.stringify([
@@ -88,8 +86,8 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                             { role: 'assistant', message: res },
                         ]),
                     );
-                    setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
-                    // typeWords(newResponse);
+                    // setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
+                    typeWords(newResponse);
                 } catch (error) {
                 } finally {
                     setMessage('');
@@ -97,7 +95,7 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                 }
             }
         },
-        [isTyping, message, messages],
+        [isTyping, message, messages, typeWords],
     );
 
     const handleChangeMessage = useCallback((event) => {
@@ -125,6 +123,7 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                     flexDirection: 'column',
                     justifyContent: 'space-between',
                     scrollbarWidth: 'thin',
+                    backgroundColor: '#dddd',
                 },
             }}
             zIndex={99999}
