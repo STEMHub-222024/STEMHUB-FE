@@ -72,6 +72,7 @@ function Header() {
                         <MenuItem title="Stem 11" to={config.routes.stem11} icon={null} />
                         <MenuItem title="Stem 12" to={config.routes.stem12} icon={null} />
                         <MenuItem title="Bài viết" to={config.routes.posts} icon={null} />
+                        <MenuItem title="Stem AI" to={config.routes.stemAI} icon={null} />
                     </Menu>
                 </aside>
                 <Search currentUser={allow} />
