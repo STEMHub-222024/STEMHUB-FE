@@ -7,9 +7,9 @@ export const ask = async ({ question }) => {
     } catch (error) {}
 };
 
-export const sendQuestion = async ({ question, answer }) => {
+export const sendQuestion = async ({ content, answer }) => {
     try {
-        const res = await httpRequest.post('chatbot/add', { question, answer });
+        const res = await httpRequest.post('chatbot/add', { content, answer });
         return res.data;
     } catch (error) {}
 };

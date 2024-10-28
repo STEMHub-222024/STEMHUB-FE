@@ -1,17 +1,18 @@
+import { Spin } from 'antd';
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import styles from './BoxChat.module.scss';
 import BoxMessage from '../BoxMessage';
 import config from '~/config';
-import { Spin } from 'antd';
+import { ask, sendQuestion } from '~/services/chatbotServices';
 
 const BoxChat = ({ data }) => {
     const inputChatRef = useRef(null);
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [messages, setMessages] = useState(() => {
-        return data || [{ role: 'assistant', message: 'Chào mừng đến với STEM AI' }];
+        return data ?? [{ role: 'assistant', message: 'Chào mừng đến với STEM AI' }];
     });
 
     const typeWords = useCallback((words) => {
@@ -43,6 +44,28 @@ const BoxChat = ({ data }) => {
         }
     }, []);
 
+    const handleAskAI = useCallback(async () => {
+        try {
+            let data;
+            const { answer, found } = await ask({ question: message });
+            data = answer;
+            if (!found) {
+                data = await config.runGemini(message);
+                await sendQuestion({ content: message, answer: data });
+            }
+            sessionStorage.setItem(
+                'chatMessages',
+                JSON.stringify([...messages, { role: 'user', message: message }, { role: 'assistant', message: data }]),
+            );
+            // setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
+            typeWords(data.split(' '));
+        } catch (error) {
+        } finally {
+            setMessage('');
+            setIsTyping(false);
+        }
+    }, [message, messages, typeWords]);
+
     const handleSendInput = useCallback(
         async (event) => {
             if (!isTyping && event.key === 'Enter' && message.trim()) {
@@ -50,27 +73,10 @@ const BoxChat = ({ data }) => {
                 inputChatRef.current?.focus();
                 setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
 
-                try {
-                    const res = await config.runGemini(message);
-                    const newResponse = res.split(' ');
-                    sessionStorage.setItem(
-                        'chatMessages',
-                        JSON.stringify([
-                            ...messages,
-                            { role: 'user', message: message },
-                            { role: 'assistant', message: res },
-                        ]),
-                    );
-                    // setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
-                    typeWords(newResponse);
-                } catch (error) {
-                } finally {
-                    setMessage('');
-                    setIsTyping(false);
-                }
+                await handleAskAI();
             }
         },
-        [isTyping, message, messages, typeWords],
+        [isTyping, message, handleAskAI],
     );
 
     const handleSendIcon = useCallback(
@@ -80,28 +86,19 @@ const BoxChat = ({ data }) => {
                 inputChatRef.current?.focus();
                 setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
 
-                try {
-                    const res = await config.runGemini(message);
-                    const newResponse = res.split(' ');
-                    sessionStorage.setItem(
-                        'chatMessages',
-                        JSON.stringify([
-                            ...messages,
-                            { role: 'user', message: message },
-                            { role: 'assistant', message: res },
-                        ]),
-                    );
-                    // setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
-                    typeWords(newResponse);
-                } catch (error) {
-                } finally {
-                    setMessage('');
-                    setIsTyping(false);
-                }
+                await handleAskAI();
             }
         },
-        [isTyping, message, messages, typeWords],
+        [handleAskAI, isTyping, message],
     );
+
+    useEffect(() => {
+        if (data) {
+            setMessages(data);
+        } else {
+            setMessages([{ role: 'assistant', message: 'Chào mừng đến với STEM AI' }]);
+        }
+    }, [data]);
 
     return (
         <div className={styles.wrapper}>
