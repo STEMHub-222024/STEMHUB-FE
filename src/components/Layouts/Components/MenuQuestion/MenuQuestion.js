@@ -17,7 +17,12 @@ const MenuQuestion = ({ onSetQuestion }) => {
             setItems([
                 {
                     key: 'newChat',
-                    label: <p><OpenAIOutlined /><span>Stem AI</span></p>,
+                    label: (
+                        <p>
+                            <OpenAIOutlined />
+                            <span>STEM AI</span>
+                        </p>
+                    ),
                 },
                 {
                     key: '7days',

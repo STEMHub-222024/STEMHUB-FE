@@ -6,6 +6,7 @@ import styles from './ModalChat.module.scss';
 
 // GeminiAI
 import config from '~/config';
+import { ask, sendQuestion } from '~/services/chatbotServices';
 
 const ModalChat = ({ isOpen, setIsOpen }) => {
     const inputChatRef = useRef(null);
@@ -38,6 +39,28 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
         });
     }, []);
 
+    const handleAskAI = useCallback(async () => {
+        try {
+            let data;
+            const { answer, found } = await ask({ question: message });
+            data = answer;
+            if (!found) {
+                data = await config.runGemini(message);
+                await sendQuestion({ content: message, answer: data });
+            }
+            sessionStorage.setItem(
+                'chatMessages',
+                JSON.stringify([...messages, { role: 'user', message: message }, { role: 'assistant', message: data }]),
+            );
+            // setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
+            typeWords(data.split(' '));
+        } catch (error) {
+        } finally {
+            setMessage('');
+            setIsTyping(false);
+        }
+    }, [message, messages, typeWords]);
+
     const handleSendInput = useCallback(
         async (event) => {
             if (!isTyping && event.key === 'Enter' && message.trim()) {
@@ -45,27 +68,10 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                 inputChatRef.current?.focus();
                 setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
 
-                try {
-                    const res = await config.runGemini(message);
-                    const newResponse = res.split(' ');
-                    sessionStorage.setItem(
-                        'chatMessages',
-                        JSON.stringify([
-                            ...messages,
-                            { role: 'user', message: message },
-                            { role: 'assistant', message: res },
-                        ]),
-                    );
-                    // setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
-                    typeWords(newResponse);
-                } catch (error) {
-                } finally {
-                    setMessage('');
-                    setIsTyping(false);
-                }
+                await handleAskAI();
             }
         },
-        [isTyping, message, messages, typeWords],
+        [isTyping, message, handleAskAI],
     );
 
     const handleSendIcon = useCallback(
@@ -75,27 +81,10 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                 inputChatRef.current?.focus();
                 setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
 
-                try {
-                    const res = await config.runGemini(message);
-                    const newResponse = res.split(' ');
-                    sessionStorage.setItem(
-                        'chatMessages',
-                        JSON.stringify([
-                            ...messages,
-                            { role: 'user', message: message },
-                            { role: 'assistant', message: res },
-                        ]),
-                    );
-                    // setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
-                    typeWords(newResponse);
-                } catch (error) {
-                } finally {
-                    setMessage('');
-                    setIsTyping(false);
-                }
+                await handleAskAI();
             }
         },
-        [isTyping, message, messages, typeWords],
+        [handleAskAI, isTyping, message],
     );
 
     const handleChangeMessage = useCallback((event) => {
