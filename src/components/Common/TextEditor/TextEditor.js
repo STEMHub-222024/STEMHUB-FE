@@ -113,14 +113,59 @@ const TextEditor = forwardRef(
 
         const onImageUpload = useCallback(async (file) => {
             try {
-                urlRef.current = await postImage(file);
-                if (urlRef.current) {
-                    uploadedImages.current.push(urlRef.current.fileUrl);
-                    uploadingImages.current.push(urlRef.current.fileUrl);
-                    uploadedImagesRef.current.push(urlRef.current.fileUrl);
-                    return urlRef.current.fileUrl;
+                const maxSize = 5 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    message.error('Kích thước file không được vượt quá 5MB!');
+                    return '';
+                }
+
+                let imageFile = file;
+                if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
+                    const img = new Image();
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    return new Promise((resolve) => {
+                        img.onload = () => {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            ctx.drawImage(img, 0, 0);
+                            canvas.toBlob(async (blob) => {
+                                imageFile = new File([blob], file.name.replace(/\.(jpg|jpeg)$/i, '.png'), {
+                                    type: 'image/png',
+                                });
+                                
+                                try {
+                                    urlRef.current = await postImage(imageFile);
+                                    if (urlRef.current) {
+                                        uploadedImages.current.push(urlRef.current.fileUrl);
+                                        uploadingImages.current.push(urlRef.current.fileUrl);
+                                        uploadedImagesRef.current.push(urlRef.current.fileUrl);
+                                        resolve(urlRef.current.fileUrl);
+                                    } else {
+                                        message.error('Tải hình ảnh lên không thành công!');
+                                        resolve('');
+                                    }
+                                } catch (error) {
+                                    resolve('');
+                                }
+                            }, 'image/png');
+                        };
+                        img.src = URL.createObjectURL(file);
+                    });
+                } else if (file.type === 'image/png') {
+                    urlRef.current = await postImage(file);
+                    if (urlRef.current) {
+                        uploadedImages.current.push(urlRef.current.fileUrl);
+                        uploadingImages.current.push(urlRef.current.fileUrl);
+                        uploadedImagesRef.current.push(urlRef.current.fileUrl);
+                        return urlRef.current.fileUrl;
+                    } else {
+                        message.error('Tải hình ảnh lên không thành công!');
+                    }
                 } else {
-                    message.error('Tải hình ảnh lên không thành công!');
+                    message.error('Chỉ chấp nhận file PNG, JPG hoặc JPEG!');
+                    return '';
                 }
             } catch (error) {
                 return '';

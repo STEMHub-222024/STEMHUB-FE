@@ -4,6 +4,7 @@ import * as topicServices from '~/services/topicServices';
 const initialState = {
     data: [],
     topicIds: {},
+    topicTop4: [],
     showOutstanding: [],
     status: 'idle',
     errorMessage: '',
@@ -13,6 +14,15 @@ const initialState = {
 export const getTopicAsync = createAsyncThunk('topic/getTopicAsync', async (topicData, { rejectWithValue }) => {
     try {
         const response = await topicServices.getTopic();
+        return response;
+    } catch (err) {
+        return rejectWithValue(err.message);
+    }
+});
+
+export const getTopicTop4 = createAsyncThunk('topic/getTopicTop4', async (topicData, { rejectWithValue }) => {
+    try {
+        const response = await topicServices.getTopicTop4();
         return response;
     } catch (err) {
         return rejectWithValue(err.message);
@@ -75,6 +85,18 @@ export const topicSlice = createSlice({
                 state.topicIds = action.payload;
             })
             .addCase(getTopicId.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMessage = action.payload;
+            });
+        builder
+            .addCase(getTopicTop4.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(getTopicTop4.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.topicTop4 = action.payload;
+            })
+            .addCase(getTopicTop4.rejected, (state, action) => {
                 state.status = 'failed';
                 state.errorMessage = action.payload;
             });

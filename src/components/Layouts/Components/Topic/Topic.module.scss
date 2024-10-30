@@ -12,12 +12,17 @@
         transform: translateY(-4px);
         box-shadow: 0 4px 8px #0000001a;
     }
-    .images {
-        padding-top: 100%;
-        background-repeat: no-repeat;
-        background-size: cover;
-        border-top-left-radius: 30px;
-        border-top-right-radius: 30px;
+
+    .group-images {
+        height: 200px;
+
+        .images {
+            height: 100%;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+        }
     }
 
     .content {
@@ -36,7 +41,7 @@
             display: block;
             display: -webkit-box;
             -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 1;
         }
 
         .group-action {

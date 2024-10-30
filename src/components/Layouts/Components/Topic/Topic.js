@@ -9,21 +9,23 @@ import { encodeImageUrl } from '~/utils/stringHelpers';
 
 const cx = classNames.bind(styles);
 
-function Topic({ colorCode, shine }) {
+function Topic({ shine }) {
     const { topicImage, topicName, view, topicId } = shine;
 
     const encodedImageUrl = useMemo(() => encodeImageUrl(topicImage), [topicImage]);
 
     return (
         <div className={cx('wrapper')}>
-            <div className={cx('images')} style={{ backgroundImage: `url(${encodedImageUrl})` }} />
+            <div className={cx('group-images')}>
+                <div className={cx('images')} style={{ backgroundImage: `url(${encodedImageUrl})` }} />
+            </div>
             <div className={cx('content')}>
                 <Heading className={cx('name')} h4>
                     {topicName}
                 </Heading>
                 <div className={cx('group-action')}>
                     <div className={cx('video-number')}>
-                        <div className={cx('wrapper-icon')} style={{ backgroundColor: colorCode }}>
+                        <div className={cx('wrapper-icon')} style={{ backgroundColor: "#7f56d9" }}>
                             <IconPlayerPlayFilled size={12} className={cx('play-icon')} />
                         </div>
                         <span className={cx('title')}>
@@ -35,7 +37,7 @@ function Topic({ colorCode, shine }) {
                     <Button
                         mainColor
                         small
-                        style={{ backgroundColor: colorCode, borderColor: colorCode }}
+                        style={{ backgroundColor: "#7f56d9", borderColor: "#7f56d9"}}
                         to={`/topic/${topicId}`}
                     >
                         Tham gia
@@ -47,7 +49,6 @@ function Topic({ colorCode, shine }) {
 }
 
 Topic.propTypes = {
-    colorCode: PropTypes.string.isRequired,
     shine: PropTypes.shape({
         topicImage: PropTypes.string.isRequired,
         topicName: PropTypes.string.isRequired,

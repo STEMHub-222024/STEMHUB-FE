@@ -9,6 +9,15 @@ export const getTopic = async () => {
     } catch (error) {}
 };
 
+export const getTopicTop4 = async () => {
+    try {
+        const res = await httpRequest.get('Topic/suggestions');
+        if (res.status === 200) {
+            return res.data;
+        }
+    } catch (error) {}
+};
+
 export const getTopicId = async ({ topicId }) => {
     const res = await httpRequest.get(`Topic/${topicId}`);
     if (res.status === 200) {

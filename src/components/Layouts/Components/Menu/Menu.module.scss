@@ -13,4 +13,7 @@
     &.active {
         color: var(--main-color);
     }
+    .title {
+        text-transform: uppercase;
+    }
 }

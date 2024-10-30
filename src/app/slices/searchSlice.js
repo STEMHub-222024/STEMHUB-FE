@@ -6,6 +6,7 @@ const initialState = {
         searchTopics: [],
         searchLessons: [],
         searchPosts: [],
+        searchTopKeywords: [],
         loading: false,
     },
     status: 'idle',
@@ -17,6 +18,18 @@ export const searchTopicAsync = createAsyncThunk(
     async (topicKeyData, { rejectWithValue }) => {
         try {
             const response = await searchService.searchTopiKey(topicKeyData);
+            return response;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    },
+);
+
+export const searchTopKeywordsAsync = createAsyncThunk(
+    'search/searchTopKeywordsAsync',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await searchService.searchTopKeywords();
             return response;
         } catch (err) {
             return rejectWithValue(err.message);
@@ -104,6 +117,21 @@ export const searchSlice = createSlice({
                 state.data.loading = false;
             })
             .addCase(searchNewspaperArticleAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMessage = action.payload;
+                state.data.loading = false;
+            });
+        builder
+            .addCase(searchTopKeywordsAsync.pending, (state) => {
+                state.status = 'loading';
+                state.data.loading = true;
+            })
+            .addCase(searchTopKeywordsAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.data.searchTopKeywords = action.payload;
+                state.data.loading = false;
+            })
+            .addCase(searchTopKeywordsAsync.rejected, (state, action) => {
                 state.status = 'failed';
                 state.errorMessage = action.payload;
                 state.data.loading = false;

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useConvertString from '~/hooks/useConvertString';
 import tinycolor from 'tinycolor2';
@@ -6,31 +6,23 @@ import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
 import SlideShow from '~/components/Common/SlideShow';
 import Heading from '~/components/Common/Heading';
-import NavbarTopic from '~/components/Layouts/Components/NavbarTopic';
 import Topic from '~/components/Layouts/Components/Topic';
 import Button from '~/components/Common/Button';
 import Introduce from '~/components/Layouts/Components/Introduce';
 import PostItem from '~/components/Layouts/Components/CommonItem';
-import { getOutstanding } from '~/app/slices/topicSlice';
+import { getTopicTop4 } from '~/app/slices/topicSlice';
 import { getPostsAsync } from '~/app/slices/postSlice';
-import { getStemAsync, handleOnClickStem } from '~/app/slices/navbarTopicSlice';
 import { selectTopic, selectNavbarTopic, selectPosts } from '~/app/selectors';
 import Loading from '~/components/Common/Loading';
 import config from '~/config';
 
 const cx = classNames.bind(styles);
 
-const checkStemDefault = (stemName, defaultValue) => {
-    const normalizedStemName = stemName.replace(/\s+/g, '').toUpperCase();
-    const normalizedDefaultValue = defaultValue.replace(/\s+/g, '').toUpperCase();
-    const isDefaultMatch = normalizedStemName.includes(normalizedDefaultValue);
-    return { upperCaseName: normalizedStemName, isDefaultMatch };
-};
 
 function Home() {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
-    const { showOutstanding } = useSelector(selectTopic);
+    const { topicTop4 } = useSelector(selectTopic);
     const { isOnClickStem } = useSelector(selectNavbarTopic);
     const posts = useSelector(selectPosts)?.data?.posts || [];
     const convertedString = useConvertString(isOnClickStem);
@@ -38,17 +30,11 @@ function Home() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const stemResult = await dispatch(getStemAsync()).unwrap();
-                const defaultStem = stemResult.find(
-                    (stem) => checkStemDefault(stem.stemName, stem.stemName)?.isDefaultMatch,
-                );
+                await Promise.allSettled([
+                    dispatch(getTopicTop4()).unwrap(),
+                    dispatch(getPostsAsync()).unwrap()
+                ]);
 
-                if (defaultStem) {
-                    await dispatch(getOutstanding({ stemId: defaultStem.stemId })).unwrap();
-                    dispatch(handleOnClickStem({ stemName: defaultStem.stemName }));
-                }
-
-                await dispatch(getPostsAsync()).unwrap();
             } catch (error) {
             } finally {
                 setLoading(false);
@@ -58,7 +44,7 @@ function Home() {
         fetchData();
     }, [dispatch]);
 
-    const topicColors = useMemo(() => showOutstanding?.map(() => tinycolor.random().toString()), [showOutstanding]);
+    // const topicColors = useMemo(() => showOutstanding?.map(() => tinycolor.random().toString()), [showOutstanding]);
 
     if (loading) {
         return <Loading title="Đang tải...." />;
@@ -78,13 +64,12 @@ function Home() {
                             <Heading h2 className={cx('title')}>
                                 Chủ Đề <span>Nổi Bật</span>
                             </Heading>
-                            <NavbarTopic checkStemDefault={checkStemDefault} />
                         </header>
                         <div className={cx('topic-content')}>
                             <div className={cx('grid-row')}>
-                                {showOutstanding?.map((shine, index) => (
+                                {topicTop4?.map((shine, index) => (
                                     <div key={shine.topicId} className={cx('grid-column-3')}>
-                                        <Topic colorCode={topicColors[index]} shine={shine} />
+                                        <Topic shine={shine} />
                                     </div>
                                 ))}
                             </div>
@@ -104,6 +89,11 @@ function Home() {
                     <Introduce />
                 </div>
                 <div className={cx('posts-content')}>
+                    <header className={cx('posts-header')}>
+                        <Heading h2 className={cx('title')}>
+                            Bài viết <span>Nổi Bật</span>
+                        </Heading>
+                    </header>
                     <div className={cx('grid-row')}>
                         {posts.map((post) => (
                             <div key={post.newspaperArticleId} className={cx('grid-column-3')}>

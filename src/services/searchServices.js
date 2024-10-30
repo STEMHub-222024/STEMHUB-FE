@@ -44,3 +44,14 @@ export const searchNewspaperArticle = async ({ newspaperArticleKey }) => {
         return null;
     }
 };
+
+export const searchTopKeywords = async () => {
+    try {
+        const res = await httpRequest.get('SearchKeywords/top-keywords');
+        if (res) {
+            return res.data;
+        }
+    } catch (error) {
+        return null;
+    }
+};
