@@ -62,7 +62,7 @@ function Home() {
                     <div className={cx('grid-column-12')}>
                         <header className={cx('topic-header')}>
                             <Heading h2 className={cx('title')}>
-                                Chủ Đề <span>Nổi Bật</span>
+                                Chủ đề <span>nổi bật</span>
                             </Heading>
                         </header>
                         <div className={cx('topic-content')}>
@@ -91,7 +91,7 @@ function Home() {
                 <div className={cx('posts-content')}>
                     <header className={cx('posts-header')}>
                         <Heading h2 className={cx('title')}>
-                            Bài viết <span>Nổi Bật</span>
+                            Bài viết <span>nổi bật</span>
                         </Heading>
                     </header>
                     <div className={cx('grid-row')}>
