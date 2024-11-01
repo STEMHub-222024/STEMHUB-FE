@@ -3,11 +3,14 @@ import { OpenAIOutlined } from '@ant-design/icons';
 
 import { Menu } from 'antd';
 import { getTopLast30days, getTopLast7days } from '~/services/chatbotServices';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const MenuQuestion = ({ onSetQuestion }) => {
     const [items, setItems] = useState();
     const [data7Days, setData7Days] = useState();
     const [data30Days, setData30Days] = useState();
+    const navigate = useNavigate();
+    let [searchParams, setSearchParams] = useSearchParams();
 
     useEffect(() => {
         (async () => {
@@ -21,6 +24,15 @@ const MenuQuestion = ({ onSetQuestion }) => {
                         <p>
                             <OpenAIOutlined />
                             <span>STEM AI</span>
+                        </p>
+                    ),
+                },
+                {
+                    key: 'newChatCareer',
+                    label: (
+                        <p>
+                            <OpenAIOutlined />
+                            <span>STEM hướng nghiệp</span>
                         </p>
                     ),
                 },
@@ -56,8 +68,19 @@ const MenuQuestion = ({ onSetQuestion }) => {
 
     const onClick = (e) => {
         if (e.key === 'newChat') {
+            navigate(`/stemAI`);
             onSetQuestion(null);
             return;
+        }
+
+        if (e.key === 'newChatCareer') {
+            navigate(`/stemAI?topic=career`);
+            onSetQuestion(null);
+            return;
+        }
+
+        if (searchParams.size !== 0) {
+            setSearchParams({});
         }
 
         const key = e.key.split('_')[0];

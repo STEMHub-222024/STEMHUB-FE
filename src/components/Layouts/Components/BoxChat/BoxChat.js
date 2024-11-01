@@ -1,19 +1,24 @@
 import { Spin } from 'antd';
+import { useSearchParams } from 'react-router-dom';
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import styles from './BoxChat.module.scss';
-import BoxMessage from '../BoxMessage';
 import config from '~/config';
 import { ask, sendQuestion } from '~/services/chatbotServices';
+
+import BoxMessage from '../BoxMessage';
+import CareerBoxMessage from '../CareerBoxMessage';
+
+import styles from './BoxChat.module.scss';
 
 const BoxChat = ({ data }) => {
     const inputChatRef = useRef(null);
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-    const [messages, setMessages] = useState(() => {
-        return data ?? [{ role: 'assistant', message: 'Chào mừng đến với STEM AI' }];
-    });
+    // eslint-disable-next-line no-unused-vars
+    let [searchParams, _] = useSearchParams();
+    const topic = searchParams.get('topic');
+    const [messages, setMessages] = useState([]);
 
     const typeWords = useCallback((words) => {
         let currentMessage = '';
@@ -44,27 +49,36 @@ const BoxChat = ({ data }) => {
         }
     }, []);
 
-    const handleAskAI = useCallback(async () => {
-        try {
-            let data;
-            const { answer, found } = await ask({ question: message });
-            data = answer;
-            if (!found) {
-                data = await config.runGemini(message);
-                await sendQuestion({ content: message, answer: data });
+    const handleAskAI = useCallback(
+        async (message) => {
+            try {
+                let data;
+                const { answer, found } = await ask({ question: message });
+                data = answer;
+                if (!found) {
+                    data = await config.runGemini(message);
+                    await sendQuestion({ content: message, answer: data });
+                }
+                sessionStorage.setItem(
+                    'chatMessages',
+                    JSON.stringify([
+                        ...messages,
+                        { role: 'user', message: message },
+                        { role: 'assistant', message: data },
+                    ]),
+                );
+                if (topic === 'career') {
+                    setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
+                }
+                typeWords(data.split(' '));
+            } catch (error) {
+            } finally {
+                setMessage('');
+                setIsTyping(false);
             }
-            sessionStorage.setItem(
-                'chatMessages',
-                JSON.stringify([...messages, { role: 'user', message: message }, { role: 'assistant', message: data }]),
-            );
-            // setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
-            typeWords(data.split(' '));
-        } catch (error) {
-        } finally {
-            setMessage('');
-            setIsTyping(false);
-        }
-    }, [message, messages, typeWords]);
+        },
+        [messages, topic, typeWords],
+    );
 
     const handleSendInput = useCallback(
         async (event) => {
@@ -73,7 +87,7 @@ const BoxChat = ({ data }) => {
                 inputChatRef.current?.focus();
                 setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
 
-                await handleAskAI();
+                await handleAskAI(message);
             }
         },
         [isTyping, message, handleAskAI],
@@ -86,7 +100,7 @@ const BoxChat = ({ data }) => {
                 inputChatRef.current?.focus();
                 setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
 
-                await handleAskAI();
+                await handleAskAI(message);
             }
         },
         [handleAskAI, isTyping, message],
@@ -95,14 +109,19 @@ const BoxChat = ({ data }) => {
     useEffect(() => {
         if (data) {
             setMessages(data);
-        } else {
-            setMessages([{ role: 'assistant', message: 'Chào mừng đến với STEM AI' }]);
+            return;
         }
-    }, [data]);
+        if (topic) {
+            setMessages([]);
+            return;
+        }
+        setMessages([{ role: 'assistant', message: 'Chào mừng đến với STEM AI' }]);
+    }, [data, topic]);
 
     return (
         <div className={styles.wrapper}>
             <div className={styles.messGroup} style={{ display: 'flex', flexDirection: 'column' }}>
+                {topic === 'career' && <CareerBoxMessage onAskAI={handleAskAI} />}
                 {messages.map((item, index) => (
                     <BoxMessage key={index} data={item} />
                 ))}
