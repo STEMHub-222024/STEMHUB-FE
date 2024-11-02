@@ -30,30 +30,12 @@
     position: relative;
     padding: 4px 0px 8px 0;
 
-    p {
+    .title {
         padding: 0 8px;
         margin: 4px 4px 4px 2px;
-    }
-    .title {
         font-weight: bold;
-    }
-    div {
-        margin-left: 32px;
-        p {
-            margin-left: -28px;
-        }
-        ul {
-            list-style-type: circle;
-
-            li {
-                text-decoration: underline;
-                cursor: pointer;
-            }
-
-            li:hover {
-                color: var(--main-color);
-            }
-        }
+        text-decoration: underline;
+        cursor: pointer;
     }
 }
 

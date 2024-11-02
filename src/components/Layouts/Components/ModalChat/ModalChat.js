@@ -7,6 +7,7 @@ import styles from './ModalChat.module.scss';
 // GeminiAI
 import config from '~/config';
 import { ask, sendQuestion } from '~/services/chatbotServices';
+import { toast } from 'react-toastify';
 
 const ModalChat = ({ isOpen, setIsOpen }) => {
     const inputChatRef = useRef(null);
@@ -40,25 +41,33 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
     }, []);
 
     const handleAskAI = useCallback(async () => {
+        let data;
+        let isError = false;
         try {
-            let data;
             const { answer, found } = await ask({ question: message });
-            data = answer;
             if (!found) {
+                isError = true;
+            }
+            data = answer;
+        } catch (error) {
+            isError = true;
+        }
+        if (isError) {
+            try {
                 data = await config.runGemini(message);
                 await sendQuestion({ content: message, answer: data });
+            } catch (error) {
+                toast.error('Đã có lỗi xảy ra. Vui lòng thử lại sau!');
+                return;
             }
-            sessionStorage.setItem(
-                'chatMessages',
-                JSON.stringify([...messages, { role: 'user', message: message }, { role: 'assistant', message: data }]),
-            );
-            // setMessages((prevMessages) => [...prevMessages, { role: 'assistant', message: res }]);
-            typeWords(data.split(' '));
-        } catch (error) {
-        } finally {
-            setMessage('');
-            setIsTyping(false);
         }
+        setMessage('');
+        setIsTyping(false);
+        sessionStorage.setItem(
+            'chatMessages',
+            JSON.stringify([...messages, { role: 'user', message: message }, { role: 'assistant', message: data }]),
+        );
+        typeWords(data.split(' '));
     }, [message, messages, typeWords]);
 
     const handleSendInput = useCallback(

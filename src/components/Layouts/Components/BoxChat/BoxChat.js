@@ -4,12 +4,14 @@ import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import config from '~/config';
+import { dataTopicCareer } from '../BoxChat/mockData';
 import { ask, sendQuestion } from '~/services/chatbotServices';
 
 import BoxMessage from '../BoxMessage';
 import CareerBoxMessage from '../CareerBoxMessage';
 
 import styles from './BoxChat.module.scss';
+import { toast } from 'react-toastify';
 
 const BoxChat = ({ data }) => {
     const inputChatRef = useRef(null);
@@ -51,31 +53,42 @@ const BoxChat = ({ data }) => {
 
     const handleAskAI = useCallback(
         async (message) => {
+            let data;
+            let isError = false;
+            if (topic === 'career') {
+                data = dataTopicCareer.find((data) => data.question === message);
+                console.log(data.answer);
+                setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
+                typeWords(data.answer.split(' '));
+                setIsTyping(false);
+                return;
+            }
             try {
-                let data;
                 const { answer, found } = await ask({ question: message });
-                data = answer;
                 if (!found) {
+                    isError = true;
+                } else {
+                    data = answer;
+                }
+            } catch (error) {
+                isError = true;
+            }
+            if (isError) {
+                try {
                     data = await config.runGemini(message);
                     await sendQuestion({ content: message, answer: data });
+                } catch (error) {
+                    toast.error('Đã có lỗi xảy ra. Vui lòng thử lại sau!');
+                    return;
                 }
-                sessionStorage.setItem(
-                    'chatMessages',
-                    JSON.stringify([
-                        ...messages,
-                        { role: 'user', message: message },
-                        { role: 'assistant', message: data },
-                    ]),
-                );
-                if (topic === 'career') {
-                    setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
-                }
-                typeWords(data.split(' '));
-            } catch (error) {
-            } finally {
-                setMessage('');
-                setIsTyping(false);
             }
+            sessionStorage.setItem(
+                'chatMessages',
+                JSON.stringify([...messages, { role: 'user', message: message }, { role: 'assistant', message: data }]),
+            );
+            setMessage('');
+            setIsTyping(false);
+            typeWords(data.split(' '));
         },
         [messages, topic, typeWords],
     );
@@ -121,7 +134,7 @@ const BoxChat = ({ data }) => {
     return (
         <div className={styles.wrapper}>
             <div className={styles.messGroup} style={{ display: 'flex', flexDirection: 'column' }}>
-                {topic === 'career' && <CareerBoxMessage onAskAI={handleAskAI} />}
+                {topic === 'career' && <CareerBoxMessage data={dataTopicCareer} onAskAI={handleAskAI} />}
                 {messages.map((item, index) => (
                     <BoxMessage key={index} data={item} />
                 ))}
