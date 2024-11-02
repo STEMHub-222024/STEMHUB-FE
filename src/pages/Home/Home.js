@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useConvertString from '~/hooks/useConvertString';
-import tinycolor from 'tinycolor2';
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
 import SlideShow from '~/components/Common/SlideShow';
@@ -44,8 +43,6 @@ function Home() {
         fetchData();
     }, [dispatch]);
 
-    // const topicColors = useMemo(() => showOutstanding?.map(() => tinycolor.random().toString()), [showOutstanding]);
-
     if (loading) {
         return <Loading title="Đang tải...." />;
     }
@@ -62,7 +59,7 @@ function Home() {
                     <div className={cx('grid-column-12')}>
                         <header className={cx('topic-header')}>
                             <Heading h2 className={cx('title')}>
-                                Chủ Đề <span>Nổi Bật</span>
+                                Chủ đề <span>nổi bật</span>
                             </Heading>
                         </header>
                         <div className={cx('topic-content')}>
@@ -91,7 +88,7 @@ function Home() {
                 <div className={cx('posts-content')}>
                     <header className={cx('posts-header')}>
                         <Heading h2 className={cx('title')}>
-                            Bài viết <span>Nổi Bật</span>
+                            Bài viết <span>nổi bật</span>
                         </Heading>
                     </header>
                     <div className={cx('grid-row')}>

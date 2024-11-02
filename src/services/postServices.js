@@ -66,3 +66,34 @@ export const deletePosts = async (newspaperArticleId) => {
         return res.data;
     } catch (error) {}
 };
+
+export const likePost = async (articleId, accessToken) => {
+    try {
+        const res = await httpRequest.post(`Like/${articleId}/toggleLike`, null, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return res.data;
+    } catch (error) {
+    }
+};
+
+export const getCommentPosts = async (newspaperArticleId) => {
+    try {
+        const res = await httpRequest.get(`Comment/filter?type=1&articleId=${newspaperArticleId}`);
+        return res.data;
+    } catch (error) {}
+};
+
+export const postCommentPosts = async ({ content_C, newspaperArticleId, userId }) => {
+    try {
+        const res = await httpRequest.post('Comment', {
+            content_C,
+            type: 1,
+            newspaperArticleId,
+            userId,
+        });
+        return res.data;
+    } catch (error) {}
+};

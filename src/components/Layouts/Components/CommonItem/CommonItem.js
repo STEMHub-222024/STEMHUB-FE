@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames/bind';
-import { IconCircleCheckFilled } from '@tabler/icons-react';
+import { IconCircleCheckFilled, IconEyeFilled, IconThumbUpFilled, IconBubbleFilled } from '@tabler/icons-react';
 import styles from './CommonItem.module.scss';
 import Heading from '~/components/Common/Heading';
 import Button from '~/components/Common/Button';
@@ -11,7 +11,7 @@ import useUserInfo from '~/hooks/useUserInfo';
 const cx = classNames.bind(styles);
 
 function CommonItem({ data }) {
-    const { newspaperArticleId, title, userId, image } = data;
+    const { newspaperArticleId, title, userId, image, view} = data.article;
     const { data: userInfo } = useUserInfo(userId);
 
     const encodedImageUrl = useMemo(() => {
@@ -45,6 +45,20 @@ function CommonItem({ data }) {
                             <div>Đang tải...</div>
                         )}
                     </Button>
+                </div>
+                <div className={cx('group-button')}>
+                    <div className={cx('btn-bookmark')}>
+                        <IconEyeFilled size={20} />
+                        <span>{view ?? '0'}</span>
+                    </div>
+                    <div className={cx('btn-share')}>
+                        <IconThumbUpFilled size={20} />
+                        <span>{data.totalLikes ?? '0'}</span>
+                    </div>
+                    <div className={cx('btn-like')}>
+                        <IconBubbleFilled size={20} />
+                        <span>{data.totalComments ?? '0'}</span>
+                    </div>
                 </div>
                 <div>
                     <Button to={`/posts/${newspaperArticleId}`} mainColor small>

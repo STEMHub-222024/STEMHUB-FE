@@ -80,6 +80,7 @@
                         color: var(--color-icon-blue);
                     }
                 }
+
                 .personal {
                     display: flex;
                 }
@@ -89,6 +90,45 @@
                 font-size: 1.4rem;
                 padding: 6px 12px;
                 white-space: nowrap;
+            }
+        }
+
+        .group-button {
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+            justify-content: space-between;
+            padding-bottom: 8px;
+            gap: 10px;
+            place-content: flex-end;
+
+            .btn-bookmark,
+            .btn-bookmark,
+            .btn-share,
+            .btn-like {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                color: #666;
+                flex: 1;
+                min-width: 80px;
+                max-width: calc(33.33% - 8px);
+
+                svg {
+                    color: #666;
+                    flex-shrink: 0;
+                }
+
+                span {
+                    font-size: 1.4rem;
+                    color: #666;
+                    font-weight: 500;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 100%;
+                }
             }
         }
     }

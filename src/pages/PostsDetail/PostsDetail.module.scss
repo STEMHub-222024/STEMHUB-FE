@@ -14,6 +14,7 @@
     position: -webkit-sticky;
     position: sticky;
     top: 116px;
+
     .userName {
         color: #292929;
         font-size: 1.6rem;
@@ -47,8 +48,10 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 28px;
+
     .user {
         display: flex;
+
         .avatar {
             position: relative;
         }
@@ -59,12 +62,14 @@
             font-size: 1.4rem;
             justify-content: center;
             margin-left: 18px;
+
             .name {
                 color: #292929;
                 font-size: 1.6rem;
                 font-weight: 600;
                 margin: 0;
             }
+
             .time {
                 color: var(--color-icon-time);
                 margin: 0;
@@ -82,6 +87,55 @@
         }
     }
 }
+
+.menu-list {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background-color: #fff;
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+
+        &:hover {
+            background-color: #f0f0f0;
+        }
+
+        &:active {
+            background-color: #e0e0e0;
+        }
+
+        &:focus {
+            outline: none;
+
+
+            &:disabled {
+                cursor: not-allowed;
+            }
+
+            &:not(:disabled) {
+                cursor: pointer;
+            }
+        }
+
+        .menu-icon {
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-text {
+            font-size: 1.4rem;
+        }
+    }
+
+}
+
 /* Extra small devices (phones, 575px and down) */
 @media (max-width: 575.98px) {
     .wrapper {

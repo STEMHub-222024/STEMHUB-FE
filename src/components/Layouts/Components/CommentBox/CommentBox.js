@@ -32,16 +32,15 @@ function CommentBox() {
             message.warning('Bài học không tồn tại');
             return;
         }
-        try {
-            await dispatch(
-                commentPostAsync({
-                    content_C,
-                    lessonId: lessonIdSplit,
-                    userId: infoUserCurrent.userId,
-                }),
-            ).unwrap();
-            setShowEditText(false);
-        } catch (error) {}
+
+        await dispatch(
+            commentPostAsync({
+                content_C,
+                lessonId: lessonIdSplit,
+                userId: infoUserCurrent.userId,
+            }),
+        ).unwrap();
+        setShowEditText(false);
     }, [dispatch, content_C, lessonId, infoUserCurrent.userId]);
 
     return (
@@ -54,7 +53,7 @@ function CommentBox() {
                     <>
                         <TextEditor height="280px" placeholder="Bạn có thắc mắc gì trong bài học này?" />
                         <div className={cx('actionWrapper')}>
-                            <Button text small className={cx('cancel')} onClick={handleShowEditText}>
+                            <Button small className={cx('cancel')} onClick={handleShowEditText}>
                                 Huỷ
                             </Button>
                             <Button
