@@ -12,7 +12,7 @@
                 margin: auto;
                 overflow-y: overlay;
                 padding: 4px 6px;
-                background-color: var(--main-color);
+                // background-color: var(--main-color);
                 border-radius: 8px;
 
                 &::-webkit-scrollbar {
@@ -39,7 +39,7 @@
                 display: flex;
                 align-items: center;
                 margin-top: 8px;
-                width: 103%;
+                width: 100%;
                 .input {
                     font-size: 1.4rem;
                     padding: 12px 52px 12px 8px;

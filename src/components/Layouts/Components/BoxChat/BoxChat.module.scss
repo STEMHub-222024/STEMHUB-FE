@@ -1,0 +1,61 @@
+.wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    scrollbar-width: thin;
+    min-height: calc(100vh - 98px);
+
+    .messGroup {
+        width: 100%;
+        display: flex;
+        flex-direction: column-reverse;
+        overflow-y: overlay;
+        padding: 4px 6px;
+        border-radius: 8px;
+
+        &::-webkit-scrollbar {
+            border-radius: 0;
+            height: 8px;
+            width: 8px;
+        }
+
+        .typing {
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+            margin-bottom: 8px;
+            color: #fff;
+            p {
+                margin: 0;
+                padding-left: 12px;
+                opacity: 0.5;
+            }
+        }
+    }
+
+    .inputChat {
+        display: flex;
+        align-items: center;
+        margin-top: 8px;
+        width: 100%;
+        .input {
+            font-size: 1.4rem;
+            padding: 12px 52px 12px 8px;
+            border-radius: 4px;
+            width: 100%;
+            font-weight: 400;
+            outline: none;
+            border: 2px solid #233296;
+            &:focus-visible {
+                outline: #0f2195 auto;
+            }
+        }
+        .typingIcon {
+            font-size: 24px;
+            right: 42px;
+            z-index: 100;
+        }
+    }
+}
