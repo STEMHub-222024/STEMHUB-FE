@@ -27,7 +27,7 @@ function Reaction({ newspaperArticleId, post }) {
 
     const [showEditText, setShowEditText] = useState(false);
     const [userInfoMap, setUserInfoMap] = useState({});
-    const [love, setLove] = useState(post.liked || false);
+    const [isliked, setIsLike] = useState(post.liked);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -71,7 +71,7 @@ function Reaction({ newspaperArticleId, post }) {
         try {
             const res = await postService.likePost(newspaperArticleId, accessToken);
             if (res.liked) {
-                setLove(res.liked);
+                setIsLike(res.liked);
                 post.totalLikes = res.totalLikes;
             }
             fetchComments();

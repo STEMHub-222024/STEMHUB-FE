@@ -93,7 +93,7 @@ function Home() {
                     </header>
                     <div className={cx('grid-row')}>
                         {posts.map((post) => (
-                            <div key={post.newspaperArticleId} className={cx('grid-column-3')}>
+                            <div key={post?.article?.newspaperArticleId} className={cx('grid-column-3')}>
                                 <PostItem data={post} />
                             </div>
                         ))}
