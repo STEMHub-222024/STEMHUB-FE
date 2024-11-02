@@ -2,8 +2,8 @@ import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import React from 'react';
-import { FacebookOutlined, TwitterOutlined, YoutubeOutlined } from '@ant-design/icons';
-import { Flex, Tag } from 'antd';
+import { FacebookIcon, TwitterIcon, WhatsappIcon } from 'react-share';
+import { FacebookShareButton, TwitterShareButton, WhatsappShareButton } from 'react-share';
 import Heading from '~/components/Common/Heading';
 import MarkdownParser from '~/components/Layouts/Components/MarkdownParser';
 import * as ScientistServices from '~/services/scientistServices';
@@ -36,17 +36,17 @@ function ScientistDetail() {
                             <Heading className={cx('heading')}>
                                 Tìm hiểu về nhà khoá học <span>{scientist ? scientist.fullName : ''}</span>
                             </Heading>
-                            <Flex gap="4px 0" wrap>
-                                <Tag icon={<FacebookOutlined />} color="#3b5999">
-                                    Facebook
-                                </Tag>
-                                <Tag icon={<YoutubeOutlined />} color="#cd201f">
-                                    Youtube
-                                </Tag>
-                                <Tag icon={<TwitterOutlined />} color="#55acee">
-                                    Twitter
-                                </Tag>
-                            </Flex>
+                            <div className={cx('shareButtons')}>
+                                <FacebookShareButton url={window.location.href} quote={`Tìm hiểu về nhà khoá học ${scientist ? scientist.fullName : ''}`}>
+                                    <FacebookIcon size={32} round />
+                                </FacebookShareButton>
+                                <TwitterShareButton url={window.location.href} title={`Tìm hiểu về nhà khoá học ${scientist ? scientist.fullName : ''}`}>
+                                    <TwitterIcon size={32} round />
+                                </TwitterShareButton>
+                                <WhatsappShareButton url={window.location.href} title={`Tìm hiểu về nhà khoá học ${scientist ? scientist.fullName : ''}`}>
+                                    <WhatsappIcon size={32} round />
+                                </WhatsappShareButton>
+                            </div>
 
                             <div className={cx('line')}></div>
 

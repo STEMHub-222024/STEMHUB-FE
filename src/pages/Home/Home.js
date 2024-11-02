@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useConvertString from '~/hooks/useConvertString';
-import tinycolor from 'tinycolor2';
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
 import SlideShow from '~/components/Common/SlideShow';
@@ -43,8 +42,6 @@ function Home() {
 
         fetchData();
     }, [dispatch]);
-
-    // const topicColors = useMemo(() => showOutstanding?.map(() => tinycolor.random().toString()), [showOutstanding]);
 
     if (loading) {
         return <Loading title="Đang tải...." />;

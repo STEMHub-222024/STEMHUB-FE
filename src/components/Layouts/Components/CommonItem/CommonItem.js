@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames/bind';
-import { IconCircleCheckFilled } from '@tabler/icons-react';
+import { IconCircleCheckFilled, IconEyeFilled, IconThumbUpFilled, IconBubbleFilled } from '@tabler/icons-react';
 import styles from './CommonItem.module.scss';
 import Heading from '~/components/Common/Heading';
 import Button from '~/components/Common/Button';
@@ -45,6 +45,20 @@ function CommonItem({ data }) {
                             <div>Đang tải...</div>
                         )}
                     </Button>
+                </div>
+                <div className={cx('group-button')}>
+                    <div className={cx('btn-bookmark')}>
+                        <IconEyeFilled size={20} />
+                        <span>2</span>
+                    </div>
+                    <div className={cx('btn-share')}>
+                        <IconThumbUpFilled size={20} />
+                        <span>61</span>
+                    </div>
+                    <div className={cx('btn-like')}>
+                        <IconBubbleFilled size={20} />
+                        <span>236</span>
+                    </div>
                 </div>
                 <div>
                     <Button to={`/posts/${newspaperArticleId}`} mainColor small>

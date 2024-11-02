@@ -62,7 +62,9 @@ function Button({
     } else if (href) {
         props.href = href;
         Comp = 'a';
-    }
+    } else if (onClick) {
+        props.onClick = onClick;
+    }   
     return (
         <Comp className={classes} {...props}>
             {leftIcon && <span className={cx('icon')}>{leftIcon}</span>}

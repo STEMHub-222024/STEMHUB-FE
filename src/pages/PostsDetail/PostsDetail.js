@@ -1,14 +1,17 @@
 import classNames from 'classnames/bind';
-import { useEffect, useMemo, memo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useEffect, useMemo, memo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { IconDots } from '@tabler/icons-react';
+import { IconDots, IconShare } from '@tabler/icons-react';
+import Tippy from '@tippyjs/react/headless';
+import { FacebookShareButton, TwitterShareButton, LinkedinShareButton } from 'react-share';
+import { FacebookIcon, TwitterIcon, LinkedinIcon } from 'react-share';
+import { message } from 'antd';
 import { getPostsByIdAsync } from '~/app/slices/postSlice';
 import { selectPosts } from '~/app/selectors';
 import useUserInfo from '~/hooks/useUserInfo';
 import styles from './PostsDetail.module.scss';
 import Button from '~/components/Common/Button';
-import config from '~/config';
 import Heading from '~/components/Common/Heading';
 import Reaction from '~/components/Layouts/Components/Reaction';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';
@@ -27,18 +30,32 @@ const UserInfo = memo(({ fullName, Component, className, h4 }) => (
 function PostsDetail() {
     const { postsId } = useParams();
     const dispatch = useDispatch();
-    const { post } = useSelector(selectPosts).data;
-    const { title, htmlContent, userId, create_at } = post || {};
+    const { post } = useSelector(selectPosts)?.data || {};
+    const { title, htmlContent, userId, create_at, description_NA, image } = post || {};
     const { data: userInfo, isLoading } = useUserInfo(userId);
+    const [showShare, setShowShare] = useState(false);
+    const shareUrl = window.location.href;
 
     useEffect(() => {
-        dispatch(getPostsByIdAsync({ postsId }));
+        if (postsId) {
+            dispatch(getPostsByIdAsync({ postsId }));
+        }
     }, [dispatch, postsId]);
 
     const fullName = useMemo(
         () => (userInfo ? `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim() : ''),
         [userInfo],
     );
+
+    const handleToggleShare = () => {
+        setShowShare(!showShare);
+    };
+
+    const handleCopyLink = () => {
+        navigator.clipboard.writeText(shareUrl);
+        message.success('Đã sao chép liên kết!');
+        setShowShare(false);
+    };
 
     if (isLoading) return <Loading title="Đang tải...." />;
 
@@ -52,7 +69,7 @@ function PostsDetail() {
                                 <UserInfo fullName={fullName} Component={Heading} className="userName" h4 />
                             </div>
                             <hr />
-                            <Reaction />
+                            <Reaction newspaperArticleId={postsId} />
                         </div>
                     </div>
                     <div className={cx('grid-column-9', { repositoryWith: true })}>
@@ -60,25 +77,89 @@ function PostsDetail() {
                             <Heading className={cx('heading')}>{title}</Heading>
                             <div className={cx('header')}>
                                 <div className={cx('user')}>
-                                    <Link to={config.routes.home}>
+                                    <span>
                                         <FallbackAvatar
                                             className={cx('avatar')}
                                             pro
                                             linkImage={userInfo?.image || ''}
                                             altImage="avatar"
                                         />
-                                    </Link>
+                                    </span>
                                     <div className={cx('info')}>
-                                        <Link to={config.routes.home}>
+                                        <span>
                                             <UserInfo fullName={fullName} Component={'span'} className="name" />
-                                        </Link>
+                                        </span>
                                         <p className={cx('time')}>{create_at && formatDateToNow(create_at)}</p>
                                     </div>
                                 </div>
                                 <div className={cx('actions')}>
-                                    <Button text>
-                                        <IconDots size={20} />
-                                    </Button>
+                                    <Tippy
+                                        interactive
+                                        visible={showShare}
+                                        placement="bottom-end"
+                                        render={(attrs) => (
+                                            <div className={cx('menu-list')} tabIndex="-1" {...attrs}>
+                                                <FacebookShareButton
+                                                    url={shareUrl}
+                                                    title={title}
+                                                    description={description_NA}
+                                                    hashtag="#stempost"
+                                                    picture={image}
+                                                >
+                                                    <div className={cx('menu-item')}>
+                                                        <div className={cx('menu-icon')}>
+                                                            <FacebookIcon size={20} round />
+                                                        </div>
+                                                        <span className={cx('menu-text')}>Chia sẻ lên Facebook</span>
+                                                    </div>
+                                                </FacebookShareButton>
+
+                                                <TwitterShareButton
+                                                    url={shareUrl}
+                                                    title={title}
+                                                    hashtags={['stempost']}
+                                                    via="STEMPost"
+                                                    media={image}
+                                                >
+                                                    <div className={cx('menu-item')}>
+                                                        <div className={cx('menu-icon')}>
+                                                            <TwitterIcon size={20} round />
+                                                        </div>
+                                                        <span className={cx('menu-text')}>Chia sẻ lên Twitter</span>
+                                                    </div>
+                                                </TwitterShareButton>
+
+                                                <LinkedinShareButton
+                                                    url={shareUrl}
+                                                    title={title}
+                                                    summary={description_NA}
+                                                    source="STEMPost"
+                                                    media={image}
+                                                >
+                                                    <div className={cx('menu-item')}>
+                                                        <div className={cx('menu-icon')}>
+                                                            <LinkedinIcon size={20} round />
+                                                        </div>
+                                                        <span className={cx('menu-text')}>Chia sẻ lên LinkedIn</span>
+                                                    </div>
+                                                </LinkedinShareButton>
+
+                                                <div className={cx('menu-item')} onClick={handleCopyLink}>
+                                                    <div className={cx('menu-icon')}>
+                                                        <IconShare size={20} />
+                                                    </div>
+                                                    <span className={cx('menu-text')}>Sao chép liên kết</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                        onClickOutside={() => setShowShare(false)}
+                                    >
+                                        <div onClick={handleToggleShare}>
+                                            <Button text>
+                                                <IconDots size={20} />
+                                            </Button>
+                                        </div>
+                                    </Tippy>
                                 </div>
                             </div>
                             <MarkdownParser content_C={htmlContent} />

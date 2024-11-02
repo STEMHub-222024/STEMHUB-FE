@@ -1,3 +1,4 @@
+
 import * as httpRequest from '~/utils/httpRequest';
 
 export const getComment = async () => {
@@ -30,10 +31,13 @@ export const postComment = async ({ content_C, lessonId, userId }) => {
         const res = await httpRequest.post('Comment', {
             content_C,
             lessonId,
+            type: 0,
             userId,
         });
         return res.data;
-    } catch (error) {}
+    } catch (error) {
+        console.log("erroer", error);
+    }
 };
 
 export const deleteComment = async ({ commentId, accessToken }) => {

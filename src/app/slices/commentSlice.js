@@ -1,14 +1,18 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import * as commentServices from '~/services/commentServices';
+import * as postServices from '~/services/postServices';
 
 const initialState = {
     data: {
         content_C: '',
         commentNew: {},
+        commentNewPosts: {},
         commentNews: [],
+        commentNewsPosts: [],
     },
     filter: {
         commentByLessonIds: [],
+        commentByPostsIds: [],
     },
     status: 'idle',
     errorMessage: '',
@@ -22,12 +26,30 @@ export const commentPostAsync = createAsyncThunk('comment/commentPostAsync', asy
         return rejectWithValue(err.response.data.message);
     }
 });
+// Posts
+export const commentGetPostsAsync = createAsyncThunk('comment/commentGetPostsAsync', async (infoData, { rejectWithValue }) => {
+    try {
+        const response = await postServices.getCommentPosts(infoData);
+        return response;
+    } catch (err) {
+        return rejectWithValue(err.response.data.message);
+    }
+});
+
+export const commentPostPostsAsync = createAsyncThunk('comment/commentPostPostsAsync', async (infoData, { rejectWithValue }) => {
+    try {
+        const response = await postServices.postCommentPosts(infoData);
+        return response;
+    } catch (err) {
+        return rejectWithValue(err.response.data.message);
+    }
+});
 
 export const commentGetAllAsync = createAsyncThunk(
     'comment/commentGetAllAsync',
     async (infoData, { rejectWithValue }) => {
         try {
-            const response = await commentServices.getComment();
+            const response = await commentServices.getComment(infoData);
             return response;
         } catch (err) {
             return rejectWithValue(err.response.data.message);
@@ -86,8 +108,8 @@ export const commentSlice = createSlice({
             })
             .addCase(commentPostAsync.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                state.filter.commentByLessonIds.push(action.payload);
                 state.data.commentNew = action.payload;
+                state.filter.commentByLessonIds.push(action.payload);
             })
             .addCase(commentPostAsync.rejected, (state, action) => {
                 state.status = 'failed';
@@ -128,6 +150,31 @@ export const commentSlice = createSlice({
                 state.filter.commentByLessonIds = newCommentByLessonIds;
             })
             .addCase(removeCommentByIdAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMessage = action.payload;
+            });
+        builder
+            .addCase(commentPostPostsAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(commentPostPostsAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.data.commentNewPosts = action.payload;
+                state.filter.commentByPostsIds.push(action.payload);
+            })
+            .addCase(commentPostPostsAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.errorMessage = action.payload;
+            })
+        builder
+            .addCase(commentGetPostsAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(commentGetPostsAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.data.commentNewsPosts = action.payload;
+            })
+            .addCase(commentGetPostsAsync.rejected, (state, action) => {
                 state.status = 'failed';
                 state.errorMessage = action.payload;
             });

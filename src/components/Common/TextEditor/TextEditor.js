@@ -42,7 +42,7 @@ const TextEditor = forwardRef(
                     if (lang && hljs.getLanguage(lang)) {
                         try {
                             return hljs.highlight(lang, str).value;
-                        } catch (__) {}
+                        } catch (__) { }
                     }
                     return '';
                 },
@@ -64,6 +64,18 @@ const TextEditor = forwardRef(
             if (initialContent && mdEditorRef.current) {
                 mdEditorRef.current.setText(initialContent.markdown);
             }
+
+            const style = document.createElement('style');
+            style.innerHTML = `
+                    .rc-md-navigation {
+                        top: 0 !important;
+                    }
+                `;
+            document.head.appendChild(style);
+
+            return () => {
+                document.head.removeChild(style);
+            };
         }, [initialContent]);
 
         useEffect(() => {
@@ -91,7 +103,7 @@ const TextEditor = forwardRef(
                 try {
                     await deleteImage(url.split('uploadimage/')[1]);
                     uploadedImages.current = uploadedImages.current.filter((imgUrl) => imgUrl !== url);
-                } catch (error) {}
+                } catch (error) { }
             });
 
             currentImages.current = Array.from(newImages);
@@ -134,7 +146,7 @@ const TextEditor = forwardRef(
                                 imageFile = new File([blob], file.name.replace(/\.(jpg|jpeg)$/i, '.png'), {
                                     type: 'image/png',
                                 });
-                                
+
                                 try {
                                     urlRef.current = await postImage(imageFile);
                                     if (urlRef.current) {
