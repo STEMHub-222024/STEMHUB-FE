@@ -1,22 +1,26 @@
-import { useState, useRef, useCallback } from 'react';
-import { Drawer, Spin } from 'antd';
+import { Spin } from 'antd';
+import { useSearchParams } from 'react-router-dom';
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
-import BoxMessage from '~/components/Layouts/Components/BoxMessage';
-import styles from './ModalChat.module.scss';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-// GeminiAI
 import config from '~/config';
+import { dataTopicCareer } from '../BoxChat/mockData';
 import { ask, sendQuestion } from '~/services/chatbotServices';
+
+import BoxMessage from '../BoxMessage';
+import CareerBoxMessage from '../CareerBoxMessage';
+
+import styles from './BoxChat.module.scss';
 import { toast } from 'react-toastify';
 
-const ModalChat = ({ isOpen, setIsOpen }) => {
+const BoxChat = ({ data }) => {
     const inputChatRef = useRef(null);
-    const [messages, setMessages] = useState(() => {
-        const savedMessages = JSON.parse(sessionStorage.getItem('chatMessages'));
-        return savedMessages || [{ role: 'assistant', message: 'Chào mừng đến với STEM AI' }];
-    });
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    // eslint-disable-next-line no-unused-vars
+    let [searchParams, _] = useSearchParams();
+    const topic = searchParams.get('topic');
+    const [messages, setMessages] = useState([]);
 
     const typeWords = useCallback((words) => {
         let currentMessage = '';
@@ -40,35 +44,54 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
         });
     }, []);
 
-    const handleAskAI = useCallback(async () => {
-        let data;
-        let isError = false;
-        try {
-            const { answer, found } = await ask({ question: message });
-            if (!found) {
-                isError = true;
-            }
-            data = answer;
-        } catch (error) {
-            isError = true;
+    const handleChangeMessage = useCallback((event) => {
+        const messageValue = event.target.value;
+        if (!messageValue.startsWith(' ')) {
+            setMessage(messageValue);
         }
-        if (isError) {
-            try {
-                data = await config.runGemini(message);
-                await sendQuestion({ content: message, answer: data });
-            } catch (error) {
-                toast.error('Đã có lỗi xảy ra. Vui lòng thử lại sau!');
+    }, []);
+
+    const handleAskAI = useCallback(
+        async (message) => {
+            let data;
+            let isError = false;
+            if (topic === 'career') {
+                data = dataTopicCareer.find((data) => data.question === message);
+                console.log(data.answer);
+                setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
+                typeWords(data.answer.split(' '));
+                setIsTyping(false);
                 return;
             }
-        }
-        setMessage('');
-        setIsTyping(false);
-        sessionStorage.setItem(
-            'chatMessages',
-            JSON.stringify([...messages, { role: 'user', message: message }, { role: 'assistant', message: data }]),
-        );
-        typeWords(data.split(' '));
-    }, [message, messages, typeWords]);
+            try {
+                const { answer, found } = await ask({ question: message });
+                if (!found) {
+                    isError = true;
+                } else {
+                    data = answer;
+                }
+            } catch (error) {
+                isError = true;
+            }
+            if (isError) {
+                try {
+                    data = await config.runGemini(message);
+                    await sendQuestion({ content: message, answer: data });
+                } catch (error) {
+                    toast.error('Đã có lỗi xảy ra. Vui lòng thử lại sau!');
+                    return;
+                }
+            }
+            sessionStorage.setItem(
+                'chatMessages',
+                JSON.stringify([...messages, { role: 'user', message: message }, { role: 'assistant', message: data }]),
+            );
+            setMessage('');
+            setIsTyping(false);
+            typeWords(data.split(' '));
+        },
+        [messages, topic, typeWords],
+    );
 
     const handleSendInput = useCallback(
         async (event) => {
@@ -77,7 +100,7 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                 inputChatRef.current?.focus();
                 setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
 
-                await handleAskAI();
+                await handleAskAI(message);
             }
         },
         [isTyping, message, handleAskAI],
@@ -90,43 +113,28 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                 inputChatRef.current?.focus();
                 setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
 
-                await handleAskAI();
+                await handleAskAI(message);
             }
         },
         [handleAskAI, isTyping, message],
     );
 
-    const handleChangeMessage = useCallback((event) => {
-        const messageValue = event.target.value;
-        if (!messageValue.startsWith(' ')) {
-            setMessage(messageValue);
+    useEffect(() => {
+        if (data) {
+            setMessages(data);
+            return;
         }
-    }, []);
-
-    const handleShowModal = useCallback(() => setIsOpen(!isOpen), [isOpen, setIsOpen]);
+        if (topic) {
+            setMessages([]);
+            return;
+        }
+        setMessages([{ role: 'assistant', message: 'Chào mừng đến với STEM AI' }]);
+    }, [data, topic]);
 
     return (
-        <Drawer
-            closable
-            destroyOnClose
-            title={'CHAT BOX AI'}
-            placement="right"
-            open={isOpen}
-            onClose={handleShowModal}
-            size="large"
-            styles={{
-                body: {
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    scrollbarWidth: 'thin',
-                    backgroundColor: '#dddd',
-                },
-            }}
-            zIndex={99999}
-        >
+        <div className={styles.wrapper}>
             <div className={styles.messGroup} style={{ display: 'flex', flexDirection: 'column' }}>
+                {topic === 'career' && <CareerBoxMessage data={dataTopicCareer} onAskAI={handleAskAI} />}
                 {messages.map((item, index) => (
                     <BoxMessage key={index} data={item} />
                 ))}
@@ -161,8 +169,8 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                     <SendOutlined className={styles.typingIcon} onClick={handleSendIcon} style={{ fontSize: '24px' }} />
                 )}
             </div>
-        </Drawer>
+        </div>
     );
 };
 
-export default ModalChat;
+export default BoxChat;

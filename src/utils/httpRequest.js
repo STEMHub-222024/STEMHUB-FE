@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const httpRequest = axios.create({
-    baseURL: process.env.REACT_APP_STEAM_BASE_URL,
+    baseURL: process.env.REACT_APP_STEAM_BASE_URL?.replace(/"/g, ''),
 });
 
 export const get = async (path, options = {}) => {
