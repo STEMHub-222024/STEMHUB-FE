@@ -13,11 +13,13 @@ import TextEditor from '~/components/Common/TextEditor';
 import Button from '~/components/Common/Button';
 import useUserInfo from '~/hooks/useUserInfo';
 import MarkdownParser from '~/components/Layouts/Components/MarkdownParser';
+import * as postService from '~/services/postServices';
+
 import styles from './Reaction.module.scss';
 
 const cx = classNames.bind(styles);
 
-function Reaction({ newspaperArticleId }) {
+function Reaction({ newspaperArticleId, post }) {
     const dispatch = useDispatch();
     const { content_C, commentNewsPosts } = useSelector(selectComment).data;
     const { infoUserCurrent, allow } = useSelector(selectAuth).data;
@@ -25,88 +27,84 @@ function Reaction({ newspaperArticleId }) {
 
     const [showEditText, setShowEditText] = useState(false);
     const [userInfoMap, setUserInfoMap] = useState({});
-    const [love, setLove] = useState(() => JSON.parse(localStorage.getItem('love')) || false);
-    const [loveCount, setLoveCount] = useState(() => JSON.parse(localStorage.getItem('loveCount')) || 30);
+    const [love, setLove] = useState(post.liked || false);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
-    const fetchComments = async () => {
+    const fetchComments = useCallback(async () => {
+        setIsLoading(true);
         try {
-            setIsLoading(true);
             await dispatch(commentGetPostsAsync(newspaperArticleId)).unwrap();
-        } catch (error) {
-            // Xử lý lỗi nếu cần
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [dispatch, newspaperArticleId]);
 
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         const map = {};
-        for (const comment of commentNewsPosts) {
+        await Promise.all(commentNewsPosts.map(async (comment) => {
             try {
                 const userInfo = await dispatch(getUserIdAsync({ userId: comment.userId })).unwrap();
                 map[comment.userId] = userInfo;
-            } catch (error) {
-            }
-        }
+            } catch (error) {}
+        }));
         setUserInfoMap(map);
-    };
+    }, [dispatch, commentNewsPosts]);
 
     useEffect(() => {
         fetchComments();
-    }, [dispatch, newspaperArticleId]);
+    }, [fetchComments]);
 
     useEffect(() => {
         if (commentNewsPosts?.length > 0) {
             fetchUsers();
         }
-    }, [dispatch, commentNewsPosts]);
+    }, [fetchUsers, commentNewsPosts]);
 
-    useEffect(() => {
-        localStorage.setItem('love', JSON.stringify(love));
-        localStorage.setItem('loveCount', JSON.stringify(loveCount));
-    }, [love, loveCount]);
-
-    const handleLove = () => {
-        const newLoveState = !love;
-        setLove(newLoveState);
-        setLoveCount(prev => newLoveState ? prev + 1 : prev - 1);
+    const handleLove = async () => {
+        const accessToken = Cookies.get('accessToken');
+        if (!accessToken) {
+            message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
+            setTimeout(() => window.location.href = '/login', 1000);
+            return;
+        }
+        try {
+            const res = await postService.likePost(newspaperArticleId, accessToken);
+            if (res.liked) {
+                setLove(res.liked);
+                post.totalLikes = res.totalLikes;
+            }
+            fetchComments();
+        } catch (error) {}
     };
 
     const handleComment = async () => {
+        const accessToken = Cookies.get('accessToken');
+        if (!accessToken) {
+            message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
+            setTimeout(() => window.location.href = '/login', 1000);
+            return;
+        }
         try {
-            await dispatch(
-                commentPostPostsAsync({
-                    content_C,
-                    newspaperArticleId,
-                    userId: infoUserCurrent.userId,
-                })
-            ).unwrap();
+            await dispatch(commentPostPostsAsync({ content_C, newspaperArticleId, userId: infoUserCurrent.userId })).unwrap();
             dispatch(commentGetPostsAsync(newspaperArticleId));
             setShowEditText(false);
-        } catch (error) {
-        }
+        } catch (error) {}
     };
 
-    const handleDeleteComment = useCallback(
-        async (commentId) => {
-            const accessToken = Cookies.get('accessToken');
-            if (!accessToken) {
-                message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
-                return;
-            }
-
-            try {
-                await dispatch(removeCommentByIdAsync({ commentId, accessToken })).unwrap();
-                await dispatch(commentGetPostsAsync(newspaperArticleId)).unwrap();
-                message.success('Xoá thành công!');
-            } catch (error) {
-                message.error('Có lỗi xảy ra khi xoá bình luận');
-            }
-        },
-        [dispatch, newspaperArticleId],
-    );
+    const handleDeleteComment = useCallback(async (commentId) => {
+        const accessToken = Cookies.get('accessToken');
+        if (!accessToken) {
+            message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
+            setTimeout(() => window.location.href = '/login', 1000);
+            return;
+        }
+        try {
+            await dispatch(removeCommentByIdAsync({ commentId, accessToken })).unwrap();
+            await dispatch(commentGetPostsAsync(newspaperArticleId)).unwrap();
+            message.success('Xoá thành công!');
+        } catch (error) {}
+    }, [dispatch, newspaperArticleId]);
 
     const renderedComments = useMemo(() => {
         if (!commentNewsPosts?.length) return null;
@@ -119,11 +117,7 @@ function Reaction({ newspaperArticleId }) {
                 <div key={comment.commentId} className={cx('detailComment')}>
                     <div className={cx('avatarWrap')}>
                         <div className={cx('avatarWrapper')}>
-                            <FallbackAvatar
-                                className={cx('avatar')}
-                                linkImage={user?.image}
-                                altImage={user?.lastName ?? 'avatar'}
-                            />
+                            <FallbackAvatar className={cx('avatar')} linkImage={user?.image} altImage={user?.lastName ?? 'avatar'} />
                         </div>
                     </div>
                     <div className={cx('commentBody')}>
@@ -159,21 +153,21 @@ function Reaction({ newspaperArticleId }) {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('btnReact')}>
-                {love ? (
+                {post.totalLikes ? (
                     <>
                         <IconThumbUpFilled size={20} className={cx('active')} onClick={handleLove} />
-                        <span>{loveCount}</span>
+                        <span>{post.totalLikes}</span>
                     </>
                 ) : (
                     <>
                         <IconThumbUp size={20} onClick={handleLove} />
-                        <span>{loveCount}</span>
+                        <span>{post.totalLikes}</span>
                     </>
                 )}
             </div>
             <div className={cx('btnReact')}>
                 <IconBubble size={20} onClick={() => setOpenDrawer(true)} />
-                <span>4</span>
+                <span>{commentNewsPosts?.length ?? '0'}</span>
             </div>
 
             <Drawer title="Bình luận" size="large" placement="right" onClose={() => setOpenDrawer(false)} open={openDrawer}>
@@ -187,24 +181,13 @@ function Reaction({ newspaperArticleId }) {
                                 <>
                                     <TextEditor className={cx('textEditor')} height="280px" placeholder="Bạn có thắc mắc gì trong bài học này?" />
                                     <div className={cx('actionWrapper')}>
-                                        <Button small className={cx('cancel')} onClick={() => setShowEditText(false)}>
-                                            Huỷ
-                                        </Button>
-                                        <Button
-                                            small
-                                            className={cx('btnSubmit', { disabled: !content_C })}
-                                            disabled={!content_C}
-                                            onClick={handleComment}
-                                        >
-                                            Bình luận
-                                        </Button>
+                                        <Button small className={cx('cancel')} onClick={() => setShowEditText(false)}>Huỷ</Button>
+                                        <Button small className={cx('btnSubmit', { disabled: !content_C })} disabled={!content_C} onClick={handleComment}>Bình luận</Button>
                                     </div>
                                 </>
                             ) : (
                                 <div className={cx('placeholder')}>
-                                    <span className={cx('comment-suggestions')} onClick={() => setShowEditText(true)}>
-                                        Bạn có thắc mắc gì trong bài viết này?
-                                    </span>
+                                    <span className={cx('comment-suggestions')} onClick={() => setShowEditText(true)}>Bạn có thắc mắc gì trong bài viết này?</span>
                                 </div>
                             )}
                         </div>

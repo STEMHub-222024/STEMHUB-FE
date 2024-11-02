@@ -11,7 +11,7 @@ import useUserInfo from '~/hooks/useUserInfo';
 const cx = classNames.bind(styles);
 
 function CommonItem({ data }) {
-    const { newspaperArticleId, title, userId, image } = data;
+    const { newspaperArticleId, title, userId, image, view} = data.article;
     const { data: userInfo } = useUserInfo(userId);
 
     const encodedImageUrl = useMemo(() => {
@@ -49,15 +49,15 @@ function CommonItem({ data }) {
                 <div className={cx('group-button')}>
                     <div className={cx('btn-bookmark')}>
                         <IconEyeFilled size={20} />
-                        <span>2</span>
+                        <span>{view ?? '0'}</span>
                     </div>
                     <div className={cx('btn-share')}>
                         <IconThumbUpFilled size={20} />
-                        <span>61</span>
+                        <span>{data.totalLikes ?? '0'}</span>
                     </div>
                     <div className={cx('btn-like')}>
                         <IconBubbleFilled size={20} />
-                        <span>236</span>
+                        <span>{data.totalComments ?? '0'}</span>
                     </div>
                 </div>
                 <div>

@@ -67,11 +67,16 @@ export const deletePosts = async (newspaperArticleId) => {
     } catch (error) {}
 };
 
-export const likePost = async (newspaperArticleId) => {
+export const likePost = async (articleId, accessToken) => {
     try {
-        const res = await httpRequest.post(`Like/${newspaperArticleId}/toggleLike`);
+        const res = await httpRequest.post(`Like/${articleId}/toggleLike`, null, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
         return res.data;
-    } catch (error) {}
+    } catch (error) {
+    }
 };
 
 export const getCommentPosts = async (newspaperArticleId) => {

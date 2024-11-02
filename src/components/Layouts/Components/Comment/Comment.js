@@ -4,7 +4,7 @@ import { message, Popconfirm } from 'antd';
 import { useEffect, useState, memo, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { IconTrash } from '@tabler/icons-react';
-
+import Loading from '~/components/Common/Loading';
 import styles from './Comment.module.scss';
 import CommentBox from '~/components/Layouts/Components/CommentBox';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';
@@ -13,8 +13,7 @@ import { handleSplitParam } from '~/utils/splitParamUrl';
 import { useDispatch, useSelector } from 'react-redux';
 import { commentGetIdLessonAsync, removeCommentByIdAsync } from '~/app/slices/commentSlice';
 import { getUserIdAsync } from '~/app/slices/userSlice';
-import { selectComment } from '~/app/selectors';
-import { selectAuth } from '~/app/selectors';
+import { selectComment, selectAuth } from '~/app/selectors';
 
 const cx = classNames.bind(styles);
 
@@ -29,68 +28,62 @@ const Comment = memo(() => {
 
     useEffect(() => {
         const fetchComments = async () => {
+            setIsLoading(true);
             try {
-                setIsLoading(true);
                 await dispatch(commentGetIdLessonAsync({ newLessonId })).unwrap();
-            } catch (error) {
-                
+            } catch {
+                // Handle error if needed
             } finally {
                 setIsLoading(false);
             }
         };
-
         fetchComments();
     }, [dispatch, newLessonId]);
 
     useEffect(() => {
         const fetchUsers = async () => {
             const map = {};
-            for (const comment of commentByLessonIds) {
+            await Promise.all(commentByLessonIds.map(async (comment) => {
                 try {
                     const userInfo = await dispatch(getUserIdAsync({ userId: comment.userId })).unwrap();
                     map[comment.userId] = userInfo;
-                } catch (error) {
-                  
+                } catch {
+                    // Handle error if needed
                 }
-            }
+            }));
             setUserInfoMap(map);
         };
 
-        if (commentByLessonIds && commentByLessonIds.length > 0) {
+        if (commentByLessonIds.length > 0) {
             fetchUsers();
         }
     }, [dispatch, commentByLessonIds]);
 
-    const confirm = useCallback(
-        (commentId) => {
-            if (Cookies.get('accessToken')) {
-                const accessToken = Cookies.get('accessToken');
-                dispatch(removeCommentByIdAsync({ commentId, accessToken }));
-                message.success('Xoá thành công!');
-            } else {
-                message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
-            }
-        },
-        [dispatch],
-    );
+    const confirm = useCallback((commentId) => {
+        const accessToken = Cookies.get('accessToken');
+        if (accessToken) {
+            dispatch(removeCommentByIdAsync({ commentId, accessToken }));
+            message.success('Xoá thành công!');
+        } else {
+            message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
+        }
+    }, [dispatch]);
 
     const renderedComments = useMemo(() => {
-        if (!commentByLessonIds || commentByLessonIds.length === 0) {
-            return null;
-        }
-
         return commentByLessonIds.map((comment) => {
             const user = userInfoMap[comment.userId];
+            if (!user) {
+                return <Loading key={comment.commentId} title="Đang tải bình luận...." />;
+            }
+
             return (
                 <div key={comment.commentId} className={cx('detailComment')}>
                     <div className={cx('avatarWrap')}>
-                        <div className={cx('avatarWrapper')}>
-                            <FallbackAvatar
-                                className={cx('avatar')}
-                                linkImage={user?.image}
-                                altImage={user?.lastName ?? 'avatar'}
-                            />
-                        </div>
+                        <FallbackAvatar
+                            className={cx('avatar')}
+                            linkImage={user?.image}
+                            altImage={user?.lastName ?? 'avatar'}
+                        />
                     </div>
                     <div className={cx('commentBody')}>
                         <div className={cx('commentInner')}>
@@ -130,7 +123,7 @@ const Comment = memo(() => {
             <div className={cx('container')}>
                 {isLoading ? (
                     <div>Đang tải bình luận...</div>
-                ) : commentByLessonIds && commentByLessonIds.length > 0 ? (
+                ) : commentByLessonIds.length > 0 ? (
                     renderedComments
                 ) : (
                     <div className={cx('noCommentMessage')}>Không có bình luận nào.</div>

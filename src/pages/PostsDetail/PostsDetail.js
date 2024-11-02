@@ -31,7 +31,7 @@ function PostsDetail() {
     const { postsId } = useParams();
     const dispatch = useDispatch();
     const { post } = useSelector(selectPosts)?.data || {};
-    const { title, htmlContent, userId, create_at, description_NA, image } = post || {};
+    const { title, htmlContent, userId, create_at, description_NA, image } = post.article || {};
     const { data: userInfo, isLoading } = useUserInfo(userId);
     const [showShare, setShowShare] = useState(false);
     const shareUrl = window.location.href;
@@ -57,7 +57,15 @@ function PostsDetail() {
         setShowShare(false);
     };
 
-    if (isLoading) return <Loading title="Đang tải...." />;
+    const [loadingDelay, setLoadingDelay] = useState(true);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoadingDelay(false);
+        }, 1500);
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (loadingDelay || isLoading || !post.article) return <Loading title="Đang tải...." />;
 
     return (
         <div className={cx('wrapper')}>
@@ -69,7 +77,7 @@ function PostsDetail() {
                                 <UserInfo fullName={fullName} Component={Heading} className="userName" h4 />
                             </div>
                             <hr />
-                            <Reaction newspaperArticleId={postsId} />
+                            <Reaction newspaperArticleId={postsId} post={post}/>
                         </div>
                     </div>
                     <div className={cx('grid-column-9', { repositoryWith: true })}>
