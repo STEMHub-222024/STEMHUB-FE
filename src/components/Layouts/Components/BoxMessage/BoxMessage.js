@@ -1,4 +1,4 @@
-import { UserOutlined, OpenAIOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
 import { marked } from 'marked';
 import styles from './BoxMessage.module.scss';
@@ -13,11 +13,16 @@ const BoxMessage = ({ data }) => {
             <div className={styles.boxChat} style={{ backgroundColor: data.role === 'user' && '#daf0ff' }}>
                 <p dangerouslySetInnerHTML={{ __html: convertMarkdownToHtml(data.message ?? '') }}></p>
             </div>
-            <Avatar
-                className={`${data.role === 'assistant' ? styles.assistant : styles.user} ${styles.img}`}
-                size={35}
-                icon={data.role === 'assistant' ? <OpenAIOutlined /> : <UserOutlined />}
-            />
+            {data.role === 'assistant' ? (
+                <img
+                    src="logo.png"
+                    alt="assistant-icon"
+                    className={`${styles.img}`}
+                    style={{ width: 35, height: 35 }}
+                />
+            ) : (
+                <Avatar className={`${styles.user} ${styles.img}`} size={35} icon={<UserOutlined />} />
+            )}
         </div>
     );
 };
