@@ -14,7 +14,6 @@ import Button from '~/components/Common/Button';
 import useUserInfo from '~/hooks/useUserInfo';
 import MarkdownParser from '~/components/Layouts/Components/MarkdownParser';
 import * as postService from '~/services/postServices';
-
 import styles from './Reaction.module.scss';
 
 const cx = classNames.bind(styles);
@@ -27,9 +26,12 @@ function Reaction({ newspaperArticleId, post }) {
 
     const [showEditText, setShowEditText] = useState(false);
     const [userInfoMap, setUserInfoMap] = useState({});
-    const [isliked, setIsLike] = useState(post.liked);
+    const [totalLike, setTotalLike] = useState(post.totalLikes);
+
+    const [isLike, setIsLike] = useState(post.liked);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isCommentLoading, setIsCommentLoading] = useState(false); 
 
     const fetchComments = useCallback(async () => {
         setIsLoading(true);
@@ -56,55 +58,54 @@ function Reaction({ newspaperArticleId, post }) {
     }, [fetchComments]);
 
     useEffect(() => {
-        if (commentNewsPosts?.length > 0) {
+        if (commentNewsPosts?.length) {
             fetchUsers();
         }
     }, [fetchUsers, commentNewsPosts]);
 
+    const handleLoginWarning = () => {
+        message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
+        setTimeout(() => window.location.href = '/login', 1000);
+    };
+
     const handleLove = async () => {
         const accessToken = Cookies.get('accessToken');
-        if (!accessToken) {
-            message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
-            setTimeout(() => window.location.href = '/login', 1000);
-            return;
-        }
+        if (!accessToken) return handleLoginWarning();
+
         try {
             const res = await postService.likePost(newspaperArticleId, accessToken);
-            if (res.liked) {
+            if (res.liked !== undefined) {
                 setIsLike(res.liked);
-                post.totalLikes = res.totalLikes;
+                setTotalLike(res.totalLikes);
             }
-            fetchComments();
         } catch (error) {}
     };
 
     const handleComment = async () => {
         const accessToken = Cookies.get('accessToken');
-        if (!accessToken) {
-            message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
-            setTimeout(() => window.location.href = '/login', 1000);
-            return;
-        }
+        if (!accessToken) return handleLoginWarning();
+
+        setIsCommentLoading(true); 
         try {
             await dispatch(commentPostPostsAsync({ content_C, newspaperArticleId, userId: infoUserCurrent.userId })).unwrap();
-            dispatch(commentGetPostsAsync(newspaperArticleId));
+            await fetchComments();
             setShowEditText(false);
         } catch (error) {}
+        setIsCommentLoading(false);
     };
 
     const handleDeleteComment = useCallback(async (commentId) => {
         const accessToken = Cookies.get('accessToken');
-        if (!accessToken) {
-            message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
-            setTimeout(() => window.location.href = '/login', 1000);
-            return;
-        }
+        if (!accessToken) return handleLoginWarning();
+
         try {
             await dispatch(removeCommentByIdAsync({ commentId, accessToken })).unwrap();
-            await dispatch(commentGetPostsAsync(newspaperArticleId)).unwrap();
+            await fetchComments();
             message.success('Xoá thành công!');
-        } catch (error) {}
-    }, [dispatch, newspaperArticleId]);
+        } catch (error) {
+            message.error('Xoá thất bại!');
+        }
+    }, [dispatch, fetchComments]);
 
     const renderedComments = useMemo(() => {
         if (!commentNewsPosts?.length) return null;
@@ -152,21 +153,12 @@ function Reaction({ newspaperArticleId, post }) {
 
     return (
         <div className={cx('wrapper')}>
-            <div className={cx('btnReact')}>
-                {post.totalLikes ? (
-                    <>
-                        <IconThumbUpFilled size={20} className={cx('active')} onClick={handleLove} />
-                        <span>{post.totalLikes}</span>
-                    </>
-                ) : (
-                    <>
-                        <IconThumbUp size={20} onClick={handleLove} />
-                        <span>{post.totalLikes}</span>
-                    </>
-                )}
+            <div className={cx('btnReact')} onClick={handleLove}>
+                {isLike ? <IconThumbUpFilled size={20} className={cx('active')} /> : <IconThumbUp size={20} />}
+                <span>{totalLike}</span>
             </div>
-            <div className={cx('btnReact')}>
-                <IconBubble size={20} onClick={() => setOpenDrawer(true)} />
+            <div className={cx('btnReact')} onClick={() => setOpenDrawer(true)}>
+                <IconBubble size={20} />
                 <span>{commentNewsPosts?.length ?? '0'}</span>
             </div>
 
@@ -182,12 +174,14 @@ function Reaction({ newspaperArticleId, post }) {
                                     <TextEditor className={cx('textEditor')} height="280px" placeholder="Bạn có thắc mắc gì trong bài học này?" />
                                     <div className={cx('actionWrapper')}>
                                         <Button small className={cx('cancel')} onClick={() => setShowEditText(false)}>Huỷ</Button>
-                                        <Button small className={cx('btnSubmit', { disabled: !content_C })} disabled={!content_C} onClick={handleComment}>Bình luận</Button>
+                                        <Button small className={cx('btnSubmit', { disabled: !content_C || isCommentLoading })} disabled={!content_C || isCommentLoading} onClick={handleComment}>
+                                            {isCommentLoading ? 'Đang gửi...' : 'Bình luận'}
+                                        </Button>
                                     </div>
                                 </>
                             ) : (
-                                <div className={cx('placeholder')}>
-                                    <span className={cx('comment-suggestions')} onClick={() => setShowEditText(true)}>Bạn có thắc mắc gì trong bài viết này?</span>
+                                <div className={cx('placeholder')} onClick={() => setShowEditText(true)}>
+                                    <span className={cx('comment-suggestions')}>Bạn có thắc mắc gì trong bài viết này?</span>
                                 </div>
                             )}
                         </div>
@@ -196,7 +190,7 @@ function Reaction({ newspaperArticleId, post }) {
 
                 <div className={cx('commentList')}>
                     {isLoading ? (
-                        <div>Đang tải bình luận...</div>
+                        <div className={cx("noCommentMessage")}>Đang tải bình luận...</div>
                     ) : commentNewsPosts?.length > 0 ? (
                         <div className={cx('detailRow')}>
                             <div className={cx('container')}>{renderedComments}</div>

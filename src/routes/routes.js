@@ -38,6 +38,7 @@ import Images from '~/pages/Admin/Images/Images';
 import PostsAdmin from '~/pages/Admin/Posts';
 import Owner from '~/pages/Admin/Owner';
 import Scientist from '~/pages/Admin/Scientist';
+import Parts from '~/pages/Admin/Parts';
 
 //Route
 const publicRouter = [
@@ -78,6 +79,8 @@ const privateRouterAdmin = [
     { path: config.routes.owner, component: Owner, layout: AdminLayout },
     { path: config.routes.postsAdmin, component: PostsAdmin, layout: AdminLayout },
     { path: config.routes.scientistAdmin, component: Scientist, layout: AdminLayout },
+    { path: config.routes.parts, component: Parts, layout: AdminLayout },
+
 ];
 
 export { publicRouter, privateRouter, privateRouterAdmin };

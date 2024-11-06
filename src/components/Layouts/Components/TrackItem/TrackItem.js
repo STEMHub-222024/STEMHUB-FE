@@ -33,7 +33,7 @@ function TrackItem({ data, index, topicParameter, isActive, onClose }) {
                 </p>
             </Link>
             <div className={cx('icon-box')}>
-                <IconCircleCheckFilled size={20} />
+                <IconCircleCheckFilled size={20} className={cx('icon-play')}/>
             </div>
         </div>
     );

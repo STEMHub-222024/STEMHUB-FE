@@ -109,7 +109,9 @@ export const commentSlice = createSlice({
             .addCase(commentPostAsync.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.data.commentNew = action.payload;
-                state.filter.commentByLessonIds.push(action.payload);
+                if (state.filter.commentByLessonIds) {
+                    state.filter.commentByLessonIds.push(action.payload);
+                }
             })
             .addCase(commentPostAsync.rejected, (state, action) => {
                 state.status = 'failed';
@@ -160,7 +162,9 @@ export const commentSlice = createSlice({
             .addCase(commentPostPostsAsync.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.data.commentNewPosts = action.payload;
-                state.filter.commentByPostsIds.push(action.payload);
+                if (state.filter.commentByPostsIds) {
+                    state.filter.commentByPostsIds.push(action.payload);
+                }
             })
             .addCase(commentPostPostsAsync.rejected, (state, action) => {
                 state.status = 'failed';

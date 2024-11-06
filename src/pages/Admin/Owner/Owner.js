@@ -1,7 +1,9 @@
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Layout, Button, Modal, Form, Input, message, Tooltip } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons'; 
 import Heading from '~/components/Common/Heading';
+import Loading from '~/components/Common/Loading';
 import * as ownerServices from '~/services/ownerServices';
 
 import styles from './Owner.module.scss';
@@ -17,16 +19,20 @@ function Owner() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [currentOwner, setCurrentOwner] = useState(null);
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         fetchBanners();
     }, []);
 
     const fetchBanners = async () => {
+        setLoading(true)
         const res = await ownerServices.getOwner();
         if (res) {
             setOwnerList(res);
         }
+
+        setLoading(false)
     };
 
     const handleAdd = () => {
@@ -107,16 +113,19 @@ function Owner() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => handleEdit(record)}>
-                        Edit
+                    <Button type="link" onClick={() => handleEdit(record)} icon={<EditOutlined />}>
                     </Button>
-                    <Button type="link" onClick={() => handleDelete(record.id)}>
-                        Delete
+                    <Button type="link" onClick={() => handleDelete(record.id)} icon={<DeleteOutlined />}>
                     </Button>
                 </Space>
             ),
         },
     ];
+
+
+    if (loading)  {
+        return <Loading title='Đang tải....'/>
+    }
 
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>

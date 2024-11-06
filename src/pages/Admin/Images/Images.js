@@ -1,20 +1,23 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Highlighter from 'react-highlight-words';
 import { Space, Table, Layout, Button, message, Input } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, DeleteOutlined } from '@ant-design/icons';
 import Heading from '~/components/Common/Heading';
+import Loading from '~/components/Common/Loading';
 import * as uploadImageServices from '~/services/uploadImage';
 
 const { Content } = Layout;
 
 function Images() {
     const [imageList, setImageList] = useState([]);
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         fetchImages();
     }, []);
 
     const fetchImages = async () => {
+        setLoading(true)
         const res = await uploadImageServices.getImages();
         if (res) {
             const resNew = res.map((imageName, index) => ({
@@ -22,6 +25,7 @@ function Images() {
                 imageName: imageName,
             }));
             setImageList(resNew);
+            setLoading(false)
         }
     };
 
@@ -136,13 +140,18 @@ function Images() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => handleDelete(record.imageName)}>
+                    <Button type="link" onClick={() => handleDelete(record.imageName)} icon={<DeleteOutlined />}>
                         Delete
                     </Button>
                 </Space>
             ),
         },
     ];
+
+    
+    if (loading)  {
+        return <Loading title='Đang tải....'/>
+    }
 
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>

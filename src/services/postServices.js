@@ -9,9 +9,14 @@ export const getPosts = async () => {
     } catch (error) {}
 };
 
-export const getPostsById = async ({ postsId }) => {
+export const getPostsById = async ({ postsId, accessToken }) => {
+    console.log("accessToken", accessToken)
     try {
-        const res = await httpRequest.get(`NewspaperArticle/${postsId}`);
+        const res = await httpRequest.get(`NewspaperArticle/${postsId}`, null, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
         return res.data;
     } catch (error) {}
 };

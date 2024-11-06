@@ -8,7 +8,6 @@ import Button from '~/components/Common/Button';
 import CurriculumOfCourse from '~/components/Common/CurriculumOfCourse';
 import { handleSplitParam } from '~/utils/splitParamUrl';
 
-// Service
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTopicId } from '~/app/slices/topicSlice';
@@ -18,10 +17,11 @@ import { selectTopic, selectLesson, selectIngredient } from '~/app/selectors';
 
 import { Modal } from 'antd';
 import VideoPlayer from '~/components/Common/VideoPlayer';
+import Loading from '~/components/Common/Loading';
 
 const cx = classNames.bind(styles);
 
-const fetchApiData = async (dispatch, topic, handleSplitParam) => {
+const fetchApiData = async (dispatch, topic) => {
     const result = handleSplitParam(topic);
     if (result) {
         await dispatch(getTopicId({ topicId: result })).unwrap();
@@ -31,13 +31,14 @@ const fetchApiData = async (dispatch, topic, handleSplitParam) => {
             dispatch(getIngredientAsync()).unwrap(),
         ]);
 
-        const lessonCurrents = lessonAll.filter((lesson) => lesson?.topicId === result);
-        if (lessonCurrents) {
+        const lessonCurrents = lessonAll.filter(lesson => lesson?.topicId === result);
+        const ingredientCurrents = ingredientAll.filter(ingredient => ingredient?.topicId === result);
+
+        if (lessonCurrents.length) {
             dispatch(handleFilter({ lessonCurrents }));
         }
 
-        const ingredientCurrents = ingredientAll.filter((ingredient) => ingredient?.topicId === result);
-        if (ingredientCurrents) {
+        if (ingredientCurrents.length) {
             dispatch(handleFillerIngredient({ ingredientCurrents }));
         }
     }
@@ -51,35 +52,40 @@ function TopicDetail() {
     const { ingredientFilter } = useSelector(selectIngredient).data;
     const [openTopic, setOpenTopic] = useState(false);
     const [isPlayed, setIsPlayed] = useState(true);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const controller = new AbortController();
         const fetchApi = async () => {
             try {
-                await fetchApiData(dispatch, topic, handleSplitParam);
-            } catch (error) {}
+                setLoading(true);
+                await fetchApiData(dispatch, topic);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchApi();
-        return () => {
-            controller.abort();
-        };
     }, [dispatch, topic]);
 
     const handleShowModal = useCallback(() => {
-        setOpenTopic((prevState) => !prevState);
-        setIsPlayed((prevState) => !prevState);
+        setOpenTopic(prev => !prev);
+        setIsPlayed(prev => !prev);
     }, []);
 
     const renderIngredients = useMemo(
-        () =>
-            ingredientFilter?.map((ingredient) => (
-                <li key={ingredient?.ingredientsId}>
-                    <IconCheck className={cx('icon')} size={20} />
-                    <span>{ingredient?.ingredientsName}</span>
-                </li>
-            )),
+        () => ingredientFilter?.map(ingredient => (
+            <li key={ingredient?.ingredientsId}>
+                <IconCheck className={cx('icon')} size={20} />
+                <span>{ingredient?.ingredientsName}</span>
+            </li>
+        )),
         [ingredientFilter],
     );
+
+    if (loading) {
+        return <Loading title='Đang tải....' />;
+    }
 
     return (
         <>
@@ -93,9 +99,7 @@ function TopicDetail() {
                                     <p>{topicIds?.description}</p>
                                 </div>
                                 <div className={cx('topicList')}>
-                                    <Heading className={cx('topicHeading')} h2>
-                                        Giới thiệu
-                                    </Heading>
+                                    <Heading className={cx('topicHeading')} h2>Giới thiệu</Heading>
                                     <section className={cx('row')}>
                                         <section className={cx('col')}>
                                             <ul className={cx('list')}>{renderIngredients}</ul>
@@ -111,14 +115,14 @@ function TopicDetail() {
                                     <div
                                         className={cx('bg')}
                                         style={{ backgroundImage: `url("${topicIds?.topicImage}")` }}
-                                    ></div>
+                                    />
                                     <div className={cx('overlay')} onClick={handleShowModal}>
                                         <IconPlayerPlay size={35} stroke={3} style={{ color: '#7f56d9' }} />
                                     </div>
                                     <p>Xem giới thiệu chủ đề</p>
                                 </div>
 
-                                <h5>Miễn phí</h5>
+                                <h5>Miễn phí </h5>
 
                                 <Button
                                     className={cx('btn-join')}

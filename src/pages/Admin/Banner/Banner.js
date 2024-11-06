@@ -1,10 +1,11 @@
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Layout, Button, Modal, Form, Input, message, Upload, Tooltip } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import Heading from '~/components/Common/Heading';
 import * as bannerServices from '~/services/bannerServices';
 import { postImage, deleteImage } from '~/services/uploadImage';
+import Loading from '~/components/Common/Loading';
 
 import styles from './Banner.module.scss';
 
@@ -21,16 +22,19 @@ function Banner() {
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [fileList, setFileList] = useState([]);
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         fetchBanners();
     }, []);
 
     const fetchBanners = async () => {
+        setLoading(true)
         const res = await bannerServices.getBanner();
         if (res) {
             setBannerList(res);
         }
+        setLoading(false)
     };
 
     const handleAdd = () => {
@@ -151,17 +155,18 @@ function Banner() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => handleEdit(record)}>
-                        Edit
-                    </Button>
-                    <Button type="link" onClick={() => handleDelete(record.bannerId)}>
-                        Delete
-                    </Button>
+                    <Button type="link" onClick={() => handleEdit(record)} icon={<EditOutlined />} />
+                    <Button type="link" onClick={() => handleDelete(record.bannerId)} icon={<DeleteOutlined />} />
                 </Space>
             ),
         },
     ];
 
+
+    if (loading)  {
+        return <Loading title='Đang tải....'/>
+    }
+    
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
             <Space className={cx('btn-add')}>

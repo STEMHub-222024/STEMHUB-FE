@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { IconCircleCheckFilled, IconDots } from '@tabler/icons-react';
+import { IconCircleCheckFilled } from '@tabler/icons-react';
 import FallbackAvatar from '~/components/Common/FallbackAvatar';
 import Button from '~/components/Common/Button';
 import Heading from '~/components/Common/Heading';
@@ -13,7 +13,7 @@ import styles from './PostItem.module.scss';
 const cx = classNames.bind(styles);
 
 function PostItem({ data }) {
-    const { userId, newspaperArticleId, title, description_NA, image } = data;
+    const { userId, newspaperArticleId, title, description_NA, image } = data.article;
     const { data: userInfo } = useUserInfo(userId);
 
     const userName = useMemo(() => {
@@ -33,11 +33,6 @@ function PostItem({ data }) {
                             <span className={cx('user-name')}>{userName}</span>
                             {userInfo && <IconCircleCheckFilled size={15} className={cx('icon-check')} />}
                         </div>
-                    </Button>
-                </div>
-                <div className={cx('actions')}>
-                    <Button text>
-                        <IconDots size={20} />
                     </Button>
                 </div>
             </div>

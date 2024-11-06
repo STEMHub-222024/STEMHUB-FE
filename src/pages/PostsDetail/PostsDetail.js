@@ -18,6 +18,7 @@ import FallbackAvatar from '~/components/Common/FallbackAvatar';
 import MarkdownParser from '~/components/Layouts/Components/MarkdownParser';
 import Loading from '~/components/Common/Loading';
 import formatDateToNow from '~/utils/formatDateToNow';
+import Cookies from 'js-cookie';
 
 const cx = classNames.bind(styles);
 
@@ -38,18 +39,16 @@ function PostsDetail() {
 
     useEffect(() => {
         if (postsId) {
-            dispatch(getPostsByIdAsync({ postsId }));
+            const accessToken = Cookies.get('accessToken');
+            dispatch(getPostsByIdAsync({ postsId, accessToken }));
         }
     }, [dispatch, postsId]);
 
-    const fullName = useMemo(
-        () => (userInfo ? `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim() : ''),
-        [userInfo],
-    );
+    const fullName = useMemo(() => {
+        return userInfo ? `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim() : '';
+    }, [userInfo]);
 
-    const handleToggleShare = () => {
-        setShowShare(!showShare);
-    };
+    const handleToggleShare = () => setShowShare(prev => !prev);
 
     const handleCopyLink = () => {
         navigator.clipboard.writeText(shareUrl);
@@ -59,9 +58,7 @@ function PostsDetail() {
 
     const [loadingDelay, setLoadingDelay] = useState(true);
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoadingDelay(false);
-        }, 1500);
+        const timer = setTimeout(() => setLoadingDelay(false), 1500);
         return () => clearTimeout(timer);
     }, []);
 
@@ -77,7 +74,7 @@ function PostsDetail() {
                                 <UserInfo fullName={fullName} Component={Heading} className="userName" h4 />
                             </div>
                             <hr />
-                            <Reaction newspaperArticleId={postsId} post={post}/>
+                            <Reaction newspaperArticleId={postsId} post={post} />
                         </div>
                     </div>
                     <div className={cx('grid-column-9', { repositoryWith: true })}>

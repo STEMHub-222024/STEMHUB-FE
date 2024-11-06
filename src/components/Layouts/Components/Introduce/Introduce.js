@@ -24,6 +24,8 @@ function Introduce() {
     );
 
     const lastFiveScientists = useMemo(() => scientists.slice(-5), [scientists]);
+
+
     return (
         <>
             <div className={cx('grid-column-5')}>
@@ -77,6 +79,7 @@ function Introduce() {
                     <div className={cx('criteria')}>
                         <div className={cx('criteria-item')}>
                             <span>{selectedScientist ? selectedScientist.adage : ''}</span>
+                            <span>{selectedScientist ? selectedScientist.adageVN : ''}</span>
                         </div>
                     </div>
                     <div className={cx('container')}>

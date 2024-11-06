@@ -4,7 +4,7 @@ import * as lessonServices from '~/services/lessonServices';
 const initialState = {
     data: {
         lessonAll: [],
-        lessonItem: [],
+        lessonItem: {},
         lessonFilter: [],
     },
     status: 'idle',

@@ -31,8 +31,8 @@ const Comment = memo(() => {
             setIsLoading(true);
             try {
                 await dispatch(commentGetIdLessonAsync({ newLessonId })).unwrap();
-            } catch {
-                // Handle error if needed
+            } catch (error) {
+                message.error('Lỗi khi tải bình luận.');
             } finally {
                 setIsLoading(false);
             }
@@ -42,16 +42,18 @@ const Comment = memo(() => {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const map = {};
-            await Promise.all(commentByLessonIds.map(async (comment) => {
-                try {
-                    const userInfo = await dispatch(getUserIdAsync({ userId: comment.userId })).unwrap();
-                    map[comment.userId] = userInfo;
-                } catch {
-                    // Handle error if needed
-                }
-            }));
-            setUserInfoMap(map);
+            const userIds = commentByLessonIds.map(comment => comment.userId);
+            const uniqueUserIds = [...new Set(userIds)];
+            const userPromises = uniqueUserIds.map(userId => 
+                dispatch(getUserIdAsync({ userId })).unwrap()
+            );
+
+            const users = await Promise.all(userPromises);
+            const userMap = uniqueUserIds.reduce((acc, userId, index) => {
+                acc[userId] = users[index];
+                return acc;
+            }, {});
+            setUserInfoMap(userMap);
         };
 
         if (commentByLessonIds.length > 0) {
@@ -72,10 +74,6 @@ const Comment = memo(() => {
     const renderedComments = useMemo(() => {
         return commentByLessonIds.map((comment) => {
             const user = userInfoMap[comment.userId];
-            if (!user) {
-                return <Loading key={comment.commentId} title="Đang tải bình luận...." />;
-            }
-
             return (
                 <div key={comment.commentId} className={cx('detailComment')}>
                     <div className={cx('avatarWrap')}>
@@ -122,7 +120,7 @@ const Comment = memo(() => {
             {allow && <CommentBox commentByLessonIds={commentByLessonIds} />}
             <div className={cx('container')}>
                 {isLoading ? (
-                    <div>Đang tải bình luận...</div>
+                    <Loading />
                 ) : commentByLessonIds.length > 0 ? (
                     renderedComments
                 ) : (

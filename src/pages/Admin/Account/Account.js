@@ -6,6 +6,7 @@ import { USER, ADMIN } from '~/utils/constant';
 import * as userServices from '~/services/userServices';
 import * as authServices from '~/services/authServices';
 import styles from './Account.module.scss';
+import Loading from '~/components/Common/Loading';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -16,9 +17,11 @@ function Account() {
     const [sortedInfo, setSortedInfo] = useState({});
     const [userList, setUserList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [loading, setLoading] = useState(true); 
     const [form] = Form.useForm();
 
     const fetchApi = useCallback(async () => {
+        setLoading(true);
         const res = await userServices.getUseAll();
         if (res) {
             const resNew = res.map((user, index) => ({
@@ -32,6 +35,7 @@ function Account() {
             }));
             setUserList(resNew);
         }
+        setLoading(false); 
     }, []);
 
     useEffect(() => {
@@ -50,8 +54,8 @@ function Account() {
                 dataIndex: 'lastName',
                 key: 'lastName',
                 filteredValue: filteredInfo.lastName || null,
-                onFilter: (value, record) => record.lastName.includes(value),
-                sorter: (a, b) => a.lastName.length - b.lastName.length,
+                onFilter: (value, record) => record.lastName?.includes(value),
+                sorter: (a, b) => (a.lastName?.length || 0) - (b.lastName?.length || 0),
                 sortOrder: sortedInfo.columnKey === 'lastName' ? sortedInfo.order : null,
                 ellipsis: true,
             },
@@ -60,8 +64,8 @@ function Account() {
                 dataIndex: 'firstName',
                 key: 'firstName',
                 filteredValue: filteredInfo.firstName || null,
-                onFilter: (value, record) => record.firstName.includes(value),
-                sorter: (a, b) => a.firstName.length - b.firstName.length,
+                onFilter: (value, record) => record.firstName?.includes(value),
+                sorter: (a, b) => (a.firstName?.length || 0) - (b.firstName?.length || 0),
                 sortOrder: sortedInfo.columnKey === 'firstName' ? sortedInfo.order : null,
                 ellipsis: true,
             },
@@ -70,8 +74,8 @@ function Account() {
                 dataIndex: 'userName',
                 key: 'userName',
                 filteredValue: filteredInfo.userName || null,
-                onFilter: (value, record) => record.userName.includes(value),
-                sorter: (a, b) => a.userName.length - b.userName.length,
+                onFilter: (value, record) => record.userName?.includes(value),
+                sorter: (a, b) => (a.userName?.length || 0) - (b.userName?.length || 0),
                 sortOrder: sortedInfo.columnKey === 'userName' ? sortedInfo.order : null,
                 ellipsis: true,
             },
@@ -80,8 +84,8 @@ function Account() {
                 dataIndex: 'email',
                 key: 'email',
                 filteredValue: filteredInfo.email || null,
-                onFilter: (value, record) => record.email.includes(value),
-                sorter: (a, b) => a.email.length - b.email.length,
+                onFilter: (value, record) => record.email?.includes(value),
+                sorter: (a, b) => (a.email?.length || 0) - (b.email?.length || 0),
                 sortOrder: sortedInfo.columnKey === 'email' ? sortedInfo.order : null,
                 ellipsis: true,
             },
@@ -105,7 +109,7 @@ function Account() {
                 ],
                 filteredValue: filteredInfo.phoneNumber || null,
                 onFilter: (value, record) => record.phoneNumber?.startsWith(value),
-                sorter: (a, b) => (a.phoneNumber || '').length - (b.phoneNumber || '').length,
+                sorter: (a, b) => (a.phoneNumber?.length || 0) - (b.phoneNumber?.length || 0),
                 sortOrder: sortedInfo.columnKey === 'phoneNumber' ? sortedInfo.order : null,
                 ellipsis: true,
             },
@@ -159,18 +163,24 @@ function Account() {
             }}
         >
             <>
-                <Space
-                    style={{
-                        marginBottom: 16,
-                    }}
-                    className={cx('btn-add')}
-                >
-                    <Heading h2>Management Account</Heading>
-                    <Button type="primary" onClick={showModal}>
-                        Add User
-                    </Button>
-                </Space>
-                <Table columns={columns} dataSource={userList} onChange={handleChange} rowKey="key" />
+                {loading ? (
+                    <Loading  title='Đang tải....'/>
+                ) : (
+                    <>
+                        <Space
+                            style={{
+                                marginBottom: 16,
+                            }}
+                            className={cx('btn-add')}
+                        >
+                            <Heading h2>Management Account</Heading>
+                            <Button type="primary" onClick={showModal}>
+                                Add User
+                            </Button>
+                        </Space>
+                        <Table columns={columns} dataSource={userList} onChange={handleChange} rowKey="key" />
+                    </>
+                )}
             </>
             <Modal title="Add New User" open={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                 <Form form={form} layout="vertical" name="form_in_modal">

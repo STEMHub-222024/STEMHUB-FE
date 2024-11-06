@@ -12,6 +12,7 @@ import {
     IconPhotoScan,
     IconTower,
     IconFlask2,
+    IconTools,
 } from '@tabler/icons-react';
 import config from '~/config';
 
@@ -83,6 +84,12 @@ function MenuAdmin() {
             icon: <IconTower stroke={1} fontSize={18} />,
             label: 'Owner',
             to: config.routes.owner,
+        },
+        {
+            key: '11',
+            icon: <IconTools stroke={1} fontSize={18} />,
+            label: 'Parts',
+            to: config.routes.parts,
         },
     ];
 

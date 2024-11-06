@@ -14,14 +14,14 @@ import { SearchOutlined, UploadOutlined, EditOutlined, DeleteOutlined } from '@a
 import { Space, Table, Layout, Button, message, Input, Tooltip, Form, Modal, Select, Upload } from 'antd';
 import Loading from '~/components/Common/Loading';
 
-import styles from './Posts.module.scss';
+import styles from './Parts.module.scss';
 
 const { Content } = Layout;
 const { Option } = Select;
 
 const cx = classNames.bind(styles);
 
-function Posts() {
+function Parts() {
     const textEditorRef = useRef();
     const dispatch = useDispatch();
     const { markdown, htmlContent } = useSelector(selectPosts).data || {};
@@ -445,4 +445,4 @@ function Posts() {
     );
 }
 
-export default Posts;
+export default Parts;

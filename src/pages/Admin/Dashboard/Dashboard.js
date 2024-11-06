@@ -1,15 +1,17 @@
 import React, { useEffect, useState, useMemo, useCallback, Suspense } from 'react';
 import moment from 'moment';
 import classNames from 'classnames/bind';
-import { Layout, Card, Row, Col, Spin, message, Space } from 'antd';
+import { Layout, Card, Row, Col, Spin, Space } from 'antd';
 import Heading from '~/components/Common/Heading';
 import UserChart from './UserChart';
 import TopicChart from './TopicChart';
+import SearchChart from './SearchChart';
 import LessonInteractionChart from './LessonInteractionChart';
 import * as userServices from '~/services/userServices';
 import * as topicServices from '~/services/topicServices';
 import * as lessonServices from '~/services/lessonServices';
 import * as commentServices from '~/services/commentServices';
+import * as searchServices from '~/services/searchServices'
 import styles from './Dashboard.module.scss';
 
 const cx = classNames.bind(styles);
@@ -20,6 +22,7 @@ const Dashboard = () => {
     const [users, setUsers] = useState([]);
     const [topics, setTopics] = useState([]);
     const [lessons, setLessons] = useState([]);
+    const [searchData, setSearchs] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchData = useCallback(async () => {
@@ -28,21 +31,21 @@ const Dashboard = () => {
             setLessons(lessonResponse);
             setLoading(false);
         } catch (error) {
-            message.error('Failed to fetch data');
             setLoading(false);
         }
     }, []);
 
     const fetchUsersAndTopics = useCallback(async () => {
         try {
-            const [userResponse, topicResponse] = await Promise.all([
+            const [userResponse, topicResponse, searchResponse] = await Promise.all([
                 userServices.getUseAll(),
                 topicServices.getTopic(),
+                searchServices.searchTopKeywords(),
             ]);
             setUsers(userResponse);
             setTopics(topicResponse);
+            setSearchs(searchResponse);
         } catch (error) {
-            message.error('Failed to fetch users and topics');
         }
     }, []);
 
@@ -65,9 +68,10 @@ const Dashboard = () => {
 
             setLessons(updatedLessons);
         } catch (error) {
-            message.error('Failed to fetch lesson interactions');
         }
     }, [lessons]);
+
+
 
     useEffect(() => {
         if (lessons.length === 0) {
@@ -140,13 +144,15 @@ const Dashboard = () => {
                 </div>
             ) : (
                 <Suspense fallback={<Spin size="large" />}>
+                    
                     <Row gutter={16}>
                         <Col span={24} className={cx('colum')}>
-                            <Card title="User Registrations Over Time">
-                                <UserChart data={userChartData} />
+                            <Card title="Top 5 keyword (Search)">
+                                <SearchChart searchData={searchData} />
                             </Card>
                         </Col>
                     </Row>
+                  
 
                     <Row gutter={16}>
                         <Col span={24} className={cx('colum')}>
@@ -160,6 +166,14 @@ const Dashboard = () => {
                         <Col span={24} className={cx('colum')}>
                             <Card title="Lesson Interactions">
                                 <LessonInteractionChart data={lessonInteractionChartData} />
+                            </Card>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                        <Col span={24} className={cx('colum')}>
+                            <Card title="User Registrations Over Time">
+                                <UserChart data={userChartData} />
                             </Card>
                         </Col>
                     </Row>

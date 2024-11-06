@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Layout, Button, Modal, Form, Input, message, Tooltip, Select } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import classNames from 'classnames/bind';
 import * as lessonServices from '~/services/lessonServices';
 import * as topicServices from '~/services/topicServices';
 import * as videoServices from '~/services/videoServices';
 import styles from './Lesson.module.scss';
 import Heading from '~/components/Common/Heading';
+import Loading from '~/components/Common/Loading';
 
 const cx = classNames.bind(styles);
 const { Content } = Layout;
@@ -24,6 +26,7 @@ function Lesson() {
     });
     const [form] = Form.useForm();
     const [videoForm] = Form.useForm();
+    const [loading, setLoading] = useState(false); 
 
     useEffect(() => {
         fetchLessonsAndTopics();
@@ -32,6 +35,7 @@ function Lesson() {
 
     const fetchLessonsAndTopics = async () => {
         try {
+            setLoading(true);
             const [lessonRes, topicRes] = await Promise.all([lessonServices.getLesson(), topicServices.getTopic()]);
             if (lessonRes && topicRes) {
                 const mergedLessons = lessonRes.map((lesson) => {
@@ -41,6 +45,9 @@ function Lesson() {
                 setState((prevState) => ({ ...prevState, lessonList: mergedLessons, topicList: topicRes }));
             }
         } catch (error) {}
+        finally {
+            setLoading(false);
+        }
     };
 
     const fetchVideos = async () => {
@@ -162,12 +169,12 @@ function Lesson() {
                 key: 'operation',
                 render: (_, record) => (
                     <Space size="middle">
-                        <Button type="link" onClick={() => handleEditVideo(record)}>
-                            Edit
-                        </Button>
-                        <Button type="link" onClick={() => handleDeleteVideo(record.videoId)}>
-                            Delete
-                        </Button>
+                        <Tooltip title="Edit">
+                            <EditOutlined type="link" style={{ color: 'blue' }} onClick={() => handleEditVideo(record)} />
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                            <DeleteOutlined type="link" style={{ color: 'blue' }} onClick={() => handleDeleteVideo(record.videoId)} />
+                        </Tooltip>
                     </Space>
                 ),
                 ellipsis: true,
@@ -232,16 +239,20 @@ function Lesson() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => handleEditLesson(record)}>
-                        Edit
-                    </Button>
-                    <Button type="link" onClick={() => handleDeleteLesson(record.lessonId)}>
-                        Delete
-                    </Button>
+                    <Tooltip title="Edit">
+                        <EditOutlined type="link" style={{ color: 'blue' }} onClick={() => handleEditLesson(record)} />
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                        <DeleteOutlined type="link" style={{ color: 'blue' }} onClick={() => handleDeleteLesson(record.lessonId)} />
+                    </Tooltip>
                 </Space>
             ),
         },
     ];
+
+    if (loading)  {
+        return <Loading title='Đang tải....'/>
+    }
 
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>

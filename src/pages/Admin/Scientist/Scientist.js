@@ -8,9 +8,10 @@ import { postImage, deleteImage } from '~/services/uploadImage';
 import TextEditor from '~/components/Common/TextEditor';
 import { selectPosts } from '~/app/selectors';
 import { setMarkdown, setHtmlContent } from '~/app/slices/postSlice';
-import { SearchOutlined, UploadOutlined } from '@ant-design/icons';
+import { SearchOutlined, UploadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Space, Table, Layout, Button, message, Input, Tooltip, Form, Modal, Upload } from 'antd';
 import * as scientistServices from '~/services/scientistServices';
+import Loading from '~/components/Common/Loading';
 import styles from './Scientist.module.scss';
 
 const { Content } = Layout;
@@ -30,16 +31,19 @@ function Scientist() {
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [fileList, setFileList] = useState([]);
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         fetchScientist();
     }, []);
 
     const fetchScientist = async () => {
+        setLoading(true)
         const response = await scientistServices.getScientist();
         if (response) {
             setScientistList(response);
         }
+        setLoading(false)
     };
 
     const handleClearEditor = () => {
@@ -285,16 +289,16 @@ function Scientist() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => handleEdit(record)}>
-                        Edit
-                    </Button>
-                    <Button type="link" onClick={() => handleDelete(record.scientistId)}>
-                        Delete
-                    </Button>
+                    <Button type="link" onClick={() => handleEdit(record)} icon={<EditOutlined />} />
+                    <Button type="link" onClick={() => handleDelete(record.scientistId)} icon={<DeleteOutlined />} />
                 </Space>
             ),
         },
     ];
+
+    if (loading)  {
+        return <Loading title='Đang tải....'/>
+    }
 
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>

@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Layout, Button, Modal, Form, Input, message, Upload, Select, Tooltip } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { postImage, deleteImage } from '~/services/uploadImage';
 import * as topicServices from '~/services/topicServices';
 import * as stemServices from '~/services/stemServices';
@@ -9,6 +9,7 @@ import * as ingredientServices from '~/services/ingredientServices';
 
 import styles from './Topic.module.scss';
 import Heading from '~/components/Common/Heading';
+import Loading from '~/components/Common/Loading';
 
 const cx = classNames.bind(styles);
 const { Content } = Layout;
@@ -28,6 +29,7 @@ function Topic() {
     const [ingredientList, setIngredientList] = useState([]);
     const [form] = Form.useForm();
     const [ingredientForm] = Form.useForm();
+    const [loading, setLoading] = useState(false); 
 
     useEffect(() => {
         fetchTopics();
@@ -35,6 +37,7 @@ function Topic() {
     }, []);
 
     const fetchTopics = async () => {
+        setLoading(true);
         const topicRes = await topicServices.getTopic();
         const stemRes = await stemServices.getStem();
         if (topicRes && stemRes) {
@@ -44,6 +47,7 @@ function Topic() {
             });
             setTopicList(mergedTopics);
         }
+        setLoading(false); 
     };
 
     const fetchStems = async () => {
@@ -84,12 +88,15 @@ function Topic() {
     };
 
     const handleDelete = async (id) => {
+        setLoading(true);
         await topicServices.deleteTopic(id);
         message.success('Topic deleted successfully');
         fetchTopics();
+        setLoading(false);
     };
 
     const handleSave = async () => {
+        setLoading(true);
         const values = form.getFieldsValue();
         values.topicImage = backgroundImage;
         if (currentTopic) {
@@ -101,6 +108,7 @@ function Topic() {
         }
         setIsModalVisible(false);
         fetchTopics();
+        setLoading(false);
     };
 
     const handleFileChange = async (event) => {
@@ -195,11 +203,9 @@ function Topic() {
                 key: 'operation',
                 render: (_, record) => (
                     <Space size="middle">
-                        <Button type="link" onClick={() => handleIngredientEdit(record)}>
-                            Edit
+                        <Button type="link" onClick={() => handleIngredientEdit(record)} icon={<EditOutlined />}>
                         </Button>
-                        <Button type="link" onClick={() => handleIngredientDelete(record.ingredientsId)}>
-                            Delete
+                        <Button type="link" onClick={() => handleIngredientDelete(record.ingredientsId)} icon={<DeleteOutlined />}>
                         </Button>
                     </Space>
                 ),
@@ -290,18 +296,22 @@ function Topic() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => handleEdit(record)}>
-                        Edit
+                    <Button type="link" onClick={() => handleEdit(record)} icon={<EditOutlined />}>
                     </Button>
-                    <Button type="link" onClick={() => handleDelete(record.topicId)}>
-                        Delete
+                    <Button type="link" onClick={() => handleDelete(record.topicId)} icon={<DeleteOutlined />}>
                     </Button>
                 </Space>
             ),
         },
     ];
+
+    if (loading)  {
+        return <Loading title='Đang tải....'/>
+    }
+
     return (
-        <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
+
+        <Content style={{ margin: '24px 16px', padding:8, minHeight: 525 }}>
             <Space className={cx('btn-add')}>
                 <Heading h2>Management Topic</Heading>
                 <Button type="primary" onClick={handleAdd}>

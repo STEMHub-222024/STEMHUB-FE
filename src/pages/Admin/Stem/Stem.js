@@ -1,8 +1,10 @@
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Layout, Button, Modal, Form, Input, message, Tooltip } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import Heading from '~/components/Common/Heading';
 import * as stemServices from '~/services/stemServices';
+import Loading from '~/components/Common/Loading';
 
 import styles from './Stem.module.scss';
 
@@ -16,12 +18,14 @@ function Stem() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [currentStem, setCurrentStem] = useState(null);
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         fetchStems();
     }, []);
 
     const fetchStems = async () => {
+        setLoading(true);
         const res = await stemServices.getStem();
         if (res) {
             const resNew = res.map((stem, index) => ({
@@ -30,6 +34,7 @@ function Stem() {
             }));
             setStemList(resNew);
         }
+        setLoading(false); 
     };
 
     const handleAdd = () => {
@@ -97,12 +102,8 @@ function Stem() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => handleEdit(record)}>
-                        Edit
-                    </Button>
-                    <Button type="link" onClick={() => handleDelete(record.stemId)}>
-                        Delete
-                    </Button>
+                    <Button type="link" onClick={() => handleEdit(record)} icon={<EditOutlined />} />
+                    <Button type="link" onClick={() => handleDelete(record.stemId)} icon={<DeleteOutlined />} />
                 </Space>
             ),
         },
@@ -110,29 +111,35 @@ function Stem() {
 
     return (
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 525 }}>
-            <Space className={cx('btn-add')}>
-                <Heading h2>Management Stem</Heading>
-                <Button type="primary" onClick={handleAdd}>
-                    Add Stem
-                </Button>
-            </Space>
-            <Table columns={columns} dataSource={steamList} onChange={handleChange} rowKey="stemId" />
-            <Modal
-                title={currentStem ? 'Edit Stem' : 'Add Stem'}
-                open={isModalVisible}
-                onOk={handleSave}
-                onCancel={() => setIsModalVisible(false)}
-            >
-                <Form form={form} layout="vertical">
-                    <Form.Item
-                        name="stemName"
-                        label="Name"
-                        rules={[{ required: true, message: 'Please input the Name!' }]}
+            {loading ? (
+                <Loading title='Đang tải....'/>
+            ) : (
+                <>
+                    <Space className={cx('btn-add')}>
+                        <Heading h2>Management Stem</Heading>
+                        <Button type="primary" onClick={handleAdd}>
+                            Add Stem
+                        </Button>
+                    </Space>
+                    <Table columns={columns} dataSource={steamList} onChange={handleChange} rowKey="stemId" />
+                    <Modal
+                        title={currentStem ? 'Edit Stem' : 'Add Stem'}
+                        open={isModalVisible}
+                        onOk={handleSave}
+                        onCancel={() => setIsModalVisible(false)}
                     >
-                        <Input placeholder="Enter the Name" />
-                    </Form.Item>
-                </Form>
-            </Modal>
+                        <Form form={form} layout="vertical">
+                            <Form.Item
+                                name="stemName"
+                                label="Name"
+                                rules={[{ required: true, message: 'Please input the Name!' }]}
+                            >
+                                <Input placeholder="Enter the Name" />
+                            </Form.Item>
+                        </Form>
+                    </Modal>
+                </>
+            )}
         </Content>
     );
 }
