@@ -8,6 +8,7 @@ import styles from './ModalChat.module.scss';
 import config from '~/config';
 import { ask, sendQuestion } from '~/services/chatbotServices';
 import { toast } from 'react-toastify';
+import { marked } from 'marked';
 
 const ModalChat = ({ isOpen, setIsOpen }) => {
     const inputChatRef = useRef(null);
@@ -43,13 +44,18 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
     const handleAskAI = useCallback(async () => {
         let data;
         let isError = false;
-        try {
-            const { answer, found } = await ask({ question: message });
-            if (!found) {
+        if (message.length > 8) {
+            try {
+                const { answer, found } = await ask({ question: message });
+                if (!found) {
+                    isError = true;
+                } else {
+                    data = answer;
+                }
+            } catch (error) {
                 isError = true;
             }
-            data = answer;
-        } catch (error) {
+        } else {
             isError = true;
         }
         if (isError) {
@@ -61,27 +67,27 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                 return;
             }
         }
-        setMessage('');
-        setIsTyping(false);
         sessionStorage.setItem(
             'chatMessages',
             JSON.stringify([...messages, { role: 'user', message: message }, { role: 'assistant', message: data }]),
         );
+        setMessage('');
+        setIsTyping(false);
         typeWords(data.split(' '));
     }, [message, messages, typeWords]);
 
-    const handleSendInput = useCallback(
-        async (event) => {
-            if (!isTyping && event.key === 'Enter' && message.trim()) {
-                setIsTyping(true);
-                inputChatRef.current?.focus();
-                setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
+    // const handleSendInput = useCallback(
+    //     async (event) => {
+    //         if (!isTyping && event.key === 'Enter' && message.trim()) {
+    //             setIsTyping(true);
+    //             inputChatRef.current?.focus();
+    //             setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
 
-                await handleAskAI();
-            }
-        },
-        [isTyping, message, handleAskAI],
-    );
+    //             await handleAskAI();
+    //         }
+    //     },
+    //     [isTyping, message, handleAskAI],
+    // );
 
     const handleSendIcon = useCallback(
         async (event) => {
@@ -109,7 +115,7 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
         <Drawer
             closable
             destroyOnClose
-            title={'CHAT BOX AI'}
+            title={'CHAT STEM AI'}
             placement="right"
             open={isOpen}
             onClose={handleShowModal}
@@ -121,35 +127,54 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                     flexDirection: 'column',
                     justifyContent: 'space-between',
                     scrollbarWidth: 'thin',
-                    backgroundColor: '#dddd',
+                    backgroundColor: '#f6f5f0',
+                    color: '#3d3929',
+                },
+                header: {
+                    borderBottom: '1px solid #cccc',
                 },
             }}
             zIndex={99999}
         >
-            <div className={styles.messGroup} style={{ display: 'flex', flexDirection: 'column' }}>
-                {messages.map((item, index) => (
-                    <BoxMessage key={index} data={item} />
-                ))}
+            <div className={styles.messGroup}>
+                {messages.map((item, index) => {
+                    if (item.role === 'assistant') {
+                        return (
+                            <div className={styles.assistant}>
+                                <img
+                                    src="logo.png"
+                                    alt="assistant-icon"
+                                    className={`${styles.img}`}
+                                    style={{ width: 35, height: 35 }}
+                                />
+                                <span
+                                    key={index}
+                                    style={{ maxWidth: '60%' }}
+                                    dangerouslySetInnerHTML={{ __html: marked(item.message) }}
+                                ></span>
+                            </div>
+                        );
+                    } else {
+                        return (
+                            <div key={index} style={{}} className={styles.user}>
+                                <span dangerouslySetInnerHTML={{ __html: marked(item.message) }}></span>
+                            </div>
+                        );
+                    }
+                })}
                 {isTyping && <BoxMessage data={{ role: 'assistant', message: 'Đang tải...' }} />}
             </div>
 
-            <div className={styles.inputChat} style={{ display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
-                <input
+            <div className={styles.inputChat}>
+                <textarea
                     ref={inputChatRef}
                     value={message}
                     className={styles.input}
                     type="text"
-                    placeholder={'Nhập tin nhắn của bạn...'}
+                    placeholder={'Nhập câu hỏi của bạn...'}
                     onChange={handleChangeMessage}
-                    onKeyDown={handleSendInput}
-                    style={{
-                        width: '100%',
-                        padding: '8px 16px',
-                        border: '1px solid #ccc',
-                        borderRadius: '24px',
-                        height: '48px',
-                        fontSize: '1.25rem',
-                    }}
+                    // onKeyDown={handleSendInput}
+                    rows={4}
                 />
                 {isTyping ? (
                     <Spin
