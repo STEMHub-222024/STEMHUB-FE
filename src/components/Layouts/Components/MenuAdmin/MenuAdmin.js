@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
     IconDashboard,
     IconUsers,
@@ -17,13 +17,18 @@ import {
 import config from '~/config';
 
 function MenuAdmin() {
-    const defaultSelectMenu = localStorage.getItem('defaultSelectMenu');
-    const [defaultSelect, setDefaultSelect] = useState(defaultSelectMenu ?? '1');
+    const location = useLocation();
+    const currentPath = location.pathname;
+    const [defaultSelect, setDefaultSelect] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        localStorage.setItem('defaultSelectMenu', defaultSelect);
-    }, [defaultSelect]);
+        const activeItem = items.find(item => item.to === currentPath);
+        if (activeItem) {
+            setDefaultSelect(activeItem.key);
+        } 
+    }, [currentPath]);
+
     const items = [
         {
             key: '1',
@@ -102,7 +107,7 @@ function MenuAdmin() {
     }
 
     return (
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={[defaultSelect]} items={items} onClick={handleRouter} />
+        <Menu theme="dark" mode="inline" selectedKeys={defaultSelect ? [defaultSelect] : []} items={items} onClick={handleRouter} />
     );
 }
 

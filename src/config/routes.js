@@ -34,7 +34,7 @@ const routes = {
     images: '/admin/images',
     owner: '/admin/owner',
     scientistAdmin: '/admin/scientist',
-    parts: '/parts',
+    parts: '/admin/parts',
 };
 
 export default routes;

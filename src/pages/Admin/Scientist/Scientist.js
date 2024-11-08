@@ -95,6 +95,7 @@ function Scientist() {
         form.setFieldsValue({
             fullName: '',
             adage: '',
+            adageVN: '',
             descriptionScientist: '',
             image: undefined,
         });
@@ -272,6 +273,19 @@ function Scientist() {
             ),
         },
         {
+            title: 'AdageVN',
+            dataIndex: 'adageVN',
+            key: 'adageVN',
+            ellipsis: {
+                showTitle: false,
+            },
+            render: (adageVN) => (
+                <Tooltip placement="topLeft" title={adageVN}>
+                    {adageVN}
+                </Tooltip>
+            ),
+        },
+        {
             title: 'Short Description',
             dataIndex: 'descriptionScientist',
             key: 'descriptionScientist',
@@ -344,6 +358,15 @@ function Scientist() {
                         rules={[{ required: true, message: 'Please enter the adage' }]}
                     >
                         <Input.TextArea rows={4} placeholder="Enter a adage" />
+                    </Form.Item>
+
+                    
+                    <Form.Item
+                        name="adageVN"
+                        label="AdageVN"
+                        rules={[{ required: true, message: 'Please enter the adageVN' }]}
+                    >
+                        <Input.TextArea rows={4} placeholder="Enter a adage VN" />
                     </Form.Item>
 
                     <Form.Item
