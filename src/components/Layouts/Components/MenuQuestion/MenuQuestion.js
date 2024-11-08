@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { OpenAIOutlined } from '@ant-design/icons';
 
 import { Menu } from 'antd';
 import { getTopLast30days, getTopLast7days } from '~/services/chatbotServices';
@@ -21,19 +20,19 @@ const MenuQuestion = ({ onSetQuestion }) => {
                 {
                     key: 'newChat',
                     label: (
-                        <p>
-                            <OpenAIOutlined />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <img src="logo.png" alt="assistant-icon" style={{ width: 30, height: 30 }} />
                             <span>STEM AI</span>
-                        </p>
+                        </div>
                     ),
                 },
                 {
                     key: 'newChatCareer',
                     label: (
-                        <p>
-                            <OpenAIOutlined />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <img src="logo.png" alt="assistant-icon" style={{ width: 30, height: 30 }} />
                             <span>STEM hướng nghiệp</span>
-                        </p>
+                        </div>
                     ),
                 },
                 {

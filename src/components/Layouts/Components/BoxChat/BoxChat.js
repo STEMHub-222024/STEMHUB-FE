@@ -57,20 +57,25 @@ const BoxChat = ({ data }) => {
             let isError = false;
             if (topic === 'career') {
                 data = dataTopicCareer.find((data) => data.question === message);
-                console.log(data.answer);
-                setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
-                typeWords(data.answer.split(' '));
-                setIsTyping(false);
-                return;
-            }
-            try {
-                const { answer, found } = await ask({ question: message });
-                if (!found) {
-                    isError = true;
-                } else {
-                    data = answer;
+                if (data?.answer) {
+                    setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
+                    typeWords(data.answer.split(' '));
+                    setIsTyping(false);
+                    return;
                 }
-            } catch (error) {
+            }
+            if (message.length > 8) {
+                try {
+                    const { answer, found } = await ask({ question: message });
+                    if (!found) {
+                        isError = true;
+                    } else {
+                        data = answer;
+                    }
+                } catch (error) {
+                    isError = true;
+                }
+            } else {
                 isError = true;
             }
             if (isError) {
@@ -128,12 +133,31 @@ const BoxChat = ({ data }) => {
             setMessages([]);
             return;
         }
-        setMessages([{ role: 'assistant', message: 'Chào mừng đến với STEM AI' }]);
+        setMessages([{ role: 'assistant', message: 'Chào bạn &#128075; Tôi là có thế giúp gì cho bạn ?' }]);
     }, [data, topic]);
 
     return (
         <div className={styles.wrapper}>
             <div className={styles.messGroup} style={{ display: 'flex', flexDirection: 'column' }}>
+                {topic !== 'career' && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 16,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginBottom: 16,
+                        }}
+                    >
+                        <img src="logo.png" alt="STEM AI logo" style={{ width: 50, height: 50 }} />
+                        <h3 style={{ fontWeight: 'bold' }}>STEM AI</h3>
+                        <p style={{ textAlign: 'center', maxWidth: 600 }}>
+                            STEM AI là một công cụ hỗ trợ học tập STEM vật lí hiệu quả, cung cấp kiến thức và giải đáp
+                            thắc mắc giúp học sinh năng cao hiểu biết và tư duy sáng tạo trong lĩnh vực này.
+                        </p>
+                    </div>
+                )}
                 {topic === 'career' && <CareerBoxMessage data={dataTopicCareer} onAskAI={handleAskAI} />}
                 {messages.map((item, index) => (
                     <BoxMessage key={index} data={item} />

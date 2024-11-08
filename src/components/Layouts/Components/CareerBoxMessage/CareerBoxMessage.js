@@ -7,11 +7,23 @@ const CareerBoxMessage = ({ data, onAskAI }) => {
     return (
         <div className={styles.messChatAI}>
             <Avatar className={`${styles.assistant} ${styles.img}`} size={35} icon={<OpenAIOutlined />} />
-            <div className={styles.boxChat}>
-                {data.map((item) => (
-                    <p className={styles.title} onClick={() => onAskAI(item.question)}>
+            <div style={{ display: 'flex', gap: 8, flexDirection: 'column' }}>
+                {data.map((item, id) => (
+                    <div
+                        key={id}
+                        style={{
+                            border: '2px solid #7f56d9',
+                            padding: 8,
+                            borderRadius: 16,
+                            width: 'fit-content',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                        }}
+                        className={styles.title}
+                        onClick={() => onAskAI(item.question)}
+                    >
                         {item.question}
-                    </p>
+                    </div>
                 ))}
             </div>
         </div>

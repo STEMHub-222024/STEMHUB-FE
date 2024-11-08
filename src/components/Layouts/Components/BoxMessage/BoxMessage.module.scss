@@ -7,17 +7,17 @@
         margin-left: 13px;
         align-self: flex-end;
     }
-    .boxChat::after {
-        content: '';
-        background: #02040f;
-        position: absolute;
-        width: 4px;
-        right: -1px;
-        top: 0;
-        height: 100%;
-        border-top-right-radius: 14px;
-        border-bottom-right-radius: 14px;
-    }
+    // .boxChat::after {
+    //     content: '';
+    //     background: #02040f;
+    //     position: absolute;
+    //     width: 4px;
+    //     right: -1px;
+    //     top: 0;
+    //     height: 100%;
+    //     border-top-right-radius: 14px;
+    //     border-bottom-right-radius: 14px;
+    // }
 }
 
 .messChatAI {
@@ -30,23 +30,23 @@
         margin-right: 13px;
         align-self: flex-end;
     }
-    .boxChat::before {
-        content: '';
-        background: #082567;
-        position: absolute;
-        width: 4px;
-        left: -1px;
-        top: 0;
-        height: 100%;
-        border-top-left-radius: 14px;
-        border-bottom-left-radius: 14px;
-    }
+    // .boxChat::before {
+    //     content: '';
+    //     background: #082567;
+    //     position: absolute;
+    //     width: 4px;
+    //     left: -1px;
+    //     top: 0;
+    //     height: 100%;
+    //     border-top-left-radius: 14px;
+    //     border-bottom-left-radius: 14px;
+    // }
 }
 
 .boxChat {
     max-width: 60%;
-    border-radius: 6px;
-    border: 1px solid #ddd;
+    // border-radius: 6px;
+    // border: 1px solid #ddd;
     background: #fff;
     box-shadow: 0px 0.191px 0.573px 0px rgba(0, 0, 0, 0.11), 0px 1.018px 2.291px 0px rgba(0, 0, 0, 0.13);
     word-wrap: break-word;
