@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Menu } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -22,14 +22,7 @@ function MenuAdmin() {
     const [defaultSelect, setDefaultSelect] = useState(null);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const activeItem = items.find(item => item.to === currentPath);
-        if (activeItem) {
-            setDefaultSelect(activeItem.key);
-        } 
-    }, [currentPath]);
-
-    const items = [
+    const items = useMemo(() => [
         {
             key: '1',
             icon: <IconDashboard stroke={1} fontSize={18} />,
@@ -96,7 +89,14 @@ function MenuAdmin() {
             label: 'Parts',
             to: config.routes.parts,
         },
-    ];
+    ], []);
+
+    useEffect(() => {
+        const activeItem = items.find(item => item.to === currentPath);
+        if (activeItem) {
+            setDefaultSelect(activeItem.key);
+        } 
+    }, [currentPath, items]);
 
     function handleRouter(e) {
         const menuItem = items.find((item) => item.key === e.key);
