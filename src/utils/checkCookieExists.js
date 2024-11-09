@@ -18,7 +18,7 @@ const handleAccessToken = async (dispatch, accessToken) => {
     }
 };
 
-const handleRefreshToken = async (dispatch) => {
+export const handleRefreshToken = async (dispatch) => {
     try {
         const saveRefreshToken = JSON.parse(Cookies.get(COOKIE_NAMES.SAVE_REFRESH_TOKEN));
         const result = await dispatch(refreshTokenAsync(saveRefreshToken)).unwrap();
@@ -28,9 +28,11 @@ const handleRefreshToken = async (dispatch) => {
 
             Cookies.set(COOKIE_NAMES.ACCESS_TOKEN, accessToken.token, {
                 expires: new Date(accessToken.expiryTokenDate),
+                secure: true,
             });
             Cookies.set(COOKIE_NAMES.REFRESH_TOKEN, refreshToken.token, {
                 expires: new Date(refreshToken.expiryTokenDate),
+                secure: true,
             });
             Cookies.set(COOKIE_NAMES.SAVE_REFRESH_TOKEN, JSON.stringify(result.response), { expires: 7 });
 

@@ -69,6 +69,9 @@ export const authSlice = createSlice({
         setAllow(state, action) {
             state.data.allow = action.payload;
         },
+        setLoding(state, action) {
+            state.data.loading = action.payload;
+        },
         logout: (state) => {
             state.data.allow = false;
             state.data.infoUserCurrent = {};

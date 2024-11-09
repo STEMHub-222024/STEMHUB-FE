@@ -39,8 +39,7 @@ function PostsDetail() {
 
     useEffect(() => {
         if (postsId) {
-            const accessToken = Cookies.get('accessToken');
-            dispatch(getPostsByIdAsync({ postsId, accessToken }));
+            dispatch(getPostsByIdAsync({ postsId }));
         }
     }, [dispatch, postsId]);
 

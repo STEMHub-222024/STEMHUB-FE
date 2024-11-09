@@ -8,17 +8,14 @@ export const getPosts = async () => {
         }
     } catch (error) {}
 };
-
-export const getPostsById = async ({ postsId, accessToken }) => {
-    console.log("accessToken", accessToken)
+export const getPostsById = async ({ postsId }) => {
     try {
-        const res = await httpRequest.get(`NewspaperArticle/${postsId}`, null, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
+        const res = await httpRequest.get(`NewspaperArticle/${postsId}`, {
+            withCredentials: true,
         });
         return res.data;
-    } catch (error) {}
+    } catch (error) {
+    }
 };
 
 export const postPosts = async ({ title, image, description, markdown, htmlContent, userId }) => {

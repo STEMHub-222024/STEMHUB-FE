@@ -15,6 +15,7 @@ import useUserInfo from '~/hooks/useUserInfo';
 import MarkdownParser from '~/components/Layouts/Components/MarkdownParser';
 import * as postService from '~/services/postServices';
 import styles from './Reaction.module.scss';
+import { handleRefreshToken } from '~/utils/checkCookieExists';
 
 const cx = classNames.bind(styles);
 
@@ -70,9 +71,17 @@ function Reaction({ newspaperArticleId, post }) {
 
     const handleLove = async () => {
         const accessToken = Cookies.get('accessToken');
-        if (!accessToken) return handleLoginWarning();
-
+        const refreshToken = Cookies.get('refreshToken');
+        if (!accessToken)   {
+            if(refreshToken) {
+                handleRefreshToken(dispatch);
+            } else {
+                return handleLoginWarning();
+         }
+        }
+    
         try {
+            if (!accessToken) return handleLoginWarning();
             const res = await postService.likePost(newspaperArticleId, accessToken);
             if (res.liked !== undefined) {
                 setIsLike(res.liked);
@@ -83,10 +92,18 @@ function Reaction({ newspaperArticleId, post }) {
 
     const handleComment = async () => {
         const accessToken = Cookies.get('accessToken');
-        if (!accessToken) return handleLoginWarning();
-
+        const refreshToken = Cookies.get('refreshToken');
+        if (!accessToken)   {
+            if(refreshToken) {
+                handleRefreshToken(dispatch);
+            } else {
+                return handleLoginWarning();
+            }
+        }
+    
         setIsCommentLoading(true); 
         try {
+            if (!accessToken) return handleLoginWarning();
             await dispatch(commentPostPostsAsync({ content_C, newspaperArticleId, userId: infoUserCurrent.userId })).unwrap();
             await fetchComments();
             setShowEditText(false);
@@ -96,9 +113,16 @@ function Reaction({ newspaperArticleId, post }) {
 
     const handleDeleteComment = useCallback(async (commentId) => {
         const accessToken = Cookies.get('accessToken');
-        if (!accessToken) return handleLoginWarning();
-
+        const refreshToken = Cookies.get('refreshToken');
+        if (!accessToken)   {
+            if(refreshToken) {
+                handleRefreshToken(dispatch);
+            } else {
+                return handleLoginWarning();
+            }
+        }
         try {
+            if (!accessToken) return handleLoginWarning();
             await dispatch(removeCommentByIdAsync({ commentId, accessToken })).unwrap();
             await fetchComments();
             message.success('Xoá thành công!');

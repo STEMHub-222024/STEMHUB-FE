@@ -46,7 +46,7 @@ function CommentBox() {
     return (
         <div className={cx('commentWrapper')}>
             <div className={cx('avatarWrapper')}>
-                <FallbackAvatar className={cx('avatar')} linkImage={userInfo?.image ?? ''} altImage="nguyen van a" />
+                <FallbackAvatar className={cx('avatar')} linkImage={userInfo?.image ?? ''} altImage="image" />
             </div>
             <div className={cx('commentContent')}>
                 {showEditText ? (

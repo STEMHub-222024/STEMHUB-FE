@@ -54,9 +54,9 @@ function Login() {
                     const expiresAccessToken = new Date(accessToken.expiryTokenDate);
                     const expiresRefreshToken = new Date(refreshToken.expiryTokenDate);
 
-                    Cookies.set('accessToken', accessToken.token, { expires: expiresAccessToken });
-                    Cookies.set('refreshToken', refreshToken.token, { expires: expiresRefreshToken });
-                    Cookies.set('saveRefreshToken', JSON.stringify(result.response), { expires: 7 });
+                    Cookies.set('accessToken', accessToken.token, { expires: expiresAccessToken, secure: true });
+                    Cookies.set('refreshToken', refreshToken.token, { expires: expiresRefreshToken, secure: true });
+                    Cookies.set('saveRefreshToken', JSON.stringify(result.response), { expires: 7, secure: true });
 
                     hide();
                     window.location.href = config.routes.home;

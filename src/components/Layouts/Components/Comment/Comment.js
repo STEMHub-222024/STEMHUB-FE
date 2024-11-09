@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { commentGetIdLessonAsync, removeCommentByIdAsync } from '~/app/slices/commentSlice';
 import { getUserIdAsync } from '~/app/slices/userSlice';
 import { selectComment, selectAuth } from '~/app/selectors';
+import { handleRefreshToken } from '~/utils/checkCookieExists';
 
 const cx = classNames.bind(styles);
 
@@ -63,9 +64,12 @@ const Comment = memo(() => {
 
     const confirm = useCallback((commentId) => {
         const accessToken = Cookies.get('accessToken');
+        const refreshToken = Cookies.get('refreshToken');
         if (accessToken) {
             dispatch(removeCommentByIdAsync({ commentId, accessToken }));
             message.success('Xoá thành công!');
+        } else  if(refreshToken) {
+            handleRefreshToken(dispatch);
         } else {
             message.warning('Vui lòng đăng nhập để thực hiện thao tác này.');
         }
@@ -79,7 +83,7 @@ const Comment = memo(() => {
                     <div className={cx('avatarWrap')}>
                         <FallbackAvatar
                             className={cx('avatar')}
-                            linkImage={user?.image}
+                            linkImage={user?.image ?? ''}
                             altImage={user?.lastName ?? 'avatar'}
                         />
                     </div>
@@ -89,7 +93,7 @@ const Comment = memo(() => {
                                 <div className={cx('commentContent')}>
                                     <div className={cx('commentHeading')}>
                                         <span className={cx('commentAuthor')}>
-                                            {`${user?.firstName} ${user?.lastName}`}
+                                            {`${user?.firstName ?? ''} ${user?.lastName ?? ''}`}
                                         </span>
                                         {allow && comment.userId === infoUserCurrent.userId && (
                                             <Popconfirm
