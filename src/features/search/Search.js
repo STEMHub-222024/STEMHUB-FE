@@ -98,7 +98,7 @@ function Search({ currentUser }) {
     );
 
     return (
-        <div>
+        <div className={cx('wrapper')}>
             <HeadlessTippy
                 interactive
                 visible={showResult && showResults}
