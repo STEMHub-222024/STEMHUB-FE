@@ -1,12 +1,9 @@
-import { Avatar } from 'antd';
-import { OpenAIOutlined } from '@ant-design/icons';
-
 import styles from './CareerBoxMessage.module.scss';
 
 const CareerBoxMessage = ({ data, onAskAI }) => {
     return (
         <div className={styles.messChatAI}>
-            <Avatar className={`${styles.assistant} ${styles.img}`} size={35} icon={<OpenAIOutlined />} />
+            <img src="logo.png" alt="assistant-icon" className={`${styles.img}`} style={{ width: 35, height: 35 }} />
             <div style={{ display: 'flex', gap: 8, flexDirection: 'column' }}>
                 {data.map((item, id) => (
                     <div
