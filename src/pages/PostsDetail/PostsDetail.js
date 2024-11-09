@@ -18,7 +18,6 @@ import FallbackAvatar from '~/components/Common/FallbackAvatar';
 import MarkdownParser from '~/components/Layouts/Components/MarkdownParser';
 import Loading from '~/components/Common/Loading';
 import formatDateToNow from '~/utils/formatDateToNow';
-import Cookies from 'js-cookie';
 
 const cx = classNames.bind(styles);
 
