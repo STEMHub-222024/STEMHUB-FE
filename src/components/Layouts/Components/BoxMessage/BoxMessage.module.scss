@@ -27,7 +27,6 @@
     flex-direction: row-reverse;
     .img {
         height: 35px;
-        margin-right: 13px;
         align-self: flex-end;
     }
     // .boxChat::before {
@@ -47,8 +46,6 @@
     max-width: 60%;
     // border-radius: 6px;
     // border: 1px solid #ddd;
-    background: #fff;
-    box-shadow: 0px 0.191px 0.573px 0px rgba(0, 0, 0, 0.11), 0px 1.018px 2.291px 0px rgba(0, 0, 0, 0.13);
     word-wrap: break-word;
     position: relative;
     p {
