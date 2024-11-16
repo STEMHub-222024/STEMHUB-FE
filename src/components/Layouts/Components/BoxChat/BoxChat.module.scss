@@ -7,14 +7,14 @@
     scrollbar-width: thin;
     min-height: calc(100vh - 98px);
     padding: 16px 0px;
+    background-color: #f6f5f0;
+    color: #3d3929;
+    border-radius: 12px;
+    padding: 12px;
 
     .messGroup {
-        width: 100%;
         display: flex;
-        flex-direction: column-reverse;
-        overflow-y: overlay;
-        padding: 4px 6px;
-        border-radius: 8px;
+        flex-direction: column;
 
         &::-webkit-scrollbar {
             border-radius: 0;
@@ -39,8 +39,11 @@
     .inputChat {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         margin-top: 8px;
         width: 100%;
+        position: relative;
+
         .input {
             font-size: 1.4rem;
             padding: 12px 52px 12px 8px;
@@ -48,15 +51,36 @@
             width: 100%;
             font-weight: 400;
             outline: none;
-            border: 2px solid #233296;
-            &:focus-visible {
-                outline: #0f2195 auto;
+            margin-bottom: 20px;
+            &:hover {
+                outline: #3f8468 auto;
             }
         }
         .typingIcon {
-            font-size: 24px;
-            right: 42px;
+            position: absolute;
+            font-size: 16px;
+            bottom: 10px;
+            right: 10px;
             z-index: 100;
+            margin-bottom: 20px;
+
+            &:hover {
+                color: #3f8468;
+            }
         }
+    }
+
+    .assistant {
+        display: flex;
+        gap: 8px;
+    }
+
+    .user {
+        padding: 10px 16px;
+        border-radius: 24px;
+        background-color: #ecebe1;
+        width: fit-content;
+        margin-left: auto;
+        max-width: 40%;
     }
 }

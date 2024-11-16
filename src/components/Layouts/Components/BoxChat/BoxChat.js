@@ -12,6 +12,7 @@ import CareerBoxMessage from '../CareerBoxMessage';
 
 import styles from './BoxChat.module.scss';
 import { toast } from 'react-toastify';
+import { marked } from 'marked';
 
 const BoxChat = ({ data }) => {
     const inputChatRef = useRef(null);
@@ -98,19 +99,6 @@ const BoxChat = ({ data }) => {
         [messages, topic, typeWords],
     );
 
-    const handleSendInput = useCallback(
-        async (event) => {
-            if (!isTyping && event.key === 'Enter' && message.trim()) {
-                setIsTyping(true);
-                inputChatRef.current?.focus();
-                setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
-
-                await handleAskAI(message);
-            }
-        },
-        [isTyping, message, handleAskAI],
-    );
-
     const handleSendIcon = useCallback(
         async (event) => {
             if (!isTyping && event.type === 'click' && message.trim()) {
@@ -151,37 +139,51 @@ const BoxChat = ({ data }) => {
                         }}
                     >
                         <img src="logo.png" alt="STEM AI logo" style={{ width: 50, height: 50 }} />
-                        <h3 style={{ fontWeight: 'bold' }}>STEM AI</h3>
-                        <p style={{ textAlign: 'center', maxWidth: 600 }}>
+                        <h3 style={{ fontWeight: 'bold', marginTop: '-12px' }}>STEM AI</h3>
+                        <p style={{ textAlign: 'center', maxWidth: 600, marginTop: '-12px' }}>
                             STEM AI là một công cụ hỗ trợ học tập STEM vật lí hiệu quả, cung cấp kiến thức và giải đáp
                             thắc mắc giúp học sinh năng cao hiểu biết và tư duy sáng tạo trong lĩnh vực này.
                         </p>
                     </div>
                 )}
                 {topic === 'career' && <CareerBoxMessage data={dataTopicCareer} onAskAI={handleAskAI} />}
-                {messages.map((item, index) => (
-                    <BoxMessage key={index} data={item} />
-                ))}
+                {messages.map((item, index) => {
+                    if (item.role === 'assistant') {
+                        return (
+                            <div className={styles.assistant} key={index}>
+                                <img
+                                    src="logo.png"
+                                    alt="assistant-icon"
+                                    className={`${styles.img}`}
+                                    style={{ width: 35, height: 35 }}
+                                />
+                                <span
+                                    key={index}
+                                    style={{ maxWidth: '60%' }}
+                                    dangerouslySetInnerHTML={{ __html: marked(item.message) }}
+                                ></span>
+                            </div>
+                        );
+                    } else {
+                        return (
+                            <div key={index} style={{}} className={styles.user}>
+                                <span dangerouslySetInnerHTML={{ __html: marked(item.message) }}></span>
+                            </div>
+                        );
+                    }
+                })}
                 {isTyping && <BoxMessage data={{ role: 'assistant', message: 'Đang tải...' }} />}
             </div>
 
             <div className={styles.inputChat} style={{ display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
-                <input
+                <textarea
                     ref={inputChatRef}
                     value={message}
                     className={styles.input}
                     type="text"
-                    placeholder={'Nhập tin nhắn của bạn...'}
+                    placeholder={'Nhập câu hỏi của bạn...'}
                     onChange={handleChangeMessage}
-                    onKeyDown={handleSendInput}
-                    style={{
-                        width: '100%',
-                        padding: '8px 16px',
-                        border: '1px solid #ccc',
-                        borderRadius: '24px',
-                        height: '48px',
-                        fontSize: '1.25rem',
-                    }}
+                    rows={4}
                 />
                 {isTyping ? (
                     <Spin
