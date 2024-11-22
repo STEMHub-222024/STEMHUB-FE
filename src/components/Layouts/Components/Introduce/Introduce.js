@@ -1,7 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Introduce.module.scss';
-import Heading from '~/components/Common/Heading';
 import Button from '~/components/Common/Button';
 import ScientistImage from './ScientistImage';
 import useScientistData from '~/hooks/useScientistData';
@@ -73,13 +72,13 @@ function Introduce() {
             </div>
             <div className={cx('grid-column-7')}>
                 <div className={cx('wrap-content')}>
-                    <Heading h2 className={cx('title')}>
-                        {selectedScientist ? selectedScientist.fullName : ''}
-                    </Heading>
                     <div className={cx('criteria')}>
                         <div className={cx('criteria-item')}>
-                            <span>{selectedScientist ? selectedScientist.adage : ''}</span>
+                            <span className={cx("criteria-item-italicized")}>{selectedScientist ? selectedScientist.adage : ''}</span>
                             <span>{selectedScientist ? selectedScientist.adageVN : ''}</span>
+                            <span className={cx("end-criteria", {
+                              "criteria-item-italicized": true
+                            })}>{selectedScientist ? selectedScientist.fullName : ''}</span>
                         </div>
                     </div>
                     <div className={cx('container')}>

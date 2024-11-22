@@ -110,7 +110,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 50px 0;
+    padding: 80px 0 0 0;
     position: relative;
     .title {
         margin-left: 4px;
@@ -126,16 +126,30 @@
         .criteria-item {
             text-align: center;
             min-height: 40px;
+            position: relative;
+
+            .criteria-item-italicized {
+                font-style: italic;
+            }
 
             span {
-                font-size: 1.4rem;
-                font-weight: 600;
+                font-size: 2rem;
+                font-weight: 400;
                 margin-left: 4px;
                 overflow: hidden;
                 word-wrap: break-word;
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 2;
+            }
+
+            .end-criteria {
+                display: flex;
+                justify-content: end;
+                margin-top: 14px;
+                position: absolute;
+                right: -48px;
+                
             }
         }
     }

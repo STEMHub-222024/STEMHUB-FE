@@ -11,7 +11,6 @@
 // Slide
 .slideshow {
     margin-top: 18px;
-    padding: 0 26px;
 }
 
 // body
@@ -24,7 +23,7 @@
 
 // Topic
 .topic-group {
-    padding: 0 26px 40px 26px;
+    padding: 0 26px 26px 26px;
     background: rgba(235, 235, 245, 1.3);
     border-radius: 12px;
     .topic-header {
@@ -36,10 +35,9 @@
             width: 66%;
             line-height: 56px;
             color: var(--color-title-topic);
-            padding: 24px 0;
+            padding: 12px 0 0 12px;
             font-size: 3rem;
             font-weight: 600;
-            font-family: "Font Awesome 6 Brands";
 
             span {
                 color: #7f56d9;
@@ -51,7 +49,11 @@
 .btn-explore-all {
     display: flex;
     justify-content: center;
-    padding: 40px 0;
+    padding: 40px 0 0 0;
+
+    .btn-home {
+        font-size: 1.7rem !important;
+    }
 }
 
 // Introduce
@@ -62,17 +64,16 @@
 //posts
 
 .posts-content {
-    padding: 0 26px 0 26px;
+    padding: 0 26px 26px 26px;
     background: rgba(235, 235, 245, 1.3);
     border-radius: 12px;
         .title {
             width: 66%;
             line-height: 56px;
             color: var(--color-title-topic);
-            padding: 24px 0;
+            padding: 12px 0 0 12px;
             font-size: 3rem;
             font-weight: 600;
-            font-family: "Font Awesome 6 Brands";
             span {
                 color: #7f56d9;
             }

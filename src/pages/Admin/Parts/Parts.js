@@ -42,16 +42,27 @@ function Parts() {
     const fetchLessonsAndParts = async () => {
         try {
             setLoading(true);
-            const [resLessons, resParts] = await Promise.all([lessonServices.getLesson(), partServices.getPart()])
-            if (resLessons && resParts) {
-                const filteredLessons = resLessons.filter(lesson => 
-                    !resParts.some(part => part.lessonId === lesson.lessonId)
-                );
-                setState((prevState) => ({ ...prevState, resParts: resParts, lessonList: filteredLessons, lessonFull: resLessons }));
+            const results = await Promise.allSettled([
+                lessonServices.getLesson(),
+                partServices.getPart()
+            ]);
+
+            const resLessons = results[0].status === 'fulfilled' ? results[0].value : null;
+            const resParts = results[1].status === 'fulfilled' ? results[1].value : null;
+
+            if (resLessons) {
+                console.log("vip nè", resLessons, resParts);
+                if (resParts) {
+                    const filteredLessons = resLessons.filter(lesson => 
+                        !resParts.some(part => part.lessonId === lesson.lessonId)
+                    );
+                    setState((prevState) => ({ ...prevState, resParts: resParts, lessonList: filteredLessons, lessonFull: resLessons }));
+                } else {
+                    setState((prevState) => ({ ...prevState, resParts: [], lessonList: resLessons, lessonFull: resLessons }));
+                }
             }
         } catch (error) {
-        }
-        finally {
+        } finally {
             setLoading(false);
         }
     };
@@ -106,7 +117,10 @@ function Parts() {
 
     const handleAdd = () => { 
         form.resetFields();
-        setState((prevState) => ({ ...prevState, editingPart: null, isLessonModalVisible: true }));
+        setState((prevState) => {
+            console.log("duc vip pro", prevState);
+           return ({ ...prevState, editingPart: null, isLessonModalVisible: true })
+        });
         setMaterialMarkdown('');
         setMaterialHtmlContent('');
         setStepsMarkdown('');

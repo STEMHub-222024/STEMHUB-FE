@@ -73,7 +73,7 @@ function Home() {
                             <div className={cx('grid-row')}>
                                 <div className={cx('grid-column-12')}>
                                     <div className={cx('btn-explore-all')}>
-                                        <Button mainColor borderMedium medium to={`/${convertedString}`}>
+                                        <Button className={cx('btn-home')}  mainColor borderMedium medium to={`/${convertedString}`}>
                                             Khám phá chủ đề
                                         </Button>
                                     </div>
@@ -101,7 +101,7 @@ function Home() {
                     <div className={cx('grid-row')}>
                         <div className={cx('grid-column-12')}>
                             <div className={cx('btn-explore-all')}>
-                                <Button to={config.routes.posts} mainColor borderMedium medium>
+                                <Button className={cx('btn-home')} to={config.routes.posts} mainColor borderMedium medium>
                                     Khám phá bài viết
                                 </Button>
                             </div>

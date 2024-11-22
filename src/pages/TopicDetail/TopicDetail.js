@@ -116,10 +116,10 @@ function TopicDetail() {
                                         className={cx('bg')}
                                         style={{ backgroundImage: `url("${topicIds?.topicImage}")` }}
                                     />
-                                    <div className={cx('overlay')} onClick={handleShowModal}>
+                                    {/* <div className={cx('overlay')} onClick={handleShowModal}>
                                         <IconPlayerPlay size={35} stroke={3} style={{ color: '#7f56d9' }} />
-                                    </div>
-                                    <p>Xem giới thiệu chủ đề</p>
+                                    </div> */}
+                                    {/* <p>Xem giới thiệu chủ đề</p> */}
                                 </div>
 
                                 <h5>Miễn phí </h5>
