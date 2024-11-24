@@ -11,8 +11,9 @@ import * as userServices from '~/services/userServices';
 import * as topicServices from '~/services/topicServices';
 import * as lessonServices from '~/services/lessonServices';
 import * as commentServices from '~/services/commentServices';
-import * as searchServices from '~/services/searchServices'
+import * as searchServices from '~/services/searchServices';
 import styles from './Dashboard.module.scss';
+import { IconQuestionMark, IconUser } from '@tabler/icons-react';
 
 const cx = classNames.bind(styles);
 
@@ -45,8 +46,7 @@ const Dashboard = () => {
             setUsers(userResponse);
             setTopics(topicResponse);
             setSearchs(searchResponse);
-        } catch (error) {
-        }
+        } catch (error) {}
     }, []);
 
     const fetchLessonInteractions = useCallback(async () => {
@@ -67,11 +67,8 @@ const Dashboard = () => {
             }));
 
             setLessons(updatedLessons);
-        } catch (error) {
-        }
+        } catch (error) {}
     }, [lessons]);
-
-
 
     useEffect(() => {
         if (lessons.length === 0) {
@@ -136,7 +133,7 @@ const Dashboard = () => {
                     marginBottom: 16,
                 }}
             >
-                <Heading h2>Dashboard</Heading>
+                <Heading h2>Chào Mừng Đến Trang Quản Trị</Heading>
             </Space>
             {loading ? (
                 <div className={cx('wrapper-loading')}>
@@ -144,34 +141,46 @@ const Dashboard = () => {
                 </div>
             ) : (
                 <Suspense fallback={<Spin size="large" />}>
-                    
-                    <Row gutter={16}>
-                        <Col span={24} className={cx('colum')}>
+                    <div className={styles['summary']}>
+                        <div className={styles['card']}>
+                            <div className={`${styles['icon']} ${styles['question']}`}>
+                                <IconQuestionMark color="#7B1FA2" />
+                            </div>
+                            <div>
+                                <p className={styles['title']}>Tổng số bài viết</p>
+                                <strong>{lessons.length}</strong>
+                            </div>
+                        </div>
+                        <div className={styles['card']}>
+                            <div className={`${styles['icon']} ${styles['user']}`}>
+                                <IconUser color="#1976D2" />
+                            </div>
+                            <div>
+                                <p className={styles['title']}>Tổng số tài khoản</p>
+                                <strong>{users.length}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+                        <Col span={24} xl={12}>
                             <Card title="Top 5 keyword (Search)">
                                 <SearchChart searchData={searchData} />
                             </Card>
                         </Col>
-                    </Row>
-                  
-
-                    <Row gutter={16}>
-                        <Col span={24} className={cx('colum')}>
+                        <Col span={24} xl={12}>
                             <Card title="Topics">
                                 <TopicChart data={topicChartData} />
                             </Card>
                         </Col>
                     </Row>
 
-                    <Row gutter={16}>
-                        <Col span={24} className={cx('colum')}>
+                    <Row gutter={[16, 16]}>
+                        <Col span={24} xl={12}>
                             <Card title="Lesson Interactions">
                                 <LessonInteractionChart data={lessonInteractionChartData} />
                             </Card>
                         </Col>
-                    </Row>
-
-                    <Row gutter={16}>
-                        <Col span={24} className={cx('colum')}>
+                        <Col span={24} xl={12}>
                             <Card title="User Registrations Over Time">
                                 <UserChart data={userChartData} />
                             </Card>

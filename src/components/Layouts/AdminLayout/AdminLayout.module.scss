@@ -1,14 +1,16 @@
-.logo-admin {
-    height: 32px;
-    margin: 16px 4px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
+.logo {
     display: flex;
+    margin: 16px 0px;
     justify-content: center;
-    align-items: center;
-    .heading {
-        color: var(--white);
-        font-size: 1.8rem;
-        text-transform: uppercase;
+}
+
+.layout-container {
+    width: 100vw;
+    height: 100vh;
+
+    .main {
+        width: 100vw;
+        height: 100vh;
+        overflow-y: scroll;
     }
 }
