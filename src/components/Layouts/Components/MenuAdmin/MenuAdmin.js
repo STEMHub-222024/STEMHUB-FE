@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Menu } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
     IconDashboard,
     IconUsers,
@@ -10,93 +10,47 @@ import {
     IconPhotoSearch,
     IconSteam,
     IconPhotoScan,
-    IconTower,
     IconFlask2,
 } from '@tabler/icons-react';
 import config from '~/config';
 
-function MenuAdmin() {
-    const defaultSelectMenu = localStorage.getItem('defaultSelectMenu');
-    const [defaultSelect, setDefaultSelect] = useState(defaultSelectMenu ?? '1');
-    const navigate = useNavigate();
+function getItem(label, key, icon, children) {
+    return {
+        key,
+        icon,
+        children,
+        label,
+    };
+}
 
-    useEffect(() => {
-        localStorage.setItem('defaultSelectMenu', defaultSelect);
-    }, [defaultSelect]);
+function MenuAdmin() {
     const items = [
-        {
-            key: '1',
-            icon: <IconDashboard stroke={1} fontSize={18} />,
-            label: 'Dashboard',
-            to: config.routes.admin,
-        },
-        {
-            key: '2',
-            icon: <IconUsers stroke={1} fontSize={18} />,
-            label: 'Account',
-            to: config.routes.account,
-        },
-        {
-            key: '3',
-            icon: <IconSteam stroke={1} fontSize={18} />,
-            label: 'STEM',
-            to: config.routes.stem,
-        },
-        {
-            key: '4',
-            icon: <IconBook stroke={1} fontSize={18} />,
-            label: 'Topic',
-            to: config.routes.topicAdmin,
-        },
-        {
-            key: '5',
-            icon: <IconBook2 stroke={1} fontSize={18} />,
-            label: 'Lesson',
-            to: config.routes.lesson,
-        },
-        {
-            key: '6',
-            icon: <IconWriting stroke={1} fontSize={18} />,
-            label: 'Posts',
-            to: config.routes.postsAdmin,
-        },
-        {
-            key: '7',
-            icon: <IconPhotoScan stroke={1} fontSize={18} />,
-            label: 'Banner',
-            to: config.routes.banner,
-        },
-        {
-            key: '8',
-            icon: <IconFlask2 stroke={1} fontSize={18} />,
-            label: 'Scientist',
-            to: config.routes.scientistAdmin,
-        },
-        {
-            key: '9',
-            icon: <IconPhotoSearch stroke={1} fontSize={18} />,
-            label: 'Images',
-            to: config.routes.images,
-        },
-        {
-            key: '10',
-            icon: <IconTower stroke={1} fontSize={18} />,
-            label: 'Owner',
-            to: config.routes.owner,
-        },
+        getItem(<Link to={config.routes.admin}>Trang chủ</Link>, '1', <IconDashboard stroke={1} fontSize={18} />),
+        getItem('Quản lý bài học', '2', <IconDashboard stroke={1} fontSize={18} />, [
+            getItem(<Link to={config.routes.stem}>STEM</Link>, '3', <IconSteam stroke={1} fontSize={18} />),
+            getItem(<Link to={config.routes.topicAdmin}>Topic</Link>, '4', <IconBook stroke={1} fontSize={18} />),
+            getItem(<Link to={config.routes.lesson}>Lesson</Link>, '5', <IconBook2 stroke={1} fontSize={18} />),
+            getItem(<Link to={config.routes.banner}>Banner</Link>, '6', <IconPhotoScan stroke={1} fontSize={18} />),
+            getItem(
+                <Link to={config.routes.scientistAdmin}>Scientist</Link>,
+                '7',
+                <IconFlask2 stroke={1} fontSize={18} />,
+            ),
+            getItem(<Link to={config.routes.images}>Images</Link>, '8', <IconPhotoSearch stroke={1} fontSize={18} />),
+        ]),
+        getItem(
+            <Link to={config.routes.postsAdmin}>Quản lí bài viết</Link>,
+            '9',
+            <IconWriting stroke={1} fontSize={18} />,
+        ),
+        getItem(
+            <Link to={config.routes.account}>Quản lí tài khoản</Link>,
+            '10',
+            <IconUsers stroke={1} fontSize={18} />,
+        ),
     ];
 
-    function handleRouter(e) {
-        const menuItem = items.find((item) => item.key === e.key);
-        if (menuItem) {
-            setDefaultSelect(menuItem.key);
-            navigate(menuItem.to);
-        }
-    }
-
-    return (
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={[defaultSelect]} items={items} onClick={handleRouter} />
-    );
+    return <Menu theme="dark" mode="inline" items={items} />;
 }
 
 export default MenuAdmin;
