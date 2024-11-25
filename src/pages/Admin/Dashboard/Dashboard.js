@@ -6,7 +6,7 @@ import Heading from '~/components/Common/Heading';
 import UserChart from './UserChart';
 import TopicChart from './TopicChart';
 import SearchChart from './SearchChart';
-import LessonInteractionChart from './LessonInteractionChart';
+// import LessonInteractionChart from './LessonInteractionChart';
 import * as userServices from '~/services/userServices';
 import * as topicServices from '~/services/topicServices';
 import * as lessonServices from '~/services/lessonServices';
@@ -14,6 +14,7 @@ import * as commentServices from '~/services/commentServices';
 import * as searchServices from '~/services/searchServices';
 import styles from './Dashboard.module.scss';
 import { IconQuestionMark, IconUser } from '@tabler/icons-react';
+import 'chart.js/auto';
 
 const cx = classNames.bind(styles);
 
@@ -104,21 +105,23 @@ const Dashboard = () => {
 
     const topicChartData = useMemo(
         () =>
-            topics.map((topic) => ({
-                name: topic.topicName,
-                views: topic.view,
-            })),
+            topics
+                .sort((a, b) => b.view - a.view)
+                .slice(0, 5)
+                .map((topic) => ({
+                    name: topic.topicName,
+                    views: topic.view,
+                })),
         [topics],
     );
-
-    const lessonInteractionChartData = useMemo(
-        () =>
-            lessons.map((lesson) => ({
-                name: lesson.lessonName,
-                comments: typeof lesson.comments === 'number' ? lesson.comments : 0,
-            })),
-        [lessons],
-    );
+    // const lessonInteractionChartData = useMemo(
+    //     () =>
+    //         lessons.map((lesson) => ({
+    //             name: lesson.lessonName,
+    //             comments: typeof lesson.comments === 'number' ? lesson.comments : 0,
+    //         })),
+    //     [lessons],
+    // );
 
     return (
         <Content
@@ -168,18 +171,21 @@ const Dashboard = () => {
                             </Card>
                         </Col>
                         <Col span={24} xl={12}>
-                            <Card title="Topics">
+                            <Card
+                                title="Topics"
+                                styles={{ body: { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}
+                            >
                                 <TopicChart data={topicChartData} />
                             </Card>
                         </Col>
                     </Row>
 
                     <Row gutter={[16, 16]}>
-                        <Col span={24} xl={12}>
+                        {/* <Col span={24} xl={12}>
                             <Card title="Lesson Interactions">
                                 <LessonInteractionChart data={lessonInteractionChartData} />
                             </Card>
-                        </Col>
+                        </Col> */}
                         <Col span={24} xl={12}>
                             <Card title="User Registrations Over Time">
                                 <UserChart data={userChartData} />

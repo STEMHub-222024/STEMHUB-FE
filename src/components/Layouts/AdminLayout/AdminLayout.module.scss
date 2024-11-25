@@ -8,6 +8,13 @@
     width: 100vw;
     height: 100vh;
 
+    .sider {
+        display: unset !important;
+        max-width: fit-content !important;
+        min-width: fit-content !important;
+        width: fit-content;
+    }
+
     .main {
         width: 100vw;
         height: 100vh;

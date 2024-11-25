@@ -35,7 +35,7 @@ function AdminLayout({ children }) {
             }}
         >
             <Layout className={styles['layout-container']}>
-                <Sider trigger={null} collapsible collapsed={collapsed}>
+                <Sider trigger={null} collapsible collapsed={collapsed} className={styles['sider']}>
                     <Link to={routes.admin} className={styles['logo']}>
                         <img
                             src={images.logo}
