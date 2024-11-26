@@ -7,11 +7,11 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const TopicChart = memo(({ data }) => {
     const colors = ['#ff6384', '#36a2eb', '#ffce56', '#82ca9d', '#ff9f40', '#4bc0c0', '#9966ff', '#c9cbcf'];
 
-    const [legendPosition, setLegendPosition] = useState('left');
+    const [legendPosition, setLegendPosition] = useState('right');
 
     useEffect(() => {
         const updateLegendPosition = () => {
-            setLegendPosition(window.innerWidth <= 768 ? 'top' : 'left');
+            setLegendPosition(window.innerWidth <= 768 ? 'top' : 'right');
         };
 
         updateLegendPosition();
@@ -34,17 +34,16 @@ const TopicChart = memo(({ data }) => {
         responsive: false,
         plugins: {
             legend: {
-                position: legendPosition,
+                position: 'bottom',
                 fullSize: true,
             },
             tooltip: {
                 enabled: true,
             },
         },
-        aspectRatio: 1 / 1,
     };
 
-    return <Pie data={chartData} options={options} width={348} height={348} />;
+    return <Pie data={chartData} options={options} width={280} height={280} />;
 });
 
 export default TopicChart;
