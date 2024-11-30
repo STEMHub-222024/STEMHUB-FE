@@ -6,7 +6,7 @@ import Heading from '~/components/Common/Heading';
 import UserChart from './UserChart';
 import TopicChart from './TopicChart';
 import SearchChart from './SearchChart';
-// import LessonInteractionChart from './LessonInteractionChart';
+import LessonInteractionChart from './LessonInteractionChart';
 import * as userServices from '~/services/userServices';
 import * as topicServices from '~/services/topicServices';
 import * as lessonServices from '~/services/lessonServices';
@@ -62,6 +62,7 @@ const Dashboard = () => {
                         .catch((error) => (error?.response?.status === 404 ? 0 : Promise.reject(error))),
                 ),
             );
+
             const updatedLessons = lessons.map((lesson, index) => ({
                 ...lesson,
                 comments: commentCounts[index].status === 'fulfilled' ? commentCounts[index].value : 0,
@@ -114,14 +115,18 @@ const Dashboard = () => {
                 })),
         [topics],
     );
-    // const lessonInteractionChartData = useMemo(
-    //     () =>
-    //         lessons.map((lesson) => ({
-    //             name: lesson.lessonName,
-    //             comments: typeof lesson.comments === 'number' ? lesson.comments : 0,
-    //         })),
-    //     [lessons],
-    // );
+    const lessonInteractionChartData = useMemo(
+        () =>
+            lessons
+                .filter((item) => item.comments > 0)
+                .sort((a, b) => a.comments - b.comments)
+                .slice(0, 5)
+                .map((lesson) => ({
+                    name: lesson.lessonName,
+                    comments: typeof lesson.comments === 'number' ? lesson.comments : 0,
+                })),
+        [lessons],
+    );
 
     return (
         <Content
@@ -180,12 +185,15 @@ const Dashboard = () => {
                         </Col>
                     </Row>
 
-                    <Row gutter={[16, 16]}>
-                        {/* <Col span={24} xl={12}>
-                            <Card title="Lesson Interactions">
+                    <Row gutter={[16, 16]} style={{ paddingBottom: 20 }}>
+                        <Col span={24} xl={12}>
+                            <Card
+                                title="Lesson Interactions"
+                                styles={{ body: { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}
+                            >
                                 <LessonInteractionChart data={lessonInteractionChartData} />
                             </Card>
-                        </Col> */}
+                        </Col>
                         <Col span={24} xl={12}>
                             <Card title="User Registrations Over Time">
                                 <UserChart data={userChartData} />
