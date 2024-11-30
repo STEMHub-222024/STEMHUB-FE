@@ -11,8 +11,10 @@ import * as userServices from '~/services/userServices';
 import * as topicServices from '~/services/topicServices';
 import * as lessonServices from '~/services/lessonServices';
 import * as commentServices from '~/services/commentServices';
-import * as searchServices from '~/services/searchServices'
+import * as searchServices from '~/services/searchServices';
 import styles from './Dashboard.module.scss';
+import { IconQuestionMark, IconUser } from '@tabler/icons-react';
+import 'chart.js/auto';
 
 const cx = classNames.bind(styles);
 
@@ -45,8 +47,7 @@ const Dashboard = () => {
             setUsers(userResponse);
             setTopics(topicResponse);
             setSearchs(searchResponse);
-        } catch (error) {
-        }
+        } catch (error) {}
     }, []);
 
     const fetchLessonInteractions = useCallback(async () => {
@@ -61,17 +62,15 @@ const Dashboard = () => {
                         .catch((error) => (error?.response?.status === 404 ? 0 : Promise.reject(error))),
                 ),
             );
+
             const updatedLessons = lessons.map((lesson, index) => ({
                 ...lesson,
                 comments: commentCounts[index].status === 'fulfilled' ? commentCounts[index].value : 0,
             }));
 
             setLessons(updatedLessons);
-        } catch (error) {
-        }
+        } catch (error) {}
     }, [lessons]);
-
-
 
     useEffect(() => {
         if (lessons.length === 0) {
@@ -107,19 +106,25 @@ const Dashboard = () => {
 
     const topicChartData = useMemo(
         () =>
-            topics.map((topic) => ({
-                name: topic.topicName,
-                views: topic.view,
-            })),
+            topics
+                .sort((a, b) => b.view - a.view)
+                .slice(0, 5)
+                .map((topic) => ({
+                    name: topic.topicName,
+                    views: topic.view,
+                })),
         [topics],
     );
-
     const lessonInteractionChartData = useMemo(
         () =>
-            lessons.map((lesson) => ({
-                name: lesson.lessonName,
-                comments: typeof lesson.comments === 'number' ? lesson.comments : 0,
-            })),
+            lessons
+                .filter((item) => item.comments > 0)
+                .sort((a, b) => a.comments - b.comments)
+                .slice(0, 5)
+                .map((lesson) => ({
+                    name: lesson.lessonName,
+                    comments: typeof lesson.comments === 'number' ? lesson.comments : 0,
+                })),
         [lessons],
     );
 
@@ -136,7 +141,7 @@ const Dashboard = () => {
                     marginBottom: 16,
                 }}
             >
-                <Heading h2>Dashboard</Heading>
+                <Heading h2>Chào Mừng Đến Trang Quản Trị</Heading>
             </Space>
             {loading ? (
                 <div className={cx('wrapper-loading')}>
@@ -144,34 +149,52 @@ const Dashboard = () => {
                 </div>
             ) : (
                 <Suspense fallback={<Spin size="large" />}>
-                    
-                    <Row gutter={16}>
-                        <Col span={24} className={cx('colum')}>
+                    <div className={styles['summary']}>
+                        <div className={styles['card']}>
+                            <div className={`${styles['icon']} ${styles['question']}`}>
+                                <IconQuestionMark color="#7B1FA2" />
+                            </div>
+                            <div>
+                                <p className={styles['title']}>Tổng số bài viết</p>
+                                <strong>{lessons.length}</strong>
+                            </div>
+                        </div>
+                        <div className={styles['card']}>
+                            <div className={`${styles['icon']} ${styles['user']}`}>
+                                <IconUser color="#1976D2" />
+                            </div>
+                            <div>
+                                <p className={styles['title']}>Tổng số tài khoản</p>
+                                <strong>{users.length}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+                        <Col span={24} xl={12}>
                             <Card title="Top 5 keyword (Search)">
                                 <SearchChart searchData={searchData} />
                             </Card>
                         </Col>
-                    </Row>
-                  
-
-                    <Row gutter={16}>
-                        <Col span={24} className={cx('colum')}>
-                            <Card title="Topics">
+                        <Col span={24} xl={12}>
+                            <Card
+                                title="Topics"
+                                styles={{ body: { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}
+                            >
                                 <TopicChart data={topicChartData} />
                             </Card>
                         </Col>
                     </Row>
 
-                    <Row gutter={16}>
-                        <Col span={24} className={cx('colum')}>
-                            <Card title="Lesson Interactions">
+                    <Row gutter={[16, 16]} style={{ paddingBottom: 20 }}>
+                        <Col span={24} xl={12}>
+                            <Card
+                                title="Lesson Interactions"
+                                styles={{ body: { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}
+                            >
                                 <LessonInteractionChart data={lessonInteractionChartData} />
                             </Card>
                         </Col>
-                    </Row>
-
-                    <Row gutter={16}>
-                        <Col span={24} className={cx('colum')}>
+                        <Col span={24} xl={12}>
                             <Card title="User Registrations Over Time">
                                 <UserChart data={userChartData} />
                             </Card>

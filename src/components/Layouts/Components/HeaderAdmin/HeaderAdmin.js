@@ -1,24 +1,51 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Button, Layout, theme } from 'antd';
+import { Button, Dropdown, Layout } from 'antd';
+import Image from '~/components/Common/Image';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAuth } from '~/app/selectors';
+import useUserInfo from '~/hooks/useUserInfo';
+import { useCallback } from 'react';
+import { logout } from '~/app/slices/authSlice';
+
+import styles from './HeaderAdmin.module.scss';
 const { Header } = Layout;
 
 function HeaderAdmin({ collapsed, setCollapsed }) {
-    const {
-        token: { colorBgContainer },
-    } = theme.useToken();
+    const { infoUserCurrent } = useSelector(selectAuth).data;
+    const { data: userInfo } = useUserInfo(infoUserCurrent?.userId);
+    const dispatch = useDispatch();
+
+    const handleLogout = useCallback(() => {
+        dispatch(logout());
+    }, [dispatch]);
+
+    const items = [
+        {
+            label: <span onClick={handleLogout}>Đăng xuất</span>,
+            key: '0',
+        },
+    ];
 
     return (
-        <Header style={{ padding: 0, background: colorBgContainer }}>
+        <Header className={styles['header']}>
             <Button
                 type="text"
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
                 style={{
                     fontSize: '16px',
-                    width: 64,
-                    height: 64,
                 }}
             />
+            <Dropdown menu={{ items }} trigger={['click']}>
+                <button className={styles['account']}>
+                    <span>{`${userInfo?.firstName} ${userInfo?.lastName}`}</span>
+                    <Image
+                        className={styles['user-avatar']}
+                        src={userInfo?.image ?? ''}
+                        alt={userInfo?.firstName ?? 'Avatar'}
+                    />
+                </button>
+            </Dropdown>
         </Header>
     );
 }
