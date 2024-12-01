@@ -186,6 +186,7 @@ function Parts() {
                                 </Col>
                                 <Col span={24} style={{ border: '1px solid #d9d9d9', borderRadius: '4px', padding: '8px', marginBottom: '16px' }}>
                                     <h4>Result</h4>
+                                
                                     <p dangerouslySetInnerHTML={{ __html: record.resultsHtmlContent ?? '' }}></p>
                                 </Col>
                             </Row>
