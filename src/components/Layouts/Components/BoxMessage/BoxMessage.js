@@ -2,6 +2,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
 import { marked } from 'marked';
 import styles from './BoxMessage.module.scss';
+import images from '~/assets/images';
 
 const BoxMessage = ({ data }) => {
     const convertMarkdownToHtml = (markdown) => {
@@ -15,7 +16,7 @@ const BoxMessage = ({ data }) => {
             </div>
             {data.role === 'assistant' ? (
                 <img
-                    src="logo.png"
+                    src={images.logo}
                     alt="assistant-icon"
                     className={`${styles.img}`}
                     style={{ width: 35, height: 35 }}

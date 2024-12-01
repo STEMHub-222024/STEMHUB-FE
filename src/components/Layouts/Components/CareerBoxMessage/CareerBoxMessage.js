@@ -5,18 +5,11 @@ const CareerBoxMessage = ({ data, onAskAI }) => {
         <div className={styles.messChatAI}>
             <img src="logo.png" alt="assistant-icon" className={`${styles.img}`} style={{ width: 35, height: 35 }} />
             <div style={{ display: 'flex', gap: 8, flexDirection: 'column' }}>
+                <p>Chào bạn &#128075; Tôi có thể giúp gì cho bạn ?</p>
                 {data.map((item, id) => (
                     <div
                         key={id}
-                        style={{
-                            border: '2px solid #7f56d9',
-                            padding: 8,
-                            borderRadius: 16,
-                            width: 'fit-content',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                        }}
-                        className={styles.title}
+                        className={`${styles.title} ${styles.message}`}
                         onClick={() => onAskAI(item.question)}
                     >
                         {item.question}

@@ -9,6 +9,7 @@ import config from '~/config';
 import { ask, sendQuestion } from '~/services/chatbotServices';
 import { toast } from 'react-toastify';
 import { marked } from 'marked';
+import images from '~/assets/images';
 
 const ModalChat = ({ isOpen, setIsOpen }) => {
     const inputChatRef = useRef(null);
@@ -140,9 +141,9 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                 {messages.map((item, index) => {
                     if (item.role === 'assistant') {
                         return (
-                            <div  key={index} className={styles.assistant}>
+                            <div key={index} className={styles.assistant}>
                                 <img
-                                    src="logo.png"
+                                    src={images.logo}
                                     alt="assistant-icon"
                                     className={`${styles.img}`}
                                     style={{ width: 35, height: 35 }}

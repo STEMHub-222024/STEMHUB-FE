@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 
 import { Menu } from 'antd';
 import { getTopLast30days, getTopLast7days } from '~/services/chatbotServices';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import images from '~/assets/images';
 
 const MenuQuestion = ({ onSetQuestion }) => {
     const [items, setItems] = useState();
     const [data7Days, setData7Days] = useState();
     const [data30Days, setData30Days] = useState();
-    const navigate = useNavigate();
-    let [searchParams, setSearchParams] = useSearchParams();
 
     useEffect(() => {
         (async () => {
@@ -21,17 +19,8 @@ const MenuQuestion = ({ onSetQuestion }) => {
                     key: 'newChat',
                     label: (
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <img src="logo.png" alt="assistant-icon" style={{ width: 30, height: 30 }} />
+                            <img src={images.logo} alt="assistant-icon" style={{ width: 30, height: 30 }} />
                             <span>STEM AI</span>
-                        </div>
-                    ),
-                },
-                {
-                    key: 'newChatCareer',
-                    label: (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <img src="logo.png" alt="assistant-icon" style={{ width: 30, height: 30 }} />
-                            <span>STEM hướng nghiệp</span>
                         </div>
                     ),
                 },
@@ -67,19 +56,8 @@ const MenuQuestion = ({ onSetQuestion }) => {
 
     const onClick = (e) => {
         if (e.key === 'newChat') {
-            navigate(`/stemAI`);
-            onSetQuestion(null);
+            onSetQuestion([]);
             return;
-        }
-
-        if (e.key === 'newChatCareer') {
-            navigate(`/stemAI?topic=career`);
-            onSetQuestion(null);
-            return;
-        }
-
-        if (searchParams.size !== 0) {
-            setSearchParams({});
         }
 
         const key = e.key.split('_')[0];
@@ -97,7 +75,6 @@ const MenuQuestion = ({ onSetQuestion }) => {
         }
         const { content, answer } = questionData;
         onSetQuestion([
-            { role: 'assistant', message: 'Chào mừng đến với STEM AI' },
             { role: 'user', message: content },
             { role: 'assistant', message: answer },
         ]);
