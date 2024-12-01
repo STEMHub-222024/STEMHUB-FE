@@ -1,6 +1,5 @@
 import { Spin } from 'antd';
-import { useSearchParams } from 'react-router-dom';
-import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
+import { LoadingOutlined, StopOutlined, SendOutlined } from '@ant-design/icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import config from '~/config';
@@ -13,35 +12,60 @@ import CareerBoxMessage from '../CareerBoxMessage';
 import styles from './BoxChat.module.scss';
 import { toast } from 'react-toastify';
 import { marked } from 'marked';
+import images from '~/assets/images';
 
 const BoxChat = ({ data }) => {
     const inputChatRef = useRef(null);
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-    // eslint-disable-next-line no-unused-vars
-    let [searchParams, _] = useSearchParams();
-    const topic = searchParams.get('topic');
     const [messages, setMessages] = useState([]);
+    const [isDisplayStopped, setIsDisplayStopped] = useState(false);
+    const typingAbortControllerRef = useRef(null);
 
     const typeWords = useCallback((words) => {
-        let currentMessage = '';
-        words.forEach((word, index) => {
-            setTimeout(() => {
-                currentMessage += word + ' ';
-                setMessages((currentMessages) => {
-                    const updatedMessages = [...currentMessages];
+        if (typingAbortControllerRef.current) {
+            typingAbortControllerRef.current.abort();
+        }
 
-                    if (updatedMessages[updatedMessages.length - 1]?.role === 'assistant') {
-                        updatedMessages[updatedMessages.length - 1].message = currentMessage;
-                    } else {
-                        updatedMessages.push({
-                            role: 'assistant',
-                            message: currentMessage,
-                        });
+        typingAbortControllerRef.current = new AbortController();
+        const signal = typingAbortControllerRef.current.signal;
+
+        let timeoutIds = [];
+
+        return new Promise((resolve) => {
+            let currentMessage = '';
+            words.forEach((word, index) => {
+                const timeoutId = setTimeout(() => {
+                    if (signal.aborted) {
+                        timeoutIds.forEach((id) => clearTimeout(id));
+                        timeoutIds = [];
+                        return;
                     }
-                    return updatedMessages;
-                });
-            }, 75 * index);
+
+                    currentMessage += `${word} `;
+                    setMessages((currentMessages) => {
+                        const updatedMessages = [...currentMessages];
+                        if (updatedMessages[updatedMessages.length - 1]?.role === 'assistant') {
+                            updatedMessages[updatedMessages.length - 1].message = currentMessage;
+                        } else {
+                            updatedMessages.push({ role: 'assistant', message: currentMessage });
+                        }
+                        return updatedMessages;
+                    });
+
+                    if (index === words.length - 1) {
+                        setIsDisplayStopped(false);
+                        resolve();
+                    }
+                }, 75 * index);
+                timeoutIds.push(timeoutId);
+            });
+
+            signal.addEventListener('abort', () => {
+                timeoutIds.forEach((id) => clearTimeout(id));
+                timeoutIds = [];
+                resolve();
+            });
         });
     }, []);
 
@@ -56,14 +80,13 @@ const BoxChat = ({ data }) => {
         async (message) => {
             let data;
             let isError = false;
-            if (topic === 'career') {
-                data = dataTopicCareer.find((data) => data.question === message);
-                if (data?.answer) {
-                    setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
-                    typeWords(data.answer.split(' '));
-                    setIsTyping(false);
-                    return;
-                }
+            data = dataTopicCareer.find((data) => data.question === message);
+            if (data?.answer) {
+                setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
+                setIsDisplayStopped(true);
+                await typeWords(data.answer.split(' '));
+                setIsTyping(false);
+                return;
             }
             if (message.length > 8) {
                 try {
@@ -94,65 +117,83 @@ const BoxChat = ({ data }) => {
             );
             setMessage('');
             setIsTyping(false);
-            typeWords(data.split(' '));
+            setIsDisplayStopped(true);
+            await typeWords(data.split(' '));
         },
-        [messages, topic, typeWords],
+        [messages, typeWords],
     );
+
+    const handleSubmit = useCallback(async () => {
+        setIsTyping(true);
+        inputChatRef.current?.focus();
+        setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
+
+        await handleAskAI(message);
+    }, [handleAskAI, message]);
 
     const handleSendIcon = useCallback(
         async (event) => {
             if (!isTyping && event.type === 'click' && message.trim()) {
-                setIsTyping(true);
-                inputChatRef.current?.focus();
-                setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
-
-                await handleAskAI(message);
+                handleSubmit();
             }
         },
-        [handleAskAI, isTyping, message],
+        [handleSubmit, isTyping, message],
     );
+
+    const handleEnter = useCallback(
+        (event) => {
+            if (event.key === 'Enter' && message.trim()) {
+                handleSubmit();
+            }
+        },
+        [handleSubmit, message],
+    );
+
+    const handleStop = useCallback(() => {
+        if (typingAbortControllerRef.current) {
+            typingAbortControllerRef.current.abort();
+        }
+        setIsDisplayStopped(false);
+    }, []);
 
     useEffect(() => {
         if (data) {
             setMessages(data);
-            return;
+        } else {
+            const savedMessages = sessionStorage.getItem('chatMessages');
+            if (savedMessages) {
+                setMessages(JSON.parse(savedMessages));
+            }
         }
-        if (topic) {
-            setMessages([]);
-            return;
-        }
-        setMessages([{ role: 'assistant', message: 'Chào bạn &#128075; Tôi là có thế giúp gì cho bạn ?' }]);
-    }, [data, topic]);
+    }, [data]);
 
     return (
         <div className={styles.wrapper}>
             <div className={styles.messGroup} style={{ display: 'flex', flexDirection: 'column' }}>
-                {topic !== 'career' && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 16,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginBottom: 16,
-                        }}
-                    >
-                        <img src="logo.png" alt="STEM AI logo" style={{ width: 50, height: 50 }} />
-                        <h3 style={{ fontWeight: 'bold', marginTop: '-12px' }}>STEM AI</h3>
-                        <p style={{ textAlign: 'center', maxWidth: 600, marginTop: '-12px' }}>
-                            STEM AI là một công cụ hỗ trợ học tập STEM vật lí hiệu quả, cung cấp kiến thức và giải đáp
-                            thắc mắc giúp học sinh năng cao hiểu biết và tư duy sáng tạo trong lĩnh vực này.
-                        </p>
-                    </div>
-                )}
-                {topic === 'career' && <CareerBoxMessage data={dataTopicCareer} onAskAI={handleAskAI} />}
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 16,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: 16,
+                    }}
+                >
+                    <img src={images.logo} alt="STEM AI logo" style={{ width: 50, height: 50 }} />
+                    <h3 style={{ fontWeight: 'bold', marginTop: '-12px' }}>STEM AI</h3>
+                    <p style={{ textAlign: 'center', maxWidth: 600, marginTop: '-12px' }}>
+                        STEM AI là một công cụ hỗ trợ học tập STEM vật lí hiệu quả, cung cấp kiến thức và giải đáp thắc
+                        mắc giúp học sinh năng cao hiểu biết và tư duy sáng tạo trong lĩnh vực này.
+                    </p>
+                </div>
+                <CareerBoxMessage data={dataTopicCareer} onAskAI={handleAskAI} />
                 {messages.map((item, index) => {
                     if (item.role === 'assistant') {
                         return (
                             <div className={styles.assistant} key={index}>
                                 <img
-                                    src="logo.png"
+                                    src={images.logo}
                                     alt="assistant-icon"
                                     className={`${styles.img}`}
                                     style={{ width: 35, height: 35 }}
@@ -174,7 +215,14 @@ const BoxChat = ({ data }) => {
                 })}
                 {isTyping && <BoxMessage data={{ role: 'assistant', message: 'Đang tải...' }} />}
             </div>
-
+            {isDisplayStopped && (
+                <div className={styles['btn-stop']}>
+                    <button onClick={handleStop}>
+                        <StopOutlined />
+                        Dừng lại
+                    </button>
+                </div>
+            )}
             <div className={styles.inputChat} style={{ display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
                 <textarea
                     ref={inputChatRef}
@@ -184,6 +232,7 @@ const BoxChat = ({ data }) => {
                     placeholder={'Nhập câu hỏi của bạn...'}
                     onChange={handleChangeMessage}
                     rows={4}
+                    onKeyDown={handleEnter}
                 />
                 {isTyping ? (
                     <Spin

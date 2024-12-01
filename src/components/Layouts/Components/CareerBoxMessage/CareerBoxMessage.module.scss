@@ -18,6 +18,18 @@
         border-top-left-radius: 14px;
         border-bottom-left-radius: 14px;
     }
+
+    .message {
+        border: 2px solid #7f56d9;
+        padding: 8px;
+        border-radius: 16px;
+        width: fit-content;
+        cursor: pointer;
+    }
+
+    .message:hover {
+        background-color: #ddd;
+    }
 }
 
 .boxChat {

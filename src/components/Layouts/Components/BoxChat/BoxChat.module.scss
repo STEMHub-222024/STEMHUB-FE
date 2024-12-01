@@ -15,6 +15,8 @@
     .messGroup {
         display: flex;
         flex-direction: column;
+        max-height: 480px;
+        overflow-y: auto;
 
         &::-webkit-scrollbar {
             border-radius: 0;
@@ -36,13 +38,32 @@
         }
     }
 
+    .btn-stop {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: -16px;
+        button {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            color: var(--main-color);
+            background-color: white;
+            border-radius: 12px;
+            width: 120px;
+            padding: 8px;
+            cursor: pointer;
+        }
+    }
+
     .inputChat {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-top: 8px;
+        margin-top: 4px;
         width: 100%;
-        position: relative;
+        position: sticky;
+        bottom: 0;
 
         .input {
             font-size: 1.4rem;
@@ -51,7 +72,7 @@
             width: 100%;
             font-weight: 400;
             outline: none;
-            margin-bottom: 20px;
+            margin-bottom: 8px;
             &:hover {
                 outline: #3f8468 auto;
             }

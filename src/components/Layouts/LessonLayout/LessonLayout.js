@@ -12,6 +12,7 @@ import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLessonAsync, handleFilter } from '~/app/slices/lessonSlice';
 import { selectLesson } from '~/app/selectors';
+import OptionPublic from '~/components/Common/OptionPublic';
 
 const cx = classNames.bind(styles);
 
@@ -51,6 +52,7 @@ function LessonLayout({ children }) {
                     <Tracks data={lessonFilter} topicParameter={topic} />
                 </div>
             </div>
+            <OptionPublic />
             <FooterLesson data={lessonFilter} topicParameter={topic} />
         </div>
     );
