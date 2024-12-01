@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { IconPlayerPlay, IconMovie, IconUsersGroup, IconBattery4, IconCheck } from '@tabler/icons-react';
+import { IconMovie, IconUsersGroup, IconBattery4, IconCheck } from '@tabler/icons-react';
 import classNames from 'classnames/bind';
 import { NumericFormat } from 'react-number-format';
 import styles from './TopicDetail.module.scss';
@@ -131,7 +131,7 @@ function TopicDetail() {
                                     borderMedium
                                     to={
                                         lessonFilter[0]?.lessonId
-                                            ? `${lessonFilter[0]?.lessonName}=${lessonFilter[0]?.lessonId}`
+                                            ? `${lessonFilter[0]?.lessonId}`
                                             : ''
                                     }
                                 >

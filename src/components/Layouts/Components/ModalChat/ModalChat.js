@@ -140,7 +140,7 @@ const ModalChat = ({ isOpen, setIsOpen }) => {
                 {messages.map((item, index) => {
                     if (item.role === 'assistant') {
                         return (
-                            <div className={styles.assistant}>
+                            <div  key={index} className={styles.assistant}>
                                 <img
                                     src="logo.png"
                                     alt="assistant-icon"

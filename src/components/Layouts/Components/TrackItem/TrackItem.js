@@ -21,7 +21,7 @@ function TrackItem({ data, index, topicParameter, isActive, onClose }) {
         <div className={cx('wrapper', { active: isActive })}>
             <Link
                 className={cx('info')}
-                to={`/topic/${topicParameter}/${lessonName}=${lessonId}`}
+                to={`/topic/${topicParameter}/${lessonId}`}
                 onClick={handleClick}
             >
                 <h3 className={cx('title')}>

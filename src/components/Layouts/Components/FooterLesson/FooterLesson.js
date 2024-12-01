@@ -63,7 +63,7 @@ function FooterLesson({ data, topicParameter }) {
                 <Button className={cx('btn-icon')} size="middle" icon={<MenuOutlined />} onClick={toggleDrawer} />
             </div>
             <Drawer
-                title="Nội dung khóa học"
+                title="Nội dung chủ đề"
                 placement="right"
                 onClose={toggleDrawer}
                 open={visible}

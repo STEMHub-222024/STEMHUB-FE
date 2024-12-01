@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import classNames from 'classnames/bind';
 import HeadlessTippy from '@tippyjs/react/headless';
 import { IconSquareRoundedXFilled, IconLoader, IconSearch } from '@tabler/icons-react';
-import { Button as AntButton } from 'antd';
 import { useDebounce } from '~/hooks';
 import styles from './Search.module.scss';
 import Button from '~/components/Common/Button';
@@ -56,12 +55,12 @@ function Search({ currentUser }) {
             } else {
                 dispatch(updatePostsSearch([]));
             }
-        } catch (error) {}
+        } catch (error) { }
     }, [dispatch, debouncedValue]);
 
     useEffect(() => {
         fetchApi();
-        return () => {};
+        return () => { };
     }, [fetchApi]);
 
     const handleClear = useCallback(() => {
@@ -113,30 +112,20 @@ function Search({ currentUser }) {
                                         </Heading>
                                         <div className={cx('keyword-list')}>
                                             {searchTopKeywords.map((keyword, index) => (
-                                                <AntButton.Group
+
+                                                <SearchCourseItem
                                                     key={`keyword-${index}`}
-                                                    size="small"
-                                                    style={{ padding: "8px 12px" }}
-                                                >
-                                                    <AntButton
-                                                        style={{
-                                                            backgroundColor: '#fff',
-                                                            color: '#7f56d9', 
-                                                            border: '1px solid #7f56d9',
-                                                            ':hover': {
-                                                                backgroundColor: '#7f56d9',
-                                                                color: '#fff'
-                                                            }
-                                                        }}
-                                                        className={cx('keyword-item')}
-                                                        onClick={() => setSearchValue(keyword.searchKeyword)}
-                                                    >
-                                                        {keyword.searchKeyword}
-                                                    </AntButton>
-                                                </AntButton.Group>
+                                                    topicData={
+                                                        {
+                                                            topicId: `keyword-${index}`,
+                                                            topicName: keyword.searchKeyword
+                                                        }
+                                                    }
+                                                    setSearchValue={() => setSearchValue(keyword.searchKeyword)}
+                                                    isKeyword
+                                                />
                                             ))}
                                         </div>
-                                        <hr />
                                     </>
                                 )}
                                 {Array.isArray(searchTopics) && searchTopics.length > 0 && (
@@ -153,7 +142,7 @@ function Search({ currentUser }) {
                                         ))}
                                     </>
                                 )}
-                                <hr />
+
                                 {Array.isArray(searchPosts) && searchPosts.length > 0 && (
                                     <>
                                         <hr />

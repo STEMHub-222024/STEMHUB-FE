@@ -11,7 +11,7 @@ function CurriculumOfCourse({ data }) {
         <div className={cx('curriculumOfCourse')}>
             <div className={cx('headerSticky')}>
                 <div className={cx('headerBlock')}>
-                    <h2>Nội dung khóa học</h2>
+                    <h2>Nội dung chủ đề</h2>
                 </div>
 
                 <div className={cx('subHeadWrapper')}>

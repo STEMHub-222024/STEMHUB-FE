@@ -7,43 +7,77 @@ import { updateTopicSearch } from '~/app/slices/searchSlice';
 import styles from './SearchCourseItem.module.scss';
 
 const cx = classNames.bind(styles);
-const wrapperClass = cx('wrapper');
-const avatarClass = cx('avatar');
-const nameClass = cx('name');
+const CLASSES = {
+    wrapper: cx('wrapper'),
+    avatar: cx('avatar'), 
+    name: cx('name')
+};
 
 const Image = lazy(() => import('~/components/Common/Image'));
 
-const SearchCourseItem = memo(({ topicData, newspaperArticleData, setSearchValue }) => {
+const SearchCourseItem = memo(({ 
+    topicData, 
+    newspaperArticleData, 
+    setSearchValue, 
+    isKeyword = false,
+    ...passProps 
+}) => {
     const dispatch = useDispatch();
 
-    const { link, imageSrc, altText, name } = useMemo(() => {
-        const link = topicData
-            ? `/topic/${topicData.topicId}`
-            : newspaperArticleData
-            ? `/posts/${newspaperArticleData.newspaperArticleId}`
-            : '/';
-
-        const imageSrc = topicData ? topicData.topicImage : newspaperArticleData ? newspaperArticleData.image : '';
-        const altText = topicData ? topicData.topicName : newspaperArticleData ? newspaperArticleData.title : '';
-        const name = topicData ? topicData.topicName : newspaperArticleData ? newspaperArticleData.title : '';
-
-        return { link, imageSrc, altText, name };
-    }, [topicData, newspaperArticleData]);
+    const { link, imageSrc, altText, name } = useMemo(() => ({
+        link: getItemLink(topicData, newspaperArticleData),
+        imageSrc: getImageSource(topicData, newspaperArticleData),
+        altText: getName(topicData, newspaperArticleData),
+        name: getName(topicData, newspaperArticleData)
+    }), [topicData, newspaperArticleData]);
 
     const handleHideResult = useCallback(() => {
         setSearchValue('');
         dispatch(updateTopicSearch([]));
+
     }, [dispatch, setSearchValue]);
 
+    const componentProps = {
+        ...passProps,
+        ...(isKeyword ? {} : { to: link }),
+        className: CLASSES.wrapper,
+        onClick: handleHideResult
+    };
+
     return (
-        <Link to={link} className={wrapperClass} onClick={handleHideResult}>
-            <Suspense fallback={<div>Loading...</div>}>
-                <Image className={avatarClass} src={imageSrc} alt={altText} />
-            </Suspense>
-            <span className={nameClass}>{name}</span>
+        <Link {...componentProps}>
+            {!isKeyword && (
+                <Suspense fallback={<div>Loading...</div>}>
+                    <Image 
+                        className={CLASSES.avatar} 
+                        src={imageSrc} 
+                        alt={altText} 
+                    />
+                </Suspense>
+            )}
+            <span className={CLASSES.name}>{name}</span>
         </Link>
     );
 });
+
+
+const getItemLink = (topicData, newspaperArticleData) => {
+    if (topicData) return `/topic/${topicData.topicId}`;
+    if (newspaperArticleData) return `/posts/${newspaperArticleData.newspaperArticleId}`;
+    return '/';
+};
+
+const getImageSource = (topicData, newspaperArticleData) => {
+    if (topicData) return topicData.topicImage;
+    if (newspaperArticleData) return newspaperArticleData.image;
+    return '';
+};
+
+const getName = (topicData, newspaperArticleData) => {
+    if (topicData) return topicData.topicName;
+    if (newspaperArticleData) return newspaperArticleData.title;
+    return '';
+};
 
 SearchCourseItem.propTypes = {
     topicData: PropTypes.shape({

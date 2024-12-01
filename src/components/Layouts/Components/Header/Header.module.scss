@@ -22,7 +22,6 @@
 }
 
 //Logo
-
 .small-group-logo {
     display: flex;
     align-items: center;
@@ -36,7 +35,7 @@
     }
 
     .trademark {
-        color: var(--text-color-trademark);
+        color: var(--main-color);
         font-size: 2.8rem;
         line-height: var(--default-layout-header-height);
     }

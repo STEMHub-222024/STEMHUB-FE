@@ -17,7 +17,7 @@ function Tracks({ data, topicParameter, onClose }) {
         <div className={cx('wrapper')}>
             <div className={cx('container')}>
                 <header className={cx('header')}>
-                    <h2>Nội dung khóa học</h2>
+                    <h2>Nội dung chủ đề</h2>
                 </header>
                 <div className={cx('body')}>
                     {data?.map((lessonItem, index) => (
