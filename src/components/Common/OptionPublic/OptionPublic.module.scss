@@ -11,6 +11,7 @@
             flex-direction: column-reverse;
 
             .item {
+                border-radius: 50%;
                 color: var(--main-color);
                 background: var(--white);
                 width: 40px;

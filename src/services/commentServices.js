@@ -5,7 +5,7 @@ export const getComment = async () => {
     try {
         const res = await httpRequest.get('Comment');
         return res.data;
-    } catch (error) {}
+    } catch (error) { }
 };
 
 export const getCommentIdLesson = async ({ newLessonId }) => {
@@ -16,14 +16,14 @@ export const getCommentIdLesson = async ({ newLessonId }) => {
             },
         });
         return res.data;
-    } catch (error) {}
+    } catch (error) { }
 };
 
 export const getCommentId = async ({ commentId }) => {
     try {
         const res = await httpRequest.get(`Comment/${commentId}`);
         return res.data;
-    } catch (error) {}
+    } catch (error) { }
 };
 
 export const postComment = async ({ content_C, lessonId, userId }) => {
@@ -36,7 +36,6 @@ export const postComment = async ({ content_C, lessonId, userId }) => {
         });
         return res.data;
     } catch (error) {
-        console.log("erroer", error);
     }
 };
 
@@ -48,5 +47,5 @@ export const deleteComment = async ({ commentId, accessToken }) => {
             },
         });
         return res.data;
-    } catch (error) {}
+    } catch (error) { }
 };

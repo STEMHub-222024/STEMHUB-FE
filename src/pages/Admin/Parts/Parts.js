@@ -25,9 +25,9 @@ function Parts() {
         isLessonModalVisible: false,
         editingPart: null,
     });
-    
+
     const [form] = Form.useForm();
-    const [loading, setLoading] = useState(true); 
+    const [loading, setLoading] = useState(true);
     const [materialMarkdown, setMaterialMarkdown] = useState('');
     const [materialHtmlContent, setMaterialHtmlContent] = useState('');
     const [stepsMarkdown, setStepsMarkdown] = useState('');
@@ -51,9 +51,8 @@ function Parts() {
             const resParts = results[1].status === 'fulfilled' ? results[1].value : null;
 
             if (resLessons) {
-                console.log("vip nè", resLessons, resParts);
                 if (resParts) {
-                    const filteredLessons = resLessons.filter(lesson => 
+                    const filteredLessons = resLessons.filter(lesson =>
                         !resParts.some(part => part.lessonId === lesson.lessonId)
                     );
                     setState((prevState) => ({ ...prevState, resParts: resParts, lessonList: filteredLessons, lessonFull: resLessons }));
@@ -115,11 +114,10 @@ function Parts() {
         }
     };
 
-    const handleAdd = () => { 
+    const handleAdd = () => {
         form.resetFields();
         setState((prevState) => {
-            console.log("duc vip pro", prevState);
-           return ({ ...prevState, editingPart: null, isLessonModalVisible: true })
+            return ({ ...prevState, editingPart: null, isLessonModalVisible: true })
         });
         setMaterialMarkdown('');
         setMaterialHtmlContent('');
@@ -135,7 +133,7 @@ function Parts() {
         setMaterialMarkdown(record.materialsMarkdown);
         setMaterialHtmlContent(record.materialsHtmlContent);
         setStepsMarkdown(record.stepsMarkdown);
-        setStepsHtmlContent(record.stepsHtmlContent); 
+        setStepsHtmlContent(record.stepsHtmlContent);
         setResultMarkdown(record.resultsMarkdown);
         setResultHtmlContent(record.resultsHtmlContent);
     };
@@ -143,13 +141,32 @@ function Parts() {
     const columns = [
         {
             title: 'Preparation steps and results',
-            key: 'Preparation steps and results',
-            render: (_, record) => (
-                <Space size="middle">
-                    <Button type="link" onClick={() => handleEdit(record)} icon={<EditOutlined />} />
-                    <Button type="link" onClick={() => handleDelete(record.partId)} icon={<DeleteOutlined />} />
-                </Space>
-            ),
+            key: 'lesson-actions',
+            width: '100%',
+            render: (_, record) => {
+          
+                const lesson = state.lessonFull.find(lesson => lesson.lessonId === record.lessonId);
+                return (
+                    <Space size="middle" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ flex: 1, fontWeight: 500 }}>{lesson?.lessonName || 'No lessons yet!'}</span>
+                        <Space>
+                            <Button
+                                type="link"
+                                onClick={() => handleEdit(record)}
+                                icon={<EditOutlined />}
+                                title="edit"
+                            />
+                            <Button
+                                type="link"
+                                onClick={() => handleDelete(record.partId)}
+                                icon={<DeleteOutlined />}
+                                danger
+                                title="delete"
+                            />
+                        </Space>
+                    </Space>
+                );
+            }
         },
     ];
 
@@ -186,7 +203,7 @@ function Parts() {
                                 </Col>
                                 <Col span={24} style={{ border: '1px solid #d9d9d9', borderRadius: '4px', padding: '8px', marginBottom: '16px' }}>
                                     <h4>Result</h4>
-                                
+
                                     <p dangerouslySetInnerHTML={{ __html: record.resultsHtmlContent ?? '' }}></p>
                                 </Col>
                             </Row>
@@ -209,7 +226,7 @@ function Parts() {
                     onFinish={handleSave}
                     form={form}
                 >
-                     <Form.Item
+                    <Form.Item
                         name="lessonId"
                         label="Lesson"
                         rules={[{ required: true, message: 'Please select a lesson!' }]}
