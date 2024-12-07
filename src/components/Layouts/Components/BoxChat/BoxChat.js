@@ -1,5 +1,5 @@
 import { Spin } from 'antd';
-import { LoadingOutlined, StopOutlined, SendOutlined } from '@ant-design/icons';
+import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import config from '~/config';
@@ -13,6 +13,7 @@ import styles from './BoxChat.module.scss';
 import { toast } from 'react-toastify';
 import { marked } from 'marked';
 import images from '~/assets/images';
+import IconCircleStop from '~/components/Common/Icons/IconCircleStop';
 
 const BoxChat = ({ data }) => {
     const inputChatRef = useRef(null);
@@ -218,7 +219,7 @@ const BoxChat = ({ data }) => {
             {isDisplayStopped && (
                 <div className={styles['btn-stop']}>
                     <button onClick={handleStop}>
-                        <StopOutlined />
+                        <IconCircleStop />
                         Dừng lại
                     </button>
                 </div>

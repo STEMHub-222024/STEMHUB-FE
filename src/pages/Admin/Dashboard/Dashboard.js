@@ -15,6 +15,9 @@ import * as searchServices from '~/services/searchServices';
 import styles from './Dashboard.module.scss';
 import { IconQuestionMark, IconUser } from '@tabler/icons-react';
 import 'chart.js/auto';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectPosts } from '~/app/selectors';
+import { getPostsAllAsync } from '~/app/slices/postSlice';
 
 const cx = classNames.bind(styles);
 
@@ -26,6 +29,8 @@ const Dashboard = () => {
     const [lessons, setLessons] = useState([]);
     const [searchData, setSearchs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
+    const { posts } = useSelector(selectPosts).data;
 
     const fetchData = useCallback(async () => {
         try {
@@ -128,6 +133,15 @@ const Dashboard = () => {
         [lessons],
     );
 
+    useEffect(() => {
+        const fetchApi = async () => {
+            try {
+                await dispatch(getPostsAllAsync()).unwrap();
+            } catch (rejectedValueOrSerializedError) {}
+        };
+        fetchApi();
+    }, [dispatch]);
+
     return (
         <Content
             style={{
@@ -151,11 +165,20 @@ const Dashboard = () => {
                 <Suspense fallback={<Spin size="large" />}>
                     <div className={styles['summary']}>
                         <div className={styles['card']}>
+                            <div className={`${styles['icon']} ${styles['user']}`}>
+                                <IconQuestionMark color="#1976D2" />
+                            </div>
+                            <div>
+                                <p className={styles['title']}>Tổng số bài viết</p>
+                                <strong>{posts.length}</strong>
+                            </div>
+                        </div>
+                        <div className={styles['card']}>
                             <div className={`${styles['icon']} ${styles['question']}`}>
                                 <IconQuestionMark color="#7B1FA2" />
                             </div>
                             <div>
-                                <p className={styles['title']}>Tổng số bài viết</p>
+                                <p className={styles['title']}>Tổng số bài học</p>
                                 <strong>{lessons.length}</strong>
                             </div>
                         </div>

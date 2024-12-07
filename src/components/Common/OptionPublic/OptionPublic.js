@@ -2,10 +2,11 @@ import classNames from 'classnames/bind';
 import { useState, useCallback, memo } from 'react';
 import { Badge, Space } from 'antd';
 import ModalChat from '~/components/Layouts/Components/ModalChat';
-import { IconCircleChevronsUp, IconCircleChevronsDown, IconRobot, IconMessageChatbot } from '@tabler/icons-react';
+import { IconCircleChevronsUp, IconCircleChevronsDown, IconMessageChatbot } from '@tabler/icons-react';
 import scrollToPosition from '~/utils/scrollToPosition';
 import styles from './OptionPublic.module.scss';
 import { useLocation } from 'react-router-dom';
+import images from '~/assets/images';
 
 const cx = classNames.bind(styles);
 
@@ -36,7 +37,12 @@ function OptionPublic() {
                         count={<IconMessageChatbot className={cx('message')} size={25} />}
                         offset={[2, -4]}
                     >
-                        <IconRobot className={cx('icon-ai')} size={35} onClick={handleShowModal} />
+                        <img
+                            src={images.logo}
+                            alt="STEM AI logo"
+                            style={{ width: 50, height: 50 }}
+                            onClick={handleShowModal}
+                        />
                     </Badge>
                 </div>
                 {show ? (
