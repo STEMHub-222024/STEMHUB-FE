@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Layout, Button, Modal, Form, Input, message, Tooltip } from 'antd';
+import { Space, Table, Layout, Button, Modal, Form, Input, message } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import Heading from '~/components/Common/Heading';
 import * as stemServices from '~/services/stemServices';

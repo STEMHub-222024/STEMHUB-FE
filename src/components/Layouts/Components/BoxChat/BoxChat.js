@@ -106,8 +106,8 @@ const BoxChat = ({ data }) => {
                 }
                 if (isError) {
                     try {
-                        data = await config.runGemini(data?.id == 5 ? data?.answer : message);
-                        await sendQuestion({ content: data?.id == 5 ? data?.question : message, answer: data });
+                        data = await config.runGemini(data?.id === 5 ? data?.answer : message);
+                        await sendQuestion({ content: data?.id === 5 ? data?.question : message, answer: data });
                     } catch (error) {
                         toast.error('Đã có lỗi xảy ra. Vui lòng thử lại sau!');
                         return;
