@@ -206,17 +206,6 @@ function Lesson() {
 
     const columns = [
         {
-            title: 'ID',
-            dataIndex: 'lessonId',
-            key: 'lessonId',
-            ellipsis: { showTitle: false },
-            render: (lessonId) => (
-                <Tooltip placement="topLeft" title={lessonId}>
-                    {lessonId}
-                </Tooltip>
-            ),
-        },
-        {
             title: 'Name',
             dataIndex: 'lessonName',
             key: 'lessonName',

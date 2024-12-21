@@ -234,19 +234,6 @@ function Topic() {
 
     const columns = [
         {
-            title: 'ID',
-            dataIndex: 'topicId',
-            key: 'topicId',
-            ellipsis: {
-                showTitle: false,
-            },
-            render: (topicId) => (
-                <Tooltip placement="topLeft" title={topicId}>
-                    {topicId}
-                </Tooltip>
-            ),
-        },
-        {
             title: 'Name',
             dataIndex: 'topicName',
             key: 'topicName',

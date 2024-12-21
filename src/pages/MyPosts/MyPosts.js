@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, Pagination, Empty, Typography, Modal, Form, message, Input, Space, Button, Upload } from 'antd';
+import { Card, Pagination, Empty, Typography, Modal, Form, message, Input, Space, Button, Upload, Spin } from 'antd';
 import { getPostsAsync } from '~/app/slices/postSlice';
 import { selectAuth } from '~/app/selectors';
 import TextEditor from '~/components/Common/TextEditor';
@@ -30,15 +30,22 @@ function MyPosts() {
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [fileList, setFileList] = useState([]);
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     const fetchPosts = useCallback(async () => {
+        setLoading(true);
         try {
             const res = await dispatch(getPostsAsync()).unwrap();
             if (res) {
-                const filterPosts = res.filter((item) => item.userId === infoUserCurrent.userId);
+                const filterPosts = res.filter((item) => item.article.userId === infoUserCurrent.userId);
                 setMyPosts(filterPosts);
             }
-        } catch (error) {}
+        } catch (error) {
+            message.error('Không thể tải bài viết');
+        } finally {
+            setLoading(false);
+        }
     }, [dispatch, infoUserCurrent.userId]);
 
     useEffect(() => {
@@ -79,7 +86,7 @@ function MyPosts() {
 
     const handleEditSubmit = useCallback(
         async (values) => {
-            const hide = message.loading('Đang cập nhật...', 0);
+            setSubmitting(true);
             try {
                 values.image = backgroundImage;
                 const postData = {
@@ -89,12 +96,12 @@ function MyPosts() {
                 };
                 await postServices.updatePost(editingPost.newspaperArticleId, postData);
                 message.success('Cập nhật bài viết thành công!');
-                hide();
                 setIsEditModalVisible(false);
                 await fetchPosts();
             } catch (error) {
-                hide();
                 message.error('Cập nhật bài viết thất bại!');
+            } finally {
+                setSubmitting(false);
             }
         },
         [backgroundImage, editingPost, fetchPosts, markdown, htmlContent],
@@ -130,39 +137,42 @@ function MyPosts() {
         [backgroundImage],
     );
 
+    console.log("myPosts", myPosts);
     return (
         <div className={cx('wrapper')}>
             <div className={cx('container')}>
-                <Card title="Bài viết của tôi">
-                    {myPosts.length > 0 ? (
-                        myPosts.map((item) => (
-                            <MyPostsItem
-                                key={item.newspaperArticleId}
-                                data={item}
-                                onPostDeleted={fetchPosts}
-                                onPostEdit={handlePostEdit}
-                            />
-                        ))
-                    ) : (
-                        <Empty
-                            image={images.empty}
-                            imageStyle={{
-                                height: 60,
-                            }}
-                            description={
-                                <Typography.Text>
-                                    <p>Bạn không có bài viết nào!</p>
-                                </Typography.Text>
-                            }
-                        >
-                            <div className={cx('wrapper-btn')}>
-                                <ButtonHome outline small rounded to={routes.newPost} className={cx('btn-next-posts')}>
-                                    Đăng bài ngay
-                                </ButtonHome>
-                            </div>
-                        </Empty>
-                    )}
-                </Card>
+                <Spin spinning={loading}>
+                    <Card title="Bài viết của tôi">
+                        {myPosts.length > 0 ? (
+                            myPosts.map((item) => (
+                                <MyPostsItem
+                                    key={item.article.newspaperArticleId}
+                                    data={item.article}
+                                    onPostDeleted={fetchPosts}
+                                    onPostEdit={handlePostEdit}
+                                />
+                            ))
+                        ) : (
+                            <Empty
+                                image={images.empty}
+                                imageStyle={{
+                                    height: 60,
+                                }}
+                                description={
+                                    <Typography.Text>
+                                        <p>Bạn không có bài viết nào!</p>
+                                    </Typography.Text>
+                                }
+                            >
+                                <div className={cx('wrapper-btn')}>
+                                    <ButtonHome outline small rounded to={routes.newPost} className={cx('btn-next-posts')}>
+                                        Đăng bài ngay
+                                    </ButtonHome>
+                                </div>
+                            </Empty>
+                        )}
+                    </Card>
+                </Spin>
                 <Modal
                     title="Chỉnh sửa bài viết"
                     open={isEditModalVisible}
@@ -170,51 +180,55 @@ function MyPosts() {
                     footer={null}
                     width={1000}
                 >
-                    <Form form={form} layout="vertical" onFinish={handleEditSubmit}>
-                        <Form.Item name="title" label="Tiêu đề" rules={[{ required: true }]}>
-                            <Input placeholder="Nhập tiêu đề" />
-                        </Form.Item>
-                        <Form.Item name="description_NA" label="Mô tả" rules={[{ required: true }]}>
-                            <Input.TextArea rows={4} placeholder="Nhập mô tả" />
-                        </Form.Item>
-                        <Form.Item name="content" label="Nội dung">
-                            <div className={cx('text-editor')}>
-                                <TextEditor
-                                    className={cx('text-content')}
-                                    showHtml
-                                    placeholder="Nội dung viết ở đây"
-                                    initialContent={{ markdown, htmlContent }}
-                                />
-                            </div>
-                        </Form.Item>
-                        <Form.Item
-                            name="image"
-                            label="Hình ảnh"
-                            rules={[{ required: true, message: 'Please upload an image!' }]}
-                        >
-                            <Upload
-                                listType="picture"
-                                fileList={fileList}
-                                maxCount={1}
-                                onRemove={() => {
-                                    setBackgroundImage(null);
-                                    setFileList([]);
-                                }}
-                                beforeUpload={() => false}
-                                onChange={handleFileChange}
+                    <Spin spinning={submitting}>
+                        <Form form={form} layout="vertical" onFinish={handleEditSubmit}>
+                            <Form.Item name="title" label="Tiêu đề" rules={[{ required: true }]}>
+                                <Input placeholder="Nhập tiêu đề" />
+                            </Form.Item>
+                            <Form.Item name="description_NA" label="Mô tả" rules={[{ required: true }]}>
+                                <Input.TextArea rows={4} placeholder="Nhập mô tả" />
+                            </Form.Item>
+                            <Form.Item name="content" label="Nội dung">
+                                <div className={cx('text-editor')}>
+                                    <TextEditor
+                                        className={cx('text-content')}
+                                        showHtml
+                                        placeholder="Nội dung viết ở đây"
+                                        initialContent={{ markdown, htmlContent }}
+                                    />
+                                </div>
+                            </Form.Item>
+                            <Form.Item
+                                name="image"
+                                label="Hình ảnh"
+                                rules={[{ required: true, message: 'Please upload an image!' }]}
                             >
-                                <Button icon={<UploadOutlined />}>Upload Image</Button>
-                            </Upload>
-                        </Form.Item>
-                        <Form.Item>
-                            <Space style={{ display: 'flex', justifyContent: 'end' }}>
-                                <Button onClick={() => setIsEditModalVisible(false)}>Hủy bỏ</Button>
-                                <Button type="primary" htmlType="submit">
-                                    Cập nhật
-                                </Button>
-                            </Space>
-                        </Form.Item>
-                    </Form>
+                                <Upload
+                                    listType="picture"
+                                    fileList={fileList}
+                                    maxCount={1}
+                                    onRemove={() => {
+                                        setBackgroundImage(null);
+                                        setFileList([]);
+                                    }}
+                                    beforeUpload={() => false}
+                                    onChange={handleFileChange}
+                                >
+                                    <Button icon={<UploadOutlined />}>Upload Image</Button>
+                                </Upload>
+                            </Form.Item>
+                            <Form.Item>
+                                <Space style={{ display: 'flex', justifyContent: 'end' }}>
+                                    <Button onClick={() => setIsEditModalVisible(false)} disabled={submitting}>
+                                        Hủy bỏ
+                                    </Button>
+                                    <Button type="primary" htmlType="submit" loading={submitting}>
+                                        Cập nhật
+                                    </Button>
+                                </Space>
+                            </Form.Item>
+                        </Form>
+                    </Spin>
                 </Modal>
                 {myPosts.length > 0 && (
                     <Pagination

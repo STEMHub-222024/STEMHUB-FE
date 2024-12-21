@@ -17,17 +17,17 @@ const SlideItem = memo(({ barber, index }) => {
                 <h2 className={cx('heading')}>{barber.title}</h2>
                 <p className={cx('desc')}>{barber.content}</p>
 
-                {index === 0 ? (
+                {index === 1 ? (
                     <Link
                         className={cx('register-btn')}
                         to={config.routes.stemAI}
-                        
+
                     >
                         Khám phá
                     </Link>
                 ) : (
                     <a
-                        href={index === 1 ? URL_YOUTUBE : URL_FACEBOOK}
+                        href={index === 0 ? URL_FACEBOOK : URL_YOUTUBE}
                         className={cx('register-btn', {
                             'btn-primary': index === 0,
                             'btn-secondary': index === 1,
@@ -35,7 +35,7 @@ const SlideItem = memo(({ barber, index }) => {
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        {index === 1 ? 'Đăng ký kênh' : 'Đăng ký ngay' }
+                        {index === 0 ? 'Tham gia ngay' : 'Đăng ký kênh'}
                     </a>
                 )}
             </div>

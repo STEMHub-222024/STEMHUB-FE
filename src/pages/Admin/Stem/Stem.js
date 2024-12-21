@@ -75,19 +75,6 @@ function Stem() {
 
     const columns = [
         {
-            title: 'ID',
-            dataIndex: 'stemId',
-            key: 'stemId',
-            ellipsis: {
-                showTitle: false,
-            },
-            render: (stemId) => (
-                <Tooltip placement="topLeft" title={stemId}>
-                    {stemId}
-                </Tooltip>
-            ),
-        },
-        {
             title: 'Name',
             dataIndex: 'stemName',
             key: 'stemName',
