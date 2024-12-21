@@ -41,4 +41,9 @@ export const dataTopicCareer = [
 - Chủ đề STEM thiết kế hệ thống điều khiển giao thông thông minh
         `,
     },
+    {
+        id: 5,
+        question: 'Trắc nghiệm hướng nghiệp',
+        answer: `Hãy tạo ra một bài trắc nghiệm gồm 12 câu hỏi với 4 phần, mỗi phần gồm 3 câu hỏi lựa chọn A hoặc B. Mỗi phần đại diện cho một cặp tính cách MBTI: Phần 1: Hướng ngoại (E) và Hướng nội (I) (Câu hỏi liên quan đến môi trường xã hội và cách giao tiếp) Phần 2: Cảm nhận (S) và Trực giác 👎 (Câu hỏi liên quan đến cách tiếp nhận thông tin và tư duy) Phần 3: Lý trí (T) và Cảm xúc (F) (Câu hỏi liên quan đến cách đưa ra quyết định và ưu tiên giá trị) Phần 4: Nguyên tắc (J) và Linh hoạt (P) (Câu hỏi liên quan đến cách tổ chức công việc và lập kế hoạch) `,
+    },
 ];

@@ -79,47 +79,52 @@ const BoxChat = ({ data }) => {
 
     const handleAskAI = useCallback(
         async (message) => {
-            let data;
-            let isError = false;
-            data = dataTopicCareer.find((data) => data.question === message);
-            if (data?.answer) {
-                setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
-                setIsDisplayStopped(true);
-                await typeWords(data.answer.split(' '));
-                setIsTyping(false);
-                return;
-            }
-            if (message.length > 8) {
-                try {
-                    const { answer, found } = await ask({ question: message });
-                    if (!found) {
-                        isError = true;
-                    } else {
-                        data = answer;
-                    }
-                } catch (error) {
-                    isError = true;
-                }
-            } else {
-                isError = true;
-            }
-            if (isError) {
-                try {
-                    data = await config.runGemini(message);
-                    await sendQuestion({ content: message, answer: data });
-                } catch (error) {
-                    toast.error('Đã có lỗi xảy ra. Vui lòng thử lại sau!');
+            setIsTyping(true);
+            try {
+                let data;
+                let isError = false;
+                data = dataTopicCareer.find((data) => data.question === message);
+                if (data?.answer && data?.id !== 5) {
+                    setMessages((prevMessages) => [...prevMessages, { role: 'user', message: message }]);
+                    setIsDisplayStopped(true);
+                    await typeWords(data.answer.split(' '));
                     return;
                 }
+                if (message.length > 8 && data?.id !== 5) {
+                    try {
+                        const { answer, found } = await ask({ question: message });
+                        if (!found) {
+                            isError = true;
+                        } else {
+                            data = answer;
+                        }
+                    } catch (error) {
+                        isError = true;
+                    }
+                } else {
+                    isError = true;
+                }
+                if (isError) {
+                    try {
+                        data = await config.runGemini(data?.id == 5 ? data?.answer : message);
+                        await sendQuestion({ content: data?.id == 5 ? data?.question : message, answer: data });
+                    } catch (error) {
+                        toast.error('Đã có lỗi xảy ra. Vui lòng thử lại sau!');
+                        return;
+                    }
+                }
+                sessionStorage.setItem(
+                    'chatMessages',
+                    JSON.stringify([...messages, { role: 'user', message: message }, { role: 'assistant', message: data }]),
+                );
+                setMessage('');
+                setIsDisplayStopped(true);
+                await typeWords(data.split(' '));
+            } catch (error) {
+                toast.error('Đã có lỗi xảy ra. Vui lòng thử lại sau!');
+            } finally {
+                setIsTyping(false);
             }
-            sessionStorage.setItem(
-                'chatMessages',
-                JSON.stringify([...messages, { role: 'user', message: message }, { role: 'assistant', message: data }]),
-            );
-            setMessage('');
-            setIsTyping(false);
-            setIsDisplayStopped(true);
-            await typeWords(data.split(' '));
         },
         [messages, typeWords],
     );
