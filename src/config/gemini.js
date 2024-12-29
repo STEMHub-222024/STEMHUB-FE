@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
+import { toast } from 'react-toastify';
 
 const apiKey = process.env.REACT_APP_STEAM_GEMINI_AI_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -34,15 +35,26 @@ const safetySettings = [
     },
 ];
 
-async function run(prompt) {
-    const chatSession = model?.startChat({
-        generationConfig,
-        safetySettings,
-        history: [],
-    });
+async function run(prompt, chatHistory = []) {
+    try {
+        let fullPrompt = `Bạn là một AI assistant. Hãy luôn trả lời bằng tiếng Việt một cách tự nhiên và dễ hiểu.\n\n`;
+        
+        if (chatHistory.length > 0) {
+            fullPrompt += `Lịch sử trò chuyện:\n`;
+            chatHistory.forEach(msg => {
+                fullPrompt += `${msg.role === 'assistant' ? 'Assistant' : 'Human'}: ${msg.message}\n`;
+            });
+            fullPrompt += `\n`;
+        }
 
-    const result = await chatSession.sendMessage(prompt);
-    return result.response.text();
+        fullPrompt += `Human: ${prompt}`;
+
+        const result = await model.generateContent(fullPrompt);
+        const response = await result.response;
+        return response.text();
+    } catch (error) {
+        toast.error('Đã có lỗi xảy ra. Vui lòng thử lại sau!');
+    }
 }
 
 export default run;
